@@ -4,6 +4,7 @@
 "  \_/ |_|_| |_| |_|_|  \___|
 
 "(((((((((((( general settings ))))))))))))
+set nocompatible
 
 "tab/indent
 set tabstop=4
@@ -103,6 +104,7 @@ filetype off
 call plug#begin('~/.vim/plugged')
 	"## vim plug ##
     Plug 'junegunn/vim-plug'
+	"== general ==
     "## quality of life ##
     Plug 'tpope/vim-surround'
     Plug 'tpope/vim-commentary'
@@ -110,26 +112,22 @@ call plug#begin('~/.vim/plugged')
     Plug 'tpope/vim-rsi'
     Plug 'tpope/vim-eunuch'
     Plug 'tpope/vim-repeat'
-    "## editorconfig ##
-    Plug 'editorconfig/editorconfig-vim'
     "## git ##
     Plug 'tpope/vim-fugitive'
     Plug 'airblade/vim-gitgutter'
-    "## terminal and tmux integration ##
-    Plug 'tmux-plugins/vim-tmux-focus-events'
-    Plug 'roxma/vim-tmux-clipboard'
-    Plug 'tpope/vim-tbone'
-    Plug 'wincent/terminus'
-    "## language specific ##
+    "## editorconfig ##
+    Plug 'editorconfig/editorconfig-vim'
+    "## colors, highlights and indents ##
+    Plug 'machakann/vim-highlightedyank'
+
+    "== language specific ==
 	"javascript/css/html
     Plug 'pangloss/vim-javascript'
     Plug 'mattn/emmet-vim'
 	"go
     Plug 'fatih/vim-go'
-    "## colors, highlights and indents ##
-    Plug 'machakann/vim-highlightedyank'
     "## linting ##
-    Plug 'w0rp/ale'
+	Plug 'w0rp/ale'
 call plug#end()
 
 "(((((((((((( plugin keybinds ))))))))))))
