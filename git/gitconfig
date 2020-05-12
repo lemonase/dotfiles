@@ -1,0 +1,37 @@
+#Have git remember credentials
+#  git config --global credential.helper (store|cache|libsecret)
+#
+#Setting up a new repo *make first commit*
+#  git remote add origin <url/path to git project>
+#  git push -u origin master
+
+[user]
+    email = notjamesdixon@gmail.com
+    name = James Dixon
+[color]
+    ui = true
+    status = auto
+    branch = auto
+[diff]
+    tool = vimdiff
+[difftool]
+    prompt = false
+[alias]
+    a = add
+    aa = add --all
+    ai = add -i
+    s = status
+    st = status
+    c = commit
+    ca = commit -a
+    cm = commit -m
+    cam = commit -am
+    br = branch
+    co = checkout
+    d = diff
+    df = diff
+    dt = difftool
+    lg = log
+    pl = log --all --decorate --oneline --graph
+    gr = log --all --decorate --oneline --graph
+    graph = log --all --decorate --oneline --graph

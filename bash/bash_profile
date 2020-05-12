@@ -1,0 +1,24 @@
+[[ -f "$HOME/.bashrc" ]] && source "$HOME/.bashrc"
+
+appendpath () {
+    case ":$PATH:" in
+        *:"$1":*)
+            ;;
+        *)
+            PATH="${PATH:+$PATH:}$1"
+    esac
+}
+
+# home paths
+user_paths=("$HOME/bin" "$HOME/.local/bin" "$HOME/scripts" "$HOME/.local/scripts")
+# language paths
+user_paths+=("$HOME/.cargo/bin" "$HOME/go/bin" "$HOME/.local/go/bin")
+
+for path in "${user_paths[@]}"; do
+	if [ -d $path ]; then
+		appendpath $path
+	fi
+done
+
+# vim:ft=sh
+
