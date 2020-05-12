@@ -1,4 +1,4 @@
-[[ -f "$HOME/.bashrc" ]] && source "$HOME/.bashrc"
+[ -f "$HOME/.bashrc" ] && source "$HOME/.bashrc"
 
 appendpath () {
     case ":$PATH:" in
@@ -15,8 +15,8 @@ user_paths=("$HOME/bin" "$HOME/.local/bin" "$HOME/scripts" "$HOME/.local/scripts
 user_paths+=("$HOME/.cargo/bin" "$HOME/go/bin" "$HOME/.local/go/bin")
 
 for path in "${user_paths[@]}"; do
-	if [ -d $path ]; then
-		appendpath $path
+	if [ -d "$path" ]; then
+		appendpath "$path"
 	fi
 done
 
