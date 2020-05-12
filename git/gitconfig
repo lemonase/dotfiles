@@ -8,6 +8,8 @@
 [user]
     email = notjamesdixon@gmail.com
     name = James Dixon
+[credential]
+    username = lemonase
 [color]
     ui = true
     status = auto
