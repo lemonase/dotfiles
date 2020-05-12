@@ -1,40 +1,283 @@
-"
-" minimal vimrc with no plugins
-"
+"__   _(_)_ __ ___  _ __ ___
+"\ \ / / | '_ ` _ \| '__/ __|
+" \ V /| | | | | | | | | (__
+"  \_/ |_|_| |_| |_|_|  \___|
 
-" ui
-set number
-set ruler
-set wildmenu
-set showcmd
-set showmatch
+"(((((((((((( general settings ))))))))))))
 
-" encoding/format
+"tab/indent
+set tabstop=4
+set softtabstop=4
+set shiftwidth=4
+set expandtab
+set autoindent
+
+"encoding/format
 set encoding=utf-8
 set fileformats=unix,dos,mac
 
-" searching
-set hlsearch
+"file/buffer
+set autoread
+set autowrite
+set confirm
+
+"display
+set background=dark
+set number
+set wrap
+set showbreak=↪\
+set listchars=tab:→\ ,extends:›,precedes:‹,nbsp:·,trail:·,eol:¬
+set foldmethod=marker
+set lazyredraw
+set regexpengine=1
+set redrawtime=10000
+
+"status bar
+set showcmd
+set wildmenu
+set ruler
+set laststatus=2
+
+"search
 set incsearch
+set hlsearch
 set ignorecase
 set smartcase
 
-" indent
-set shiftwidth=4
-set tabstop=4
-set softtabstop=4
-set autoindent
+"cursor behaviour
+set virtualedit=block
+set backspace=indent,eol,start
+set showmatch
+set scrolloff=2
+set sidescrolloff=8
 
-" allow syntax and filetype plugins
+"input/timeout
+set esckeys
+set timeoutlen=1000 "for mappings
+set ttimeoutlen=20 "for keycodes
+
+"window behaviour (ltr)
+set splitbelow
+set splitright
+
+"undo/bkup dirs
+set undofile
+set undodir=~/.vim/.undo//,/tmp//
+set backupdir=~/.vim/.backup//,/tmp//
+set directory=~/.vim/.swap//,/tmp//
+
+"leader key
+let mapleader=','
+
+"(((((((((((( normal keybinds ))))))))))))
+nnoremap <silent><leader><space> :let @/ = ""<CR>
+nnoremap <leader>p :set invpaste<CR>
+nnoremap <silent><leader>lb :call ToggleLineBreak()<CR>
+nnoremap <silent><leader>wr :call ToggleWrap()<CR>
+nnoremap <silent><leader>cc :call ToggleColorColumn()<CR>
+
+nnoremap <leader>ts "=strftime("%F %T%z")<CR>p
+nnoremap =j :%!python -m json.tool<CR>
+
+"(((((((((((( abbreviations ))))))))))))
+inoreabbrev <expr> #!! "#!/usr/bin/env"
+
+"(((((((((((( commands ))))))))))))
+cnoremap w!! w !sudo tee % > /dev/null
+command! W w !sudo tee % > /dev/null
+command! Trim %s/\s\+$//
+command! Q q
+command! WQ wq
+command! Q1 q!
+
+"(((((((((((( plugins ))))))))))))
+if empty(glob('~/.vim/autoload/plug.vim'))
+  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
+"filetype may interfere with plugins
+filetype off
+
+call plug#begin('~/.vim/plugged')
+	"## vim plug ##
+    Plug 'junegunn/vim-plug'
+    "## quality of life ##
+    Plug 'tpope/vim-surround'
+    Plug 'tpope/vim-commentary'
+    Plug 'tpope/vim-unimpaired'
+    Plug 'tpope/vim-rsi'
+    Plug 'tpope/vim-eunuch'
+    Plug 'tpope/vim-repeat'
+    "## editorconfig ##
+    Plug 'editorconfig/editorconfig-vim'
+    "## git ##
+    Plug 'tpope/vim-fugitive'
+    Plug 'airblade/vim-gitgutter'
+    "## terminal and tmux integration ##
+    Plug 'tmux-plugins/vim-tmux-focus-events'
+    Plug 'roxma/vim-tmux-clipboard'
+    Plug 'tpope/vim-tbone'
+    Plug 'wincent/terminus'
+    "## language specific ##
+	"javascript/css/html
+    Plug 'pangloss/vim-javascript'
+    Plug 'mattn/emmet-vim'
+	"go
+    Plug 'fatih/vim-go'
+    "## colors, highlights and indents ##
+    Plug 'machakann/vim-highlightedyank'
+    "## linting ##
+    Plug 'w0rp/ale'
+call plug#end()
+
+"(((((((((((( plugin keybinds ))))))))))))
+nnoremap <silent><leader>e :call ToggleNetrw()<CR>
+nnoremap <leader>at :ALEToggle<CR>
+if !exists('##TextYankPost')
+  map y <Plug>(highlightedyank)
+endif
+
+"(((((((((((( plugin settings ))))))))))))
+function! SetPluginSettings()
+    "netrw
+    let g:netrw_banner = 0
+    let g:netrw_winsize = 24
+    let g:netrw_liststyle = 3
+    let g:netrw_preview = 1
+    let g:netrw_alto = 0
+    let g:netrw_usetab = 1
+    "git gutter
+    augroup git_gutter
+        if exists(':GitGutter')
+            autocmd!
+            let g:gitgutter_map_keys = 0 "don't use mapped keys
+            autocmd BufWritePost * GitGutter "update GitGutter after writing
+        endif
+    augroup END
+    if exists(':ALEToggle')
+        let g:ale_fixers = {
+        \   '*': ['remove_trailing_lines', 'trim_whitespace'],
+        \   'javascript': ['eslint'],
+        \}
+        let g:ale_sign_error = '->'
+        let g:ale_sign_warning = '--'
+    endif
+endfunction
+
+"(((((((((((( general use functions ))))))))))))
+function! ToggleColorColumn()
+    if &cc == ''
+        set cc=80
+    else
+        set cc=
+    endif
+endfunction
+
+function! ToggleLineBreak()
+    if &lbr == ''
+        set fo+=t "Autowraps text with textwidth
+        set fo-=l "Wraps long lines in --insert-- mode
+        set lbr
+    else
+        set fo-=t
+        set fo+=l
+        set lbr!
+    endif
+endfunction
+
+function! ToggleWrap()
+    if &wrap == ''
+        set wrap
+    else
+        set nowrap
+    endif
+endfunction
+
+"make netrw toggleable
+"https://vi.stackexchange.com/questions/10988/toggle-explorer-window
+let g:NetrwIsOpen=0
+function! ToggleNetrw()
+    if g:NetrwIsOpen
+        let i = bufnr("$")
+        while (i >= 1)
+            if (getbufvar(i, "&filetype") == "netrw")
+                silent exe "bwipeout " . i
+            endif
+            let i-=1
+        endwhile
+        let g:NetrwIsOpen=0
+    else
+        let g:NetrwIsOpen=1
+        silent Lexplore
+    endif
+endfunction
+
+"(((((((((((( enable syntax/filetype ))))))))))))
 syntax enable
 filetype plugin indent on
 runtime macros/matchit.vim
 
-" key timeout values
-set esckeys
-set ttimeoutlen=20
-set timeoutlen=1000
+"(((((((((((( gui settings ))))))))))))
+if has("gui_running")
+	set guioptions -=m
+	set guioptions -=T
+  if has("gui_gtk2")
+    set guifont=Inconsolata\ 12
+  elseif has("gui_macvim")
+    set guifont=Menlo\ Regular:h14
+  elseif has("gui_win32")
+    set guifont=Consolas:h10
+  endif
+endif
 
-" filetypes
-autocmd FileType markdown setlocal sw=4 ts=4 sts=4 expandtab
+"(((((((((((( win32 settings ))))))))))))
+if has('win32')
+endif
 
+"(((((((((((( auto commands ))))))))))))
+if has("autocmd")
+    "## global ##
+    augroup set_plugin_settings
+        autocmd!
+        autocmd VimEnter * call SetPluginSettings()
+    augroup END
+
+    augroup auto_resize_windows
+        autocmd!
+        autocmd VimResized * wincmd =
+    augroup END
+
+    "## save cursor position in a file ##
+    au BufReadPost * if line("'\"") > 1 && line("'\"")
+    \ <= line("$") | exe "normal! g'\"" | endif
+
+    "## language/filetype specific ##
+    augroup filetype_shell
+        autocmd!
+        autocmd BufNewFile,BufRead *bash* set syntax=sh
+    augroup END
+
+    augroup filetype_python
+        autocmd!
+        autocmd FileType python xnoremap <leader>r <esc>:'<,'>:w !python3<CR>
+    augroup END
+
+    augroup filetype_go
+        autocmd!
+        set expandtab!
+    augroup END
+
+    augroup filetype_html
+        autocmd!
+        autocmd FileType html :syntax sync fromstart
+    augroup END
+
+    augroup half_tab
+        autocmd!
+        autocmd FileType html,javascript,css,json,yaml,yml,sh
+        \ setlocal ts=2 sts=2 sw=2 expandtab
+    augroup END
+
+endif

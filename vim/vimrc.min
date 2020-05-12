@@ -1,0 +1,40 @@
+"
+" minimal vimrc with no plugins
+"
+
+" ui
+set number
+set ruler
+set wildmenu
+set showcmd
+set showmatch
+
+" encoding/format
+set encoding=utf-8
+set fileformats=unix,dos,mac
+
+" searching
+set hlsearch
+set incsearch
+set ignorecase
+set smartcase
+
+" indent
+set shiftwidth=4
+set tabstop=4
+set softtabstop=4
+set autoindent
+
+" allow syntax and filetype plugins
+syntax enable
+filetype plugin indent on
+runtime macros/matchit.vim
+
+" key timeout values
+set esckeys
+set ttimeoutlen=20
+set timeoutlen=1000
+
+" filetypes
+autocmd FileType markdown setlocal sw=4 ts=4 sts=4 expandtab
+
