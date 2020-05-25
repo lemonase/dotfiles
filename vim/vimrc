@@ -7,13 +7,6 @@
 "general settings
 "------------------------------------------------------------------------------
 
-"tab/indent
-set tabstop=4
-set softtabstop=4
-set shiftwidth=4
-set expandtab
-set autoindent
-
 "encoding/format
 set encoding=utf-8
 set fileformats=unix,dos,mac
@@ -33,6 +26,13 @@ set foldmethod=marker
 set lazyredraw
 set regexpengine=1
 set redrawtime=10000
+
+"tab/indent
+set tabstop=4
+set softtabstop=4
+set shiftwidth=4
+set expandtab
+set autoindent
 
 "status bar
 set showcmd
@@ -69,19 +69,26 @@ set backupdir=~/.vim/.backup//,/tmp//
 set directory=~/.vim/.swap//,/tmp//
 
 "leader key
-let mapleader=','
+let mapleader=' '
 
 "------------------------------------------------------------------------------
-"normal mode keybinds
+"normal/visual mode keybinds
 "------------------------------------------------------------------------------
 
 "normal keybinds
 nnoremap <silent><leader><space> :let @/ = ""<CR>
 nnoremap <leader>p :set invpaste<CR>
+
 nnoremap <silent><leader>lb :call ToggleLineBreak()<CR>
 nnoremap <silent><leader>wr :call ToggleWrap()<CR>
 nnoremap <silent><leader>cc :call ToggleColorColumn()<CR>
-nnoremap <leader>ts "=strftime("%F %T%z")<CR>p
+
+nnoremap <leader>ts "=strftime("%F %T%z")<CR>
+nnoremap <leader>dt :r !date<CR>
+
+nnoremap <leader>rc :vsplit $MYVIMRC<CR>
+nnoremap <leader>so :source $MYVIMRC<CR>
+
 nnoremap =j :%!python -m json.tool<CR>
 
 "plugin keybinds
@@ -92,7 +99,7 @@ if !exists('##TextYankPost')
 endif
 
 "------------------------------------------------------------------------------
-"abbreviations
+"insert mode keybinds and abbreviations
 "------------------------------------------------------------------------------
 
 inoreabbrev <expr> #!! "#!/usr/bin/env"
@@ -108,6 +115,10 @@ command! Trim %s/\s\+$//
 command! Q q
 command! WQ wq
 command! Q1 q!
+
+"function calls
+command! -nargs=+ SearchGoogle call SearchGoogle(join([<f-args>]))
+
 
 "------------------------------------------------------------------------------
 "plugins (vim-plug)
@@ -261,6 +272,13 @@ endfunction
 "search functions
 "----------------
 
+function! SearchGoogle(string)
+	let l:google = "https://www.google.com/search?q="
+	let l:browser = "xdg-open >/dev/null 2>/dev/null"
+	let l:query = substitute(join(split(a:string),"+"),'"',"","g")
+	execute "!" l:browser . "\ " . l:google . l:query
+endfunction
+
 "------------------------------------------------------------------------------
 "syntax/filetype
 "------------------------------------------------------------------------------
@@ -337,7 +355,7 @@ if has("autocmd")
 	"go
 	augroup filetype_go
 		autocmd!
-		set expandtab!
+		set expandtab! "go uses real tabs
 	augroup END
 
 	"html
@@ -346,10 +364,16 @@ if has("autocmd")
 		autocmd FileType html :syntax sync fromstart
 	augroup END
 
-	"where tabs should = 2 spaces
+	"markdown
+	augroup filetype_md
+		autocmd!
+		autocmd FileType markdown setlocal sw=4 ts=4 sts=4 expandtab
+	augroup END
+
+	"filestypes where tabs should = 2 spaces
 	augroup half_tab
 		autocmd!
-		autocmd FileType html,javascript,css,json,yaml,yml,sh
+		autocmd FileType html,javascript,css,json,yaml,sh
 					\ setlocal ts=2 sts=2 sw=2 expandtab
 	augroup END
 
