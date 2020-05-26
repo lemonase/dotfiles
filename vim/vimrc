@@ -7,6 +7,12 @@
 "general settings
 "------------------------------------------------------------------------------
 
+"load defaults if available
+if filereadable(expand('$VIMRUNTIME/defaults.vim'))
+	unlet! g:skip_defaults_vim
+	source $VIMRUNTIME/defaults.vim
+endif
+
 "encoding/format
 set encoding=utf-8
 set fileformats=unix,dos,mac
@@ -319,60 +325,31 @@ if has("autocmd")
 	"------------
 	"## global ##
 	"------------
-
-	"set plugin settings on VimEnter
-	augroup set_plugin_settings
+	augroup general
 		autocmd!
+		"set plugin settings on VimEnter
 		autocmd VimEnter * call SetPluginSettings()
-	augroup END
-
-	"keep equal proportions when windows resized
-	augroup auto_resize_windows
-		autocmd!
+		"keep equal proportions when windows resized
 		autocmd VimResized * wincmd =
+		"save cursor position in a file
+		autocmd BufReadPost * if line("'\"") > 1 && line("'\"")
+					\ <= line("$") | exe "normal! g'\"" | endif
 	augroup END
-
-	"save cursor position in a file
-	au BufReadPost * if line("'\"") > 1 && line("'\"")
-				\ <= line("$") | exe "normal! g'\"" | endif
 
 	"--------------------------------
 	"## language/filetype specific ##
 	"--------------------------------
-
-	"shell
-	augroup filetype_shell
+	augroup languages
 		autocmd!
+		"shell
 		autocmd BufNewFile,BufRead *bash* set syntax=sh
-	augroup END
-
-	"python
-	augroup filetype_python
-		autocmd!
+		"python
 		autocmd FileType python xnoremap <leader>r <esc>:'<,'>:w !python3<CR>
-	augroup END
-
-	"go
-	augroup filetype_go
-		autocmd!
-		set expandtab! "go uses real tabs
-	augroup END
-
-	"html
-	augroup filetype_html
-		autocmd!
+		"go
+		autocmd FileType go set expandtab! "go uses real tabs
+		"html
 		autocmd FileType html :syntax sync fromstart
-	augroup END
-
-	"markdown
-	augroup filetype_md
-		autocmd!
-		autocmd FileType markdown setlocal sw=4 ts=4 sts=4 expandtab
-	augroup END
-
-	"filestypes where tabs should = 2 spaces
-	augroup half_tab
-		autocmd!
+		"filestypes where tabs should = 2 spaces
 		autocmd FileType html,javascript,css,json,yaml,sh
 					\ setlocal ts=2 sts=2 sw=2 expandtab
 	augroup END

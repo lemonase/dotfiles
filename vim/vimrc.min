@@ -1,6 +1,12 @@
 "
-" minimal vimrc with no plugins
+" minimal vimrc with no (extra) plugins
 "
+
+"load defaults if available
+if filereadable(expand('$VIMRUNTIME/defaults.vim'))
+	unlet! g:skip_defaults_vim
+	source $VIMRUNTIME/defaults.vim
+endif
 
 " ui
 set number
@@ -35,18 +41,28 @@ set esckeys
 set ttimeoutlen=20
 set timeoutlen=1000
 
-" filetype autocmds
+" autocmds
 
-"markdown
-augroup filetype_md
-	autocmd!
-	autocmd FileType markdown setlocal sw=4 ts=4 sts=4 expandtab
+augroup general
+    autocmd!
+    "keep equal proportions when windows resized
+    autocmd VimResized * wincmd =
+    "save cursor position in a file
+    autocmd BufReadPost * if line("'\"") > 1 && line("'\"")
+                \ <= line("$") | exe "normal! g'\"" | endif
 augroup END
 
-"filestypes where tabs should = 2 spaces
-augroup half_tab
-	autocmd!
-	autocmd FileType html,javascript,css,json,yaml,sh
-				\ setlocal ts=2 sts=2 sw=2 expandtab
+augroup languages
+    autocmd!
+    "shell
+    autocmd BufNewFile,BufRead *bash* set syntax=sh
+    "python
+    autocmd FileType python xnoremap <leader>r <esc>:'<,'>:w !python3<CR>
+    "go
+    autocmd FileType go set expandtab! "go uses real tabs
+    "html
+    autocmd FileType html :syntax sync fromstart
+    "filestypes where tabs should = 2 spaces
+    autocmd FileType html,javascript,css,json,yaml,sh
+                \ setlocal ts=2 sts=2 sw=2 expandtab
 augroup END
-
