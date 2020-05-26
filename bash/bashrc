@@ -179,10 +179,11 @@ parse_git() {
   # colors are unescaped because the whole function should be escaped in PS1
   if [[ $? -ne 0 ]]; then return; else printf "${unesc_reset}${unesc_bold}%s" ":(${BRANCH})["; fi
   if echo "${STATUS}" | grep -c "nothing to commit" &> /dev/null; then printf "${unesc_blue}%s" "="; else printf ""; fi
-  if echo "${STATUS}" | grep -c "renamed:"  &> /dev/null; then printf "${unesc_red}%s" ">"; else printf ""; fi
+  if echo "${STATUS}" | grep -c "renamed:"  &> /dev/null; then printf "${unesc_red}%s" "%"; else printf ""; fi
   if echo "${STATUS}" | grep -c "deleted:"  &> /dev/null; then printf "${unesc_red}%s" "-"; else printf ""; fi
   if echo "${STATUS}" | grep -c "new file:" &> /dev/null; then printf "${unesc_green}%s" "+"; else printf ""; fi
-  if echo "${STATUS}" | grep -c "branch is ahead:" &> /dev/null; then printf "${unesc_yellow}%s" "!"; else printf ""; fi
+  if echo "${STATUS}" | grep -c "branch is ahead:" &> /dev/null; then printf "${unesc_yellow}%s" ">"; else printf ""; fi
+  if echo "${STATUS}" | grep -c "branch is behind" &> /dev/null; then printf "${unesc_yellow}%s" "<"; else printf ""; fi
   if echo "${STATUS}" | grep -c "Untracked files:" &> /dev/null; then printf "${unesc_yellow}%s" "?"; else printf ""; fi
   if echo "${STATUS}" | grep -c "modified:"        &> /dev/null; then printf "${unesc_yellow}%s" "*"; else printf ""; fi
   printf "${unesc_white}%s" "]"
