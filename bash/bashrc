@@ -190,6 +190,12 @@ parse_git() {
 
 # PROMPTS
 # -------
+# ***non-color prompts***
+# PS1="\W \\$ "
+# PS1="[\u@\h:\W]\\$ "
+PS1="\u@\h:\W\\$ "
+# PS1="[\t] \u@\h:\W\\$ "
+
 # start prompt string
 # PS1="${bold}"
 
@@ -205,12 +211,6 @@ parse_git() {
 
 # end prompt string
 # PS1+="${reset}"
-
-# ***non-color prompts***
-# PS1="\W \\$ "
-# PS1="[\u@\h:\W]\\$ "
-PS1="\u@\h:\W\\$ "
-
 
 # BASH AUTOCOMPLETION
 # -------------------
