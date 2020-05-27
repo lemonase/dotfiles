@@ -13,7 +13,7 @@ HISTTIMEFORMAT="%F %T  "
 
 # SHELL OPTIONS
 # -------------
-shopt -s checkhash checkjobs checkwinsize 
+shopt -s checkhash checkjobs checkwinsize
 shopt -s direxpand dirspell extglob globstar
 shopt -s cmdhist histappend
 
@@ -65,11 +65,11 @@ alias tmka='tmux kill-server' # aka killall
 # python venv
 alias venvac='source venv/bin/activate'
 
-# COLORS 
+# COLORS
 # ------
 # color vars using tput or ANSI/VT100 Control sequences
 # check if tput is available
-if [ -x "$(command -v tput)" ]; then 
+if [ -x "$(command -v tput)" ]; then
   num_colors=$(tput colors)
   if [ -n "$num_colors" ] && [ "$num_colors" -ge 8 ]; then
     black="\[$(tput setaf 0)\]"; unesc_black="$(tput setaf 0)"
@@ -83,8 +83,8 @@ if [ -x "$(command -v tput)" ]; then
     reset="\[$(tput sgr0)\]"; unesc_reset="$(tput sgr0)"
     bold="\[$(tput bold)\]"; unesc_bold="$(tput bold)"
   fi
-# fallback to ANSI esacpe codes
 else
+  # fallback to ANSI esacpe codes
   black="\[\033[0;30m\]"; unesc_black="\033[0;30m"
   red="\[\033[1;31m\]"; unesc_red="\033[1;31m"
   green="\[\033[1;32m\]"; unesc_green="\033[1;32m"
@@ -149,22 +149,22 @@ bkup() {
 
 # hugo -- create and edit a new post
 new-post() {
-  postname=""
-  if [ -z "$1" ]; then
-    echo -n "Please enter a postname: "
-    read -r postname
-  else
-    postname="$1"
-  fi
+postname=""
+if [ -z "$1" ]; then
+  echo -n "Please enter a postname: "
+  read -r postname
+else
+  postname="$1"
+fi
 
-  post_filename="$postname.md"
-  blog_dir="$HOME/src/blog"
-  local_url="http://localhost:1313/posts/$postname"
+post_filename="$postname.md"
+blog_dir="$HOME/src/blog"
+local_url="http://localhost:1313/posts/$postname"
 
-  hugo new -s "$blog_dir" "posts/$post_filename"
-  hugo serve -s "$blog_dir" -D &> /dev/null &
-  xdg-open "$local_url" &> /dev/null &
-  vim "$blog_dir/content/posts/$post_filename" && kill %1
+hugo new -s "$blog_dir" "posts/$post_filename"
+hugo serve -s "$blog_dir" -D &> /dev/null &
+xdg-open "$local_url" &> /dev/null &
+vim "$blog_dir/content/posts/$post_filename" && kill %1
 }
 
 # git
@@ -176,42 +176,57 @@ parse_git() {
   BRANCH="$(git rev-parse --abbrev-ref HEAD 2> /dev/null)"
   STATUS="$(git status 2> /dev/null)"
 
-  # colors are unescaped because the whole function should be escaped in PS1
-  if [[ $? -ne 0 ]]; then return; else printf "${unesc_reset}${unesc_bold}%s" ":(${BRANCH})["; fi
-  if echo "${STATUS}" | grep -c "nothing to commit" &> /dev/null; then printf "${unesc_blue}%s" "="; else printf ""; fi
-  if echo "${STATUS}" | grep -c "renamed:"  &> /dev/null; then printf "${unesc_red}%s" "%"; else printf ""; fi
-  if echo "${STATUS}" | grep -c "deleted:"  &> /dev/null; then printf "${unesc_red}%s" "-"; else printf ""; fi
-  if echo "${STATUS}" | grep -c "new file:" &> /dev/null; then printf "${unesc_green}%s" "+"; else printf ""; fi
-  if echo "${STATUS}" | grep -c "branch is ahead:" &> /dev/null; then printf "${unesc_yellow}%s" ">"; else printf ""; fi
-  if echo "${STATUS}" | grep -c "branch is behind" &> /dev/null; then printf "${unesc_yellow}%s" "<"; else printf ""; fi
-  if echo "${STATUS}" | grep -c "Untracked files:" &> /dev/null; then printf "${unesc_yellow}%s" "?"; else printf ""; fi
-  if echo "${STATUS}" | grep -c "modified:"        &> /dev/null; then printf "${unesc_yellow}%s" "*"; else printf ""; fi
-  printf "${unesc_white}%s" "]"
+  if [[ $? -ne 0 ]]; then
+    return
+  else
+    printf "\001${unesc_reset}${unesc_bold}\002:(%s)" "${BRANCH}"
+    printf "\001${unesc_white}\002%s" "["
+    if echo "${STATUS}" | grep -c "nothing to commit" &> /dev/null; then
+      printf "\001${unesc_blue}\002%s" "=";
+    fi
+    if echo "${STATUS}" | grep -c "renamed:"  &> /dev/null; then
+      printf "\001${unesc_red}\002%s" "%";
+    fi
+    if echo "${STATUS}" | grep -c "deleted:"  &> /dev/null; then
+      printf "\001${unesc_red}\002%s" "-";
+    fi
+    if echo "${STATUS}" | grep -c "new file:" &> /dev/null; then
+      printf "\001${unesc_green}\002%s" "+";
+    fi
+    if echo "${STATUS}" | grep -c "branch is ahead:" &> /dev/null; then
+      printf "\001${unesc_yellow}\002%s" ">";
+    fi
+    if echo "${STATUS}" | grep -c "branch is behind" &> /dev/null; then
+      printf "\001${unesc_yellow}\002%s" "<";
+    fi
+    if echo "${STATUS}" | grep -c "Untracked files:" &> /dev/null; then
+      printf "\001${unesc_yellow}\002%s" "?";
+    fi
+    if echo "${STATUS}" | grep -c "modified:"        &> /dev/null; then
+      printf "\001${unesc_yellow}\002%s" "*";
+    fi
+    printf "\001${unesc_white}\002%s" "]"
+  fi
 }
 
 # PROMPTS
 # -------
-# ***non-color prompts***
+
+# ***common prompts***
 # PS1="\W \\$ "
 # PS1="[\u@\h:\W]\\$ "
-PS1="\u@\h:\W\\$ "
-# PS1="[\t] \u@\h:\W\\$ "
+# PS1="\u@\h:\W\\$ "
 
-# start prompt string
-# PS1="${bold}"
+# ***color prompts***
+# PS1="${blue}\W ${yellow}\\$ "
+# PS1="${purple}\u${yellow}@${cyan}\h${white}:${blue}\W ${yellow}\\$ "
 
 # ***git prompts***
-# PS1+="${blue}\w\[\$(parse_git)\] ${cyan}\\$ "
-# PS1+="${white}[\t] ${blue}\W\[\$(parse_git)\] ${green}\\$ "
-# PS1+="${purple}\u${yellow}@${cyan}\h${white}:${blue}\W\[\$(parse_git)\]${green}\\$ "
-# PS1+="\n${cyan}\u ${white}at ${yellow}\h ${white}in ${blue}\w ${white}on \[\$(parse_git)\]\n${yellow}\\$ "
+# PS1="${bold}${blue}\W\$(parse_git)${cyan} \\$ ${reset}"
+PS1="${bold}${white}\t ${blue}\W\$(parse_git) ${cyan}\\$ ${reset}"
+# PS1="${bold}${purple}\u${yellow}@${cyan}\h${white}:${blue}\W\$(parse_git)${green} \\$ ${reset}"
+# PS1="${bold}\n${cyan}\u ${white}at ${yellow}\h ${white}in ${blue}\w ${white}on \$(parse_git)\n${yellow}\\$ ${reset}"
 
-# ***non git prompts***
-# PS1+="${blue}\W ${yellow}\\$ "
-# PS1+="${purple}\u${yellow}@${cyan}\h${white}:${blue}\W ${yellow}\\$ "
-
-# end prompt string
-# PS1+="${reset}"
 
 # BASH AUTOCOMPLETION
 # -------------------
