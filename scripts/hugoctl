@@ -59,7 +59,7 @@ print_help() {
   printf "%s\n" "Options: "
   printf "\t%s:\n\t\t%s\n\n" "new-post (aliases: newpost,np,new,n) [post-name]" "create a new post, open editor and live server"
   printf "\t%s:\n\t\t%s\n\n" "edit-post (alises: edit,ep,e) [post-name]"        "edit a post in the content directory"
-  printf "\t%s:\n\t\t%s\n\n" "list-post (aliases: list,lp,ls,l)"                "list all posts in content directory"
+  printf "\t%s:\n\t\t%s\n\n" "list-post (aliases: list,li,lp,ls,l)"                "list all posts in content directory"
   printf "\t%s:\n\t\t%s\n\n" "list-drafts (alises: listdraft,ld)"               "list all posts in content directory"
   printf "\t%s:\n\t\t%s\n\n" "server (alises: serve,s)"                         "serve blog from your blog directory"
   printf "\t%s:\n\t\t%s\n\n" "kill (alises: killlall,ka,k)"                     "kill all hugo processes"
@@ -86,9 +86,9 @@ while (($#)); do
       edit_post "$1"
       break
       ;;
-    list-post|list|lp|l|ls)
+    list-post|list|li|lp|l|ls)
       # hugo list all | cut -d, -f1 | tail -n +2
-      hugo list all | cut -f1,4 -d, | tail -n +2 | tr ',' ' ' | column -t 
+      hugo list -s "$blog_dir" all | cut -f1,4 -d, | tail -n +2 | tr ',' ' ' | column -t 
       break
       ;;
     list-drafts|listdraft|ld)
