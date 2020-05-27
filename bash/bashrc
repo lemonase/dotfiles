@@ -140,32 +140,7 @@ pathappend() {
   done
 }
 
-bkup() {
-  # create backup file with date appended
-  if [ -f "$1" ]; then
-    cp "${1}" "${1}.bkup.$(date +'%F.%R')"
-  fi
-}
-
-# hugo -- create and edit a new post
-new-post() {
-postname=""
-if [ -z "$1" ]; then
-  echo -n "Please enter a postname: "
-  read -r postname
-else
-  postname="$1"
-fi
-
-post_filename="$postname.md"
-blog_dir="$HOME/src/blog"
-local_url="http://localhost:1313/posts/$postname"
-
-hugo new -s "$blog_dir" "posts/$post_filename"
-hugo serve -s "$blog_dir" -D &> /dev/null &
-xdg-open "$local_url" &> /dev/null &
-vim "$blog_dir/content/posts/$post_filename" && kill %1
-}
+bkup() { if [ -f "$1" ]; then cp "${1}" "${1}.bkup.$(date +'%F.%R')"; fi }
 
 # git
 lazygit() { git commit -a -m "$*" && git push; }
