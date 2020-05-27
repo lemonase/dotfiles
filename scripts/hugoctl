@@ -5,13 +5,17 @@
 # hugo variables (local machine)
 scriptname=$(basename "$0")
 blog_dir="$HOME/src/blog" # or the path to your blog
-local_url="http://localhost:1313/posts/"
+local_url="http://localhost:1313/"
 post_filename=""
 postname=""
+full_post_dir=""
+full_post_url=""
 
 # deployment variables
+# TODO set deployment variables
 
-set_names() {
+set_vars() {
+  # handle extraneous .md file extension
   local arg="$1"
   if [[ ! "$arg" =~ .md$ ]]; then
     postname="$arg"
@@ -19,18 +23,23 @@ set_names() {
     postname="${arg%???}"
   fi
   post_filename="$postname.md"
+
+  # hugo post location for server
+  full_post_dir="$blog_dir/content/posts/$post_filename"
+
+  # url for browser
+  full_post_url="$local_url/posts/$postname"
 }
 
 serve_and_open() {
   killall hugo > /dev/null 2>&1
   hugo serve -s "$blog_dir" -D  > /dev/null 2>&1 &
-  xdg-open "http://localhost:1313/posts/$postname"
-  echo "Don't forget to \"killall hugo\" when finished"
+  xdg-open "$full_post_url"
 }
 
 edit_post() {
   serve_and_open
-  $EDITOR "$blog_dir/content/posts/$post_filename" && kill %1
+  $EDITOR "$full_post_dir" && kill %1
 }
 
 new_post() {
@@ -67,18 +76,19 @@ while (($#)); do
   case "$1" in
     new-post|newpost|np|new|n)
       shift
-      set_names "$1"
+      set_vars "$1"
       new_post "$1"
       break
       ;;
     edit-post|edit|ep|e)
       shift
-      set_names "$1"
+      set_vars "$1"
       edit_post "$1"
       break
       ;;
     list-post|list|lp|l|ls)
-      ls -ltr "$blog_dir/content/posts"
+      # hugo list all | cut -d, -f1 | tail -n +2
+      hugo list all | cut -f1,4 -d, | tail -n +2 | tr ',' ' ' | column -t 
       break
       ;;
     list-drafts|listdraft|ld)
