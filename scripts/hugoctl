@@ -2,36 +2,40 @@
 
 # hugoctl -- hugo wrapper script to help manage a hugo blog
 
+# hugo variables (local machine)
 scriptname=$(basename "$0")
-post_filename="$postname.md"
-blog_dir="$HOME/src/blog"
-local_url="http://localhost:1313/posts/$postname"
+blog_dir="$HOME/src/blog" # or the path to your blog
+local_url="http://localhost:1313/posts/"
+post_filename=""
+postname=""
 
-new-post() {
-  postname=""
-  if [ -z "$1" ]; then
-    echo -n "Please enter a postname: "
-    read -r postname
+# deployment variables
+
+set_names() {
+  local arg="$1"
+  if [[ ! "$arg" =~ .md$ ]]; then
+    postname="$arg"
   else
-    postname="$1"
+    postname="${arg%???}"
   fi
+  post_filename="$postname.md"
+}
 
-  hugo new -s "$blog_dir" "posts/$post_filename"
-  hugo serve -s "$blog_dir" -D &> /dev/null &
-  xdg-open "$local_url" &> /dev/null &
+serve_and_open() {
+  killall hugo > /dev/null 2>&1
+  hugo serve -s "$blog_dir" -D  > /dev/null 2>&1 &
+  xdg-open "http://localhost:1313/posts/$postname"
+  echo "Don't forget to \"killall hugo\" when finished"
+}
+
+edit_post() {
+  serve_and_open
   $EDITOR "$blog_dir/content/posts/$post_filename" && kill %1
 }
 
-edit-post() {
-  filename="$1"
-  if [[ ! "$filename" =~ .md$ ]]; then
-    filename="$filename.md"
-  fi
-  postname="${filename%???}"
-
-  hugo serve -s "$blog_dir" &> /dev/null &
-  xdg-open "http://localhost:1313/posts/$postname"
-  $EDITOR "$blog_dir/content/posts/$filename"
+new_post() {
+  hugo new -s "$blog_dir" "posts/$post_filename"
+  edit_post
 }
 
 deploy_blog() {
@@ -45,9 +49,9 @@ print_help() {
 
   printf "%s\n" "Options: "
   printf "\t%s:\n\t\t%s\n\n" "new-post (aliases: newpost,np,new,n) [post-name]" "create a new post, open editor and live server"
+  printf "\t%s:\n\t\t%s\n\n" "edit-post (alises: edit,ep,e) [post-name]"        "edit a post in the content directory"
   printf "\t%s:\n\t\t%s\n\n" "list-post (aliases: list,lp,ls,l)"                "list all posts in content directory"
   printf "\t%s:\n\t\t%s\n\n" "list-drafts (alises: listdraft,ld)"               "list all posts in content directory"
-  printf "\t%s:\n\t\t%s\n\n" "edit-post (alises: edit,ep,e) [post-name]"        "edit a post in the content directory"
   printf "\t%s:\n\t\t%s\n\n" "server (alises: serve,s)"                         "serve blog from your blog directory"
   printf "\t%s:\n\t\t%s\n\n" "kill (alises: killlall,ka,k)"                     "kill all hugo processes"
   printf "\t%s:\n\t\t%s\n\n" "deploy (aliases: dep,d)"                          "deploy to a remote server"
@@ -63,7 +67,14 @@ while (($#)); do
   case "$1" in
     new-post|newpost|np|new|n)
       shift
-      new-post "$1"
+      set_names "$1"
+      new_post "$1"
+      break
+      ;;
+    edit-post|edit|ep|e)
+      shift
+      set_names "$1"
+      edit_post "$1"
       break
       ;;
     list-post|list|lp|l|ls)
@@ -74,19 +85,12 @@ while (($#)); do
       hugo list drafts -s "$blog_dir"
       break
       ;;
-    edit-post|edit|ep|e)
-      shift
-      edit-post "$1"
-      break
-      ;;
     server|serve|s)
-      pkill "hugo"
-      hugo serve -s "$blog_dir" -D & 
-      xdg-open "http://localhost:1313"
+      serve_and_open
       break
       ;;
     kill|killall|ka|k)
-      pkill "hugo"
+      killall "hugo"
       break
       ;;
     deploy|dep|d)
