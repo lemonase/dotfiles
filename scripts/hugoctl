@@ -9,7 +9,7 @@ local_url="http://localhost:1313/"
 post_filename=""
 postname=""
 full_post_dir=""
-full_post_url=""
+full_post_url="$local_url"
 
 # deployment variables
 # TODO set deployment variables
