@@ -15,8 +15,15 @@ full_post_url=""
 # TODO set deployment variables
 
 set_vars() {
-  # handle extraneous .md file extension
   local arg="$1"
+
+  # handle no argument case
+  if [[ -z "$arg" ]]; then
+    echo -en "Please enter a post title: "
+    read -r arg
+  fi
+
+  # handle extraneous .md file extension
   if [[ ! "$arg" =~ .md$ ]]; then
     postname="$arg"
   else
