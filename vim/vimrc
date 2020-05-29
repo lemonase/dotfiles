@@ -74,16 +74,18 @@ function! SetPluginSettings()
         let g:ale_sign_warning = '--'
     endif
 
-    "colors
-    "set background=dark
-
     "colorscheme 1989
     "colorscheme PaperColor
-    "colorscheme dracula
     "colorscheme gruvbox
-    colorscheme jellybeans
+    "colorscheme jellybeans
     "colorscheme molokai
+    "colorscheme Benokai
+    "colorscheme Monokai
     "colorscheme badwolf
+    "colorscheme wombat256
+    "colorscheme yuejiu
+    "colorscheme wargrey
+    "colorscheme Tomorrow-Night-Bright
 endfunction
 
 "general settings
@@ -163,6 +165,7 @@ nnoremap =j :%!python -m json.tool<CR>
 "plugin keybinds
 nnoremap <silent><leader>e :call ToggleNetrw()<CR>
 nnoremap <leader>at :ALEToggle<CR>
+
 
 "insert mode keybinds/abbreviations
 "--------------------
