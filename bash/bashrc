@@ -198,7 +198,7 @@ parse_git() {
 
 # ***git prompts***
 # PS1="${bold}${blue}\W\$(parse_git)${cyan} \\$ ${reset}"
-PS1="${bold}${white}\t ${blue}\W\$(parse_git) ${cyan}\\$ ${reset}"
+# PS1="${bold}${white}\t ${blue}\W\$(parse_git) ${cyan}\\$ ${reset}"
 # PS1="${bold}${purple}\u${yellow}@${cyan}\h${white}:${blue}\W\$(parse_git)${green} \\$ ${reset}"
 # PS1="${bold}\n${cyan}\u ${white}at ${yellow}\h ${white}in ${blue}\w ${white}on \$(parse_git)\n${yellow}\\$ ${reset}"
 
