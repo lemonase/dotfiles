@@ -9,10 +9,27 @@ appendpath () {
     esac
 }
 
+user_paths=()
+
 # home paths
-user_paths=("$HOME/bin" "$HOME/.local/bin" "$HOME/scripts" "$HOME/.local/scripts")
+# ----------
+
+user_paths+=("$HOME/bin" "$HOME/.local/bin")
+user_paths+=("$HOME/scripts" "$HOME/.local/scripts")
+
 # language paths
-user_paths+=("$HOME/.cargo/bin" "$HOME/go/bin" "$HOME/.local/go/bin")
+# --------------
+
+# ruby
+if command -v ruby > /dev/null && command -v gem > /dev/null; then
+  appendpath "$(ruby -r rubygems -e 'puts Gem.user_dir')/bin"
+fi
+
+# rust
+user_paths+=("$HOME/.cargo/bin")
+
+# go
+user_paths+=("$HOME/go/bin" "$HOME/.local/go/bin")
 
 for path in "${user_paths[@]}"; do
 	if [ -d "$path" ]; then
@@ -21,4 +38,3 @@ for path in "${user_paths[@]}"; do
 done
 
 # vim:ft=sh
-
