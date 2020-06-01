@@ -11,8 +11,6 @@ postname=""
 full_post_dir=""
 full_post_url="$local_url"
 
-# deployment variables
-# TODO set deployment variables
 
 set_vars() {
   local arg="$1"
@@ -55,8 +53,16 @@ new_post() {
 }
 
 deploy_blog() {
-  # TODO make this transparent but don't leak stuff
+  if [ -z "$blog_remote_host" ]; then echo "Please set blog_remote_host variable"; exit 1; fi
+  if [ -z "$blog_remote_user" ]; then echo "Please set blog_remote_user variable"; exit 1; fi
+  if [ -z "$blog_remote_dir" ]; then echo "Please set blog_remote_dir variable (relative to \$HOME)"; exit 1; fi
+
+  green="$(tput setaf 2)"
+  reset="$(tput sgr0)"
+
   printf "${green}%s\n${reset}" "Deploying..."
+
+  ssh "$blog_remote_user@$blog_remote_host" "(cd \$HOME/$blog_remote_dir && git pull && hugo)"
 }
 
 print_help() {
