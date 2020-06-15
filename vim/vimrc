@@ -23,7 +23,6 @@ filetype off
 
 call plug#begin('~/.vim/plugged')
     Plug 'junegunn/vim-plug'
-
     "general
     "-------
     "quality of life
@@ -48,51 +47,54 @@ call plug#begin('~/.vim/plugged')
     Plug 'mattn/emmet-vim'
     "go
     Plug 'fatih/vim-go'
+    "md
+    Plug 'godlygeek/tabular'
+    Plug 'plasticboy/vim-markdown'
 call plug#end()
 
 "plugin settings
 "---------------
-"this function gets called with the VimEnter autocommand to set plugin
-"options
-function! SetPluginSettings()
-    "netrw
-    let g:netrw_banner = 0
-    let g:netrw_winsize = 24
-    let g:netrw_liststyle = 3
-    let g:netrw_preview = 1
-    let g:netrw_alto = 0
-    let g:netrw_usetab = 1
-    let g:NetrwIsOpen = 0 "for toggle function
+"netrw
+let g:netrw_banner = 0
+let g:netrw_winsize = 24
+let g:netrw_liststyle = 3
+let g:netrw_preview = 1
+let g:netrw_alto = 0
+let g:netrw_usetab = 1
+let g:NetrwIsOpen = 0 "for toggle function
 
-    "ale
-    if exists(':ALEToggle')
-        let g:ale_linters = {
-        \   'javascript': ['eslint'],
-        \   'markdown': ['mdl', 'write-good'],
-        \}
-        let g:ale_fixers = {
-        \   '*': ['remove_trailing_lines', 'trim_whitespace'],
-        \   'javascript': ['prettier'],
-        \   'markdown': ['prettier'],
-        \}
-        let g:ale_sign_error = '->'
-        let g:ale_sign_warning = '--'
-    endif
+"ale
+if exists(':ALEToggle')
+    let g:ale_linters = {
+    \   'javascript': ['eslint'],
+    \   'markdown': ['mdl', 'write-good'],
+    \}
+    let g:ale_fixers = {
+    \   '*': ['remove_trailing_lines', 'trim_whitespace'],
+    \   'javascript': ['prettier'],
+    \   'markdown': ['prettier'],
+    \}
+    let g:ale_sign_error = '->'
+    let g:ale_sign_warning = '--'
+endif
 
-    "colorscheme 1989
-    "colorscheme PaperColor
-    "colorscheme gruvbox
-    "colorscheme jellybeans
-    "colorscheme molokai
-    colorscheme monokai-phoenix
-    "colorscheme Benokai
-    "colorscheme Monokai
-    "colorscheme badwolf
-    "colorscheme wombat256
-    "colorscheme yuejiu
-    "colorscheme wargrey
-    "colorscheme Tomorrow-Night-Bright
-endfunction
+"md
+let g:vim_markdown_folding_disabled = 1
+
+"colorschemes
+"colorscheme 1989
+"colorscheme PaperColor
+"colorscheme gruvbox
+"colorscheme jellybeans
+"colorscheme molokai
+"colorscheme Benokai
+"colorscheme Monokai
+"colorscheme badwolf
+"colorscheme wombat256
+"colorscheme yuejiu
+"colorscheme wargrey
+"colorscheme Tomorrow-Night-Bright
+colorscheme monokai-phoenix
 
 "general settings
 "----------------
@@ -222,8 +224,7 @@ function! ToggleWrap()
     endif
 endfunction
 
-function! ToggleNetrw() "make netrw toggleable
-    "https://vi.stackexchange.com/questions/10988/toggle-explorer-window
+function! ToggleNetrw() "make netrw toggleable <https://vi.stackexchange.com/questions/10988/toggle-explorer-window>
     if g:NetrwIsOpen
         let i = bufnr("$")
         while (i >= 1)
@@ -278,8 +279,6 @@ if has("autocmd")
     "global
     augroup global
         autocmd!
-        "set plugin settings on VimEnter
-        autocmd VimEnter * call SetPluginSettings()
         "keep equal proportions when windows resized
         autocmd VimResized * wincmd =
         "save cursor position in a file
