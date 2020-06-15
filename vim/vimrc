@@ -66,10 +66,15 @@ function! SetPluginSettings()
 
     "ale
     if exists(':ALEToggle')
+        let g:ale_linters = {
+        \   'javascript': ['eslint'],
+        \   'markdown': ['mdl', 'write-good'],
+        \}
         let g:ale_fixers = {
-                    \   '*': ['remove_trailing_lines', 'trim_whitespace'],
-                    \   'javascript': ['eslint'],
-                    \}
+        \   '*': ['remove_trailing_lines', 'trim_whitespace'],
+        \   'javascript': ['prettier'],
+        \   'markdown': ['prettier'],
+        \}
         let g:ale_sign_error = '->'
         let g:ale_sign_warning = '--'
     endif
@@ -79,6 +84,7 @@ function! SetPluginSettings()
     "colorscheme gruvbox
     "colorscheme jellybeans
     "colorscheme molokai
+    colorscheme monokai-phoenix
     "colorscheme Benokai
     "colorscheme Monokai
     "colorscheme badwolf
@@ -103,6 +109,7 @@ set number
 set wrap
 set showbreak=↪\
 set listchars=tab:→\ ,extends:›,precedes:‹,nbsp:·,trail:·,eol:¬
+set list
 set foldmethod=marker
 set lazyredraw
 set regexpengine=1
@@ -283,15 +290,10 @@ if has("autocmd")
     "language/filetype
     augroup languages
         autocmd!
-        "shell
         autocmd BufNewFile,BufRead *bash* set syntax=sh
-        "python
         autocmd FileType python xnoremap <leader>r <esc>:'<,'>:w !python3<CR>
-        "go
-        autocmd FileType go set expandtab! "go uses real tabs
-        "html
+        autocmd FileType go set noexpandtab
         autocmd FileType html :syntax sync fromstart
-        "filestypes where tabs should = 2 spaces
         autocmd FileType html,javascript,css,json,yaml,sh
                     \ setlocal ts=2 sts=2 sw=2 expandtab
     augroup END

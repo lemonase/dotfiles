@@ -54,15 +54,10 @@ augroup END
 
 augroup languages
     autocmd!
-    "shell
     autocmd BufNewFile,BufRead *bash* set syntax=sh
-    "python
     autocmd FileType python xnoremap <leader>r <esc>:'<,'>:w !python3<CR>
-    "go
-    autocmd FileType go set expandtab! "go uses real tabs
-    "html
+    autocmd FileType go set noexpandtab
     autocmd FileType html :syntax sync fromstart
-    "filestypes where tabs should = 2 spaces
     autocmd FileType html,javascript,css,json,yaml,sh
                 \ setlocal ts=2 sts=2 sw=2 expandtab
 augroup END
