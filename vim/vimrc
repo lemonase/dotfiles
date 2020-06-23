@@ -66,19 +66,19 @@ let g:netrw_usetab = 1
 let g:NetrwIsOpen = 0 "for toggle function
 
 "ale
-if exists(':ALEToggle')
-    let g:ale_linters = {
-    \   'javascript': ['eslint'],
-    \   'markdown': ['mdl', 'write-good'],
-    \}
-    let g:ale_fixers = {
-    \   '*': ['remove_trailing_lines', 'trim_whitespace'],
-    \   'javascript': ['prettier'],
-    \   'markdown': ['prettier'],
-    \}
-    let g:ale_sign_error = '->'
-    let g:ale_sign_warning = '--'
-endif
+let g:ale_linters = {
+\   'javascript': ['standard'],
+\   'markdown': ['mdl', 'write-good']
+\}
+let g:ale_fixers = {
+\   '*': ['remove_trailing_lines', 'trim_whitespace'],
+\   'javascript': ['standard'],
+\   'markdown': ['prettier']
+\}
+let g:ale_sign_error = '->'
+let g:ale_sign_warning = '--'
+" let g:ale_lint_on_save = 1
+" let g:ale_fix_on_save = 1
 
 "md
 let g:vim_markdown_folding_disabled = 1
@@ -296,6 +296,6 @@ if has("autocmd")
         autocmd FileType html :syntax sync fromstart
         autocmd FileType html,javascript,css,json,yaml,sh
                     \ setlocal ts=2 sts=2 sw=2 expandtab
-        autocmd BufRead,BufNewFile *.md,*.txt setlocal spell
+        autocmd BufRead,BufNewFile *.md setlocal spell
     augroup END
 endif
