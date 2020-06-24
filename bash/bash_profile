@@ -1,40 +1,31 @@
 [ -f "$HOME/.bashrc" ] && source "$HOME/.bashrc"
 
 appendpath () {
+  if [ -d "$1" ]; then
     case ":$PATH:" in
         *:"$1":*)
             ;;
         *)
             PATH="${PATH:+$PATH:}$1"
     esac
+  fi
 }
 
-user_paths=()
+appendpath "$HOME/.local/bin"
+appendpath "$HOME/.local/scripts"
 
-# home paths
-# ----------
-
-user_paths+=("$HOME/bin" "$HOME/.local/bin")
-user_paths+=("$HOME/scripts" "$HOME/.local/scripts")
-
-# language paths
-# --------------
-
-# ruby
 if command -v ruby > /dev/null && command -v gem > /dev/null; then
   appendpath "$(ruby -r rubygems -e 'puts Gem.user_dir')/bin"
 fi
 
-# rust
-user_paths+=("$HOME/.cargo/bin")
+if command -v go > /dev/null; then
+  export GOPATH="$HOME/.go"
+  [ -d "$HOME/go" ] && mv "$HOME/go" "$HOME/.go"
+  appendpath "$(go env GOPATH)/bin"
+fi
 
-# go
-user_paths+=("$HOME/go/bin" "$HOME/.local/go/bin")
-
-for path in "${user_paths[@]}"; do
-	if [ -d "$path" ]; then
-		appendpath "$path"
-	fi
-done
+if command -v cargo > /dev/null; then
+  appendpath "$HOME/.cargo/bin"
+fi
 
 # vim:ft=sh
