@@ -9,22 +9,34 @@ if filereadable(expand('$VIMRUNTIME/defaults.vim'))
     source $VIMRUNTIME/defaults.vim
 endif
 
+"vimfile paths
+let myUndoDir = expand("$HOME/.vim/.undo")
+let myBackupDir = expand("$HOME/.vim/.backup")
+let mySwapDir = expand("$HOME/.vim/.swap")
+
+"plug paths
+let plugDir = expand("$HOME/.vim/autoload/plug.vim")
+let pluginDir = expand("$HOME/.vim/plugged")
+let plugRemote = "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
+
+if has('win32')
+    let &runtimepath.=",$HOME/.vim"
+endif
+
 "plugins (vim-plug)
 "------------------
 "ensure vim-plug is installed on VimEnter
-if empty(glob('~/.vim/autoload/plug.vim'))
-    silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
-                \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+if empty(glob(plugDir))
+    silent execute "!curl -fLo " . shellescape(expand(plugDir)) . " --create-dirs " . shellescape(plugRemote)
     autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
 
 "filetype *may* interfere with certain plugins
 filetype off
 
-call plug#begin('~/.vim/plugged')
+call plug#begin(pluginDir)
     Plug 'junegunn/vim-plug'
-    "general
-    "-------
+
     "quality of life
     Plug 'tpope/vim-surround'
     Plug 'tpope/vim-commentary'
@@ -40,8 +52,6 @@ call plug#begin('~/.vim/plugged')
     "linting
     Plug 'w0rp/ale'
 
-    "language/ft specific
-    "--------------------
     "javascript/css/html
     Plug 'pangloss/vim-javascript'
     Plug 'mattn/emmet-vim'
@@ -84,6 +94,7 @@ let g:ale_sign_warning = '--'
 let g:vim_markdown_folding_disabled = 1
 
 " colorschemes
+
 " colorscheme 1989
 " colorscheme PaperColor
 " colorscheme gruvbox
@@ -103,54 +114,70 @@ let g:vim_markdown_folding_disabled = 1
 "encoding/format
 set encoding=utf-8
 set fileformats=unix,dos,mac
+
 "file/buffer
 set autoread
 set autowrite
 set confirm
+
 "display
 set background=dark
 set number
 set wrap
 set listchars=tab:→\ ,extends:›,precedes:‹,nbsp:·,trail:·,eol:¬
-set list
+"set list
 set foldmethod=marker
 set lazyredraw
 set regexpengine=1
 set redrawtime=10000
+
 "tab/indent
 set tabstop=4
 set softtabstop=4
 set shiftwidth=4
 set expandtab
 set autoindent
+
 "status bar
 set showcmd
 set wildmenu
 set ruler
 set laststatus=2
+
 "search
 set incsearch
 set hlsearch
 set ignorecase
 set smartcase
+
 "cursor behaviour
 set virtualedit=block
 set backspace=indent,eol,start
 set showmatch
 set scrolloff=2
-set sidescrolloff=8
+set sidescrolloff=4
+
 "input/timeout
 set esckeys
 set timeoutlen=1000 "for mappings
 set ttimeoutlen=20 "for keycodes
+
 "window behaviour (ltr)
 set splitbelow
 set splitright
+
 "undo/bkup dirs
-set undofile
-set undodir=~/.vim/.undo//,/tmp//
-set backupdir=~/.vim/.backup//,/tmp//
-set directory=~/.vim/.swap//,/tmp//
+if has('persistent_undo')
+    call mkdir(myUndoDir, "p")
+    call mkdir(myBackupDir, "p")
+    call mkdir(mySwapDir, "p")
+    let &undodir=myUndoDir
+    let &backupdir=myBackupDir
+    let &directory=mySwapDir
+    set backup
+    set undofile
+endif
+
 "leader key
 let mapleader=' '
 
@@ -159,16 +186,20 @@ let mapleader=' '
 "paste and search
 nnoremap <silent><leader><space> :let @/ = ""<CR>
 nnoremap <leader>p :set invpaste<CR>
+
 "toggles
 nnoremap <silent><leader>lb :call ToggleLineBreak()<CR>
 nnoremap <silent><leader>wr :call ToggleWrap()<CR>
 nnoremap <silent><leader>cc :call ToggleColorColumn()<CR>
+
 "dates
 nnoremap <leader>ts "=strftime("%F %T%z")<CR>
 nnoremap <leader>dt :r !date<CR>
+
 "rc files
 nnoremap <leader>rc :vsplit $MYVIMRC<CR>
 nnoremap <leader>so :source $MYVIMRC<CR>
+
 "formatting tools
 nnoremap =j :%!python -m json.tool<CR>
 
@@ -267,11 +298,6 @@ if has("gui_running")
     elseif has("gui_win32")
         set guifont=Consolas:h10
     endif
-endif
-
-"win32 settings
-"--------------
-if has('win32')
 endif
 
 "auto commands
