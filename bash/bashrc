@@ -24,6 +24,7 @@ export VISUAL="/usr/bin/vim"
 export PAGER="less"
 
 export GH="https://github.com/lemonase"
+export DF="$HOME/src/dotfiles"
 
 # ALIASES
 # -------
@@ -68,6 +69,7 @@ alias venvac='source venv/bin/activate'
 # COLORS
 # ------
 # color vars using tput or ANSI/VT100 Control sequences
+
 # check if tput is available
 if [ -x "$(command -v tput)" ]; then
   num_colors=$(tput colors)
@@ -197,11 +199,10 @@ parse_git() {
 # PS1="${purple}\u${yellow}@${cyan}\h${white}:${blue}\W ${yellow}\\$ "
 
 # ***git prompts***
-# PS1="${bold}${blue}\W\$(parse_git)${cyan} \\$ ${reset}"
+# PS1="${bold}${blue}\W\$(parse_git)${green} \\$ ${reset}"
 # PS1="${bold}${white}\t ${blue}\W\$(parse_git) ${cyan}\\$ ${reset}"
 # PS1="${bold}${purple}\u${yellow}@${cyan}\h${white}:${blue}\W\$(parse_git)${green} \\$ ${reset}"
 # PS1="${bold}\n${cyan}\u ${white}at ${yellow}\h ${white}in ${blue}\w ${white}on \$(parse_git)\n${yellow}\\$ ${reset}"
-
 
 # BASH AUTOCOMPLETION
 # -------------------
@@ -216,4 +217,4 @@ fi
 # LOCAL RC
 # --------
 [ -f "$HOME/.config/bashrc" ] && source "$HOME/.config/bashrc"
-
+[ -f "$HOME/.local/bashrc" ] && source "$HOME/.local/bashrc"
