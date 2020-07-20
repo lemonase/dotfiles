@@ -40,6 +40,8 @@ call plug#begin(pluginDir)
     Plug 'tpope/vim-eunuch'
     Plug 'tpope/vim-repeat'
     Plug 'editorconfig/editorconfig-vim'
+    "browser/url opener
+    Plug 'tyru/open-browser.vim'
     "git
     Plug 'tpope/vim-fugitive'
     "visual
@@ -68,7 +70,13 @@ let g:netrw_liststyle = 3
 let g:netrw_preview = 1
 let g:netrw_alto = 0
 let g:netrw_usetab = 1
+let g:netrw_browsex_viewer = "xdg-open"
 let g:NetrwIsOpen = 0 "for toggle function
+
+"netrw gx is borked and open-browser is way better
+let g:netrw_nogx = 1
+nmap gx <Plug>(openbrowser-smart-search)
+vmap gx <Plug>(openbrowser-smart-search)
 
 "ale
 let g:ale_linters = {
@@ -239,9 +247,6 @@ command! Q q
 command! WQ wq
 command! Q1 q!
 
-"function calls
-command! -nargs=+ SearchGoogle call SearchGoogle(join([<f-args>]))
-
 "general functions
 "-----------------
 "toggle functions
@@ -287,14 +292,6 @@ function! ToggleNetrw() "make netrw toggleable <https://vi.stackexchange.com/que
         let g:NetrwIsOpen=1
         silent Lexplore
     endif
-endfunction
-
-"search functions
-function! SearchGoogle(string)
-    let l:google = "https://www.google.com/search?q="
-    let l:browser = "xdg-open >/dev/null 2>/dev/null"
-    let l:query = substitute(join(split(a:string),"+"),'"',"","g")
-    execute "!" l:browser . "\ " . l:google . l:query
 endfunction
 
 "syntax/filetype
