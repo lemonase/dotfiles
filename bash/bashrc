@@ -128,7 +128,7 @@ tma() {
   fi
 }
 
-# paths and files
+# path management
 pathappend() {
   # https://superuser.com/questions/39751/add-directory-to-path-if-its-not-already-there
   for ARG; do
@@ -142,11 +142,42 @@ pathappend() {
   done
 }
 
-bkup() { if [ -f "$1" ]; then cp "${1}" "${1}.bkup.$(date +'%F.%R')"; fi }
+# easy backup
+bkup() {
+  if [ -f "$1" ]; then
+    cp "${1}" "${1}.bkup.$(date +'%F.%R')";
+  fi
+}
+
+# easy diff rc files in home and in dotfile repo
+rcdiff() {
+  if [ "$#" -lt 1 ]; then
+    echo "Please specify rc to diff"
+  fi
+
+  if [ "$1" == "vim" ]; then
+    vimdiff "$HOME/.vim/vimrc" "$DF/vim/vimrc"
+  fi
+
+  if [ "$1" == "bash" ]; then
+    vimdiff "$HOME/.bashrc" "$DF/bash/bashrc"
+  fi
+
+  if [ "$1" == "git" ]; then
+    vimdiff "$HOME/.gitconfig" "$DF/git/gitconfig"
+  fi
+
+  if [ "$1" == "tmux" ]; then
+    vimdiff "$HOME/.tmux.conf" "$DF/tmux/tmux.conf"
+  fi
+}
 
 # git
 lazygit() { git commit -a -m "$*" && git push; }
 lg() { lazygit "$*"; }
+
+# PROMPTS
+# -------
 
 # git prompt function
 parse_git() {
