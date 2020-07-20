@@ -72,13 +72,13 @@ let g:NetrwIsOpen = 0 "for toggle function
 
 "ale
 let g:ale_linters = {
-\   'javascript': ['standard'],
+\   'javascript': ['prettier', 'eslint'],
 \   'markdown': ['mdl', 'write-good']
 \}
 
 let g:ale_fixers = {
 \   '*': ['remove_trailing_lines', 'trim_whitespace'],
-\   'javascript': ['standard'],
+\   'javascript': ['eslint'],
 \   'markdown': ['prettier']
 \}
 
@@ -125,8 +125,8 @@ set background=dark
 set number
 set wrap
 set foldmethod=marker
-set listchars=tab:→\ ,extends:›,precedes:‹,nbsp:·,trail:·,eol:¬
-"set list
+set listchars=tab:→\ ,extends:›,precedes:‹,nbsp:·,space:·,trail:·,eol:¬
+" set list
 
 "drawing
 set lazyredraw
