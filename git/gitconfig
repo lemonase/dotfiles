@@ -10,6 +10,7 @@
     name = James Dixon
 [credential]
     username = lemonase
+    helper = store
 [color]
     ui = true
     status = auto
@@ -18,6 +19,8 @@
     tool = vimdiff
 [difftool]
     prompt = false
+[pull]
+    ff = only
 [alias]
     a = add
     aa = add --all
