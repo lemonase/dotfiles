@@ -14,17 +14,24 @@ HISTTIMEFORMAT="%F %T  "
 # SHELL OPTIONS
 # -------------
 shopt -s checkhash checkjobs checkwinsize
-shopt -s direxpand dirspell extglob globstar
+shopt -s dirspell extglob globstar
 shopt -s cmdhist histappend
 
 # VARIABLES
 # ---------
+
+# PROGRAMS
 export EDITOR="/usr/bin/vim"
 export VISUAL="/usr/bin/vim"
 export PAGER="less"
 
+# PATHS
+export WD="$HOME/src"
+export GOWD="$HOME/.go/src/github.com/lemonase"
+export DF="$WD/dotfiles"
+
+# URLS
 export GH="https://github.com/lemonase"
-export DF="$HOME/src/dotfiles"
 
 # ALIASES
 # -------
@@ -173,8 +180,13 @@ rcdiff() {
 }
 
 # git
-lazygit() { git commit -a -m "$*" && git push; }
-lg() { lazygit "$*"; }
+lazygit() {
+  git commit -a -m "$*" && git push;
+}
+
+lg() {
+  lazygit "$*";
+}
 
 # PROMPTS
 # -------
