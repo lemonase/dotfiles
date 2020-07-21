@@ -157,26 +157,83 @@ bkup() {
 }
 
 # easy diff rc files in home and in dotfile repo
-rcdiff() {
-  if [ "$#" -lt 1 ]; then
-    echo "Please specify rc to diff"
-  fi
+rc() {
+  error_1() {
+    echo "Please specify rc command: [diff] [up] [down]"
+    echo "and a valid dotfile: [vim] [bash] [git] [tmux]"
+    return 1
+  }
 
-  if [ "$1" == "vim" ]; then
-    vimdiff "$HOME/.vim/vimrc" "$DF/vim/vimrc"
-  fi
+  error_2() {
+    echo "Please specify a valid dotfile: [vim] [bash] [git] [tmux]"
+    return 2
+  }
 
-  if [ "$1" == "bash" ]; then
-    vimdiff "$HOME/.bashrc" "$DF/bash/bashrc"
-  fi
+  case "$1" in
+    "diff"|"di")
+      case "$2" in
+        "vim")
+          vimdiff "$HOME/.vim/vimrc" "$DF/vim/vimrc" ;;
+        "bash")
+          vimdiff "$HOME/.bashrc" "$DF/bash/bashrc" ;;
+        "git")
+          vimdiff "$HOME/.gitconfig" "$DF/git/gitconfig" ;;
+        "tmux")
+          vimdiff "$HOME/.tmux.conf" "$DF/tmux/tmux.conf" ;;
+        *)
+          error_2
+      esac
+      return;;
 
-  if [ "$1" == "git" ]; then
-    vimdiff "$HOME/.gitconfig" "$DF/git/gitconfig"
-  fi
+    "edit"|"e")
+      case "$2" in
+        "vim")
+          vim "$HOME/.vim/vimrc" ;;
+        "bash")
+          vim "$HOME/.bashrc" ;;
+        "git")
+          vim "$HOME/.gitconfig" ;;
+        "tmux")
+          vim "$HOME/.tmux.conf" ;;
+        *)
+          error_2
+      esac
+      return;;
 
-  if [ "$1" == "tmux" ]; then
-    vimdiff "$HOME/.tmux.conf" "$DF/tmux/tmux.conf"
-  fi
+    "up"|"u")
+      case "$2" in
+        "vim")
+          cp "$HOME/.vim/vimrc" "$DF/vim/vimrc" ;;
+        "bash")
+          cp "$HOME/.bashrc" "$DF/bash/bashrc" ;;
+        "git")
+          cp "$HOME/.gitconfig" "$DF/git/gitconfig" ;;
+        "tmux")
+          cp "$HOME/.tmux.conf" "$DF/tmux/tmux.conf" ;;
+        *)
+          error_2
+      esac
+      (cd "$DF" || return) && git diff
+      return;;
+
+    "down"|"d")
+      case "$2" in
+        "vim")
+          cp "$DF/vim/vimrc" "$HOME/.vim/vimrc" ;;
+        "bash")
+          cp "$DF/bash/bashrc" "$HOME/.bashrc" ;;
+        "git")
+          cp "$DF/git/gitconfig" "$HOME/.gitconfig" ;;
+        "tmux")
+          cp "$DF/tmux/tmux.conf" "$HOME/.tmux.conf" ;;
+        *)
+          error_2
+      esac
+      return;;
+
+    *)
+      error_1
+  esac
 }
 
 # git
