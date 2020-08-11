@@ -52,6 +52,8 @@ call plug#begin(pluginDir)
     "javascript/css/html
     Plug 'pangloss/vim-javascript'
     Plug 'mattn/emmet-vim'
+    "gdscript
+    Plug 'calviken/vim-gdscript3'
     "go
     Plug 'fatih/vim-go'
     "md
