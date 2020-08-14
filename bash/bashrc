@@ -19,13 +19,12 @@ shopt -s cmdhist histappend
 
 # VARIABLES
 # ---------
-
 # PROGRAMS
 export EDITOR="/usr/bin/vim"
 export VISUAL="/usr/bin/vim"
 export PAGER="less"
 
-# PATHS
+# DIRS
 export WD="$HOME/src"
 export GOWD="$HOME/.go/src/github.com/lemonase"
 export DF="$WD/dotfiles"
@@ -135,19 +134,18 @@ tma() {
   fi
 }
 
-# path management
-pathappend() {
-  # https://superuser.com/questions/39751/add-directory-to-path-if-its-not-already-there
-  for ARG; do
-    if [ -d "$ARG" ] && [[ ":$PATH:" != *":$ARG:"* ]]; then
-      ABS_DIR="$(readlink -f "$ARG")"
-      PATH="${PATH:+"$PATH:"}$ABS_DIR"
-      echo "$ABS_DIR" added!
-    else
-      echo Invalid directory in "\"$*\""
-    fi
-  done
+# checks if directory and path duplication
+appendpath () {
+  if [ -d "$1" ]; then
+    case ":$PATH:" in
+      *:"$1":*)
+        ;;
+      *)
+        PATH="${PATH:+$PATH:}$1"
+    esac
+  fi
 }
+
 
 # easy backup
 bkup() {
@@ -245,10 +243,8 @@ lg() {
   lazygit "$*";
 }
 
-# PROMPTS
+# GIT PROMPT FUNCTION
 # -------
-
-# git prompt function
 parse_git() {
   BRANCH="$(git rev-parse --abbrev-ref HEAD 2> /dev/null)"
   STATUS="$(git status 2> /dev/null)"
@@ -288,7 +284,6 @@ parse_git() {
 
 # PROMPTS
 # -------
-
 # ***common prompts***
 # PS1="\W \\$ "
 # PS1="[\u@\h:\W]\\$ "
@@ -314,7 +309,26 @@ if ! shopt -oq posix; then
   fi
 fi
 
-# LOCAL RC
+# PATH APPENDING
+# --------------
+appendpath "$HOME/.local/bin"
+appendpath "$HOME/.local/scripts"
+
+if command -v ruby > /dev/null && command -v gem > /dev/null; then
+  appendpath "$(ruby -r rubygems -e 'puts Gem.user_dir')/bin"
+fi
+
+if command -v go > /dev/null; then
+  [ -d "$HOME/go" ] && mv "$HOME/go" "$HOME/.go"
+  export GOPATH="$HOME/.go"
+  appendpath "$(go env GOPATH)/bin"
+fi
+
+if command -v cargo > /dev/null; then
+  appendpath "$HOME/.cargo/bin"
+fi
+
+# SOURCE LOCAL RC
 # --------
 [ -f "$HOME/.config/bashrc" ] && source "$HOME/.config/bashrc"
 [ -f "$HOME/.local/bashrc" ] && source "$HOME/.local/bashrc"
