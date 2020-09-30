@@ -24,14 +24,6 @@ export EDITOR="/usr/bin/vim"
 export VISUAL="/usr/bin/vim"
 export PAGER="less"
 
-# DIRS
-export WD="$HOME/src"
-export GOWD="$HOME/.go/src/github.com/lemonase"
-export DF="$WD/repos/dotfiles"
-
-# URLS
-export GH="https://github.com/lemonase"
-
 # ALIASES
 # -------
 # common options
@@ -154,86 +146,6 @@ bkup() {
   fi
 }
 
-# easy diff rc files in home and in dotfile repo
-rc() {
-  error_1() {
-    echo "Please specify rc command: [diff] [up] [down]"
-    echo "and a valid dotfile: [vim] [bash] [git] [tmux]"
-    return 1
-  }
-
-  error_2() {
-    echo "Please specify a valid dotfile: [vim] [bash] [git] [tmux]"
-    return 2
-  }
-
-  case "$1" in
-    "diff"|"di")
-      case "$2" in
-        "vim")
-          vimdiff "$HOME/.vim/vimrc" "$DF/vim/vimrc" ;;
-        "bash")
-          vimdiff "$HOME/.bashrc" "$DF/bash/bashrc" ;;
-        "git")
-          vimdiff "$HOME/.gitconfig" "$DF/git/gitconfig" ;;
-        "tmux")
-          vimdiff "$HOME/.tmux.conf" "$DF/tmux/tmux.conf" ;;
-        *)
-          error_2
-      esac
-      return;;
-
-    "edit"|"e")
-      case "$2" in
-        "vim")
-          vim "$HOME/.vim/vimrc" ;;
-        "bash")
-          vim "$HOME/.bashrc" ;;
-        "git")
-          vim "$HOME/.gitconfig" ;;
-        "tmux")
-          vim "$HOME/.tmux.conf" ;;
-        *)
-          error_2
-      esac
-      return;;
-
-    "up"|"u")
-      case "$2" in
-        "vim")
-          cp "$HOME/.vim/vimrc" "$DF/vim/vimrc" ;;
-        "bash")
-          cp "$HOME/.bashrc" "$DF/bash/bashrc" ;;
-        "git")
-          cp "$HOME/.gitconfig" "$DF/git/gitconfig" ;;
-        "tmux")
-          cp "$HOME/.tmux.conf" "$DF/tmux/tmux.conf" ;;
-        *)
-          error_2
-      esac
-      (cd "$DF" || return) && git diff
-      return;;
-
-    "down"|"d")
-      case "$2" in
-        "vim")
-          cp "$DF/vim/vimrc" "$HOME/.vim/vimrc" ;;
-        "bash")
-          cp "$DF/bash/bashrc" "$HOME/.bashrc" ;;
-        "git")
-          cp "$DF/git/gitconfig" "$HOME/.gitconfig" ;;
-        "tmux")
-          cp "$DF/tmux/tmux.conf" "$HOME/.tmux.conf" ;;
-        *)
-          error_2
-      esac
-      return;;
-
-    *)
-      error_1
-  esac
-}
-
 # git
 lazygit() {
   git commit -a -m "$*" && git push;
@@ -274,7 +186,7 @@ parse_git() {
 # PS1="\u@\h:\W\\$ "
 
 # ***color prompts***
-# PS1="${bold}${blue}\W ${yellow}\\$ ${reset}"
+PS1="${bold}${blue}\W ${yellow}\\$ ${reset}"
 # PS1="${bold}${purple}\u${yellow}@${cyan}\h${white}:${blue}\W ${yellow}\\$ ${reset}"
 
 # ***git prompts***
@@ -296,8 +208,6 @@ fi
 # EXTRA PATHS
 # --------------
 
-# Languages
-
 # Ruby
 if command -v ruby > /dev/null && command -v gem > /dev/null; then
   appendpath "$(ruby -r rubygems -e 'puts Gem.user_dir')/bin"
@@ -307,6 +217,7 @@ fi
 if command -v go > /dev/null; then
   [ -d "$HOME/go" ] && mv "$HOME/go" "$HOME/.go"
   export GOPATH="$HOME/.go"
+  export GOWD="$GOPATH/src/github.com/lemonase"
   appendpath "$(go env GOPATH)/bin"
 fi
 
