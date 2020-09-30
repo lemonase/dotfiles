@@ -27,7 +27,7 @@ export PAGER="less"
 # DIRS
 export WD="$HOME/src"
 export GOWD="$HOME/.go/src/github.com/lemonase"
-export DF="$WD/dotfiles"
+export DF="$WD/repos/dotfiles"
 
 # URLS
 export GH="https://github.com/lemonase"
@@ -134,7 +134,7 @@ tma() {
   fi
 }
 
-# checks if directory and path duplication
+# checks if directory exists and path duplication
 appendpath () {
   if [ -d "$1" ]; then
     case ":$PATH:" in
@@ -254,30 +254,14 @@ parse_git() {
   else
     printf "\001${unesc_reset}${unesc_bold}\002:(%s)" "${BRANCH}"
     printf "\001${unesc_white}\002%s" "["
-    if echo "${STATUS}" | grep -c "nothing to commit" &> /dev/null; then
-      printf "\001${unesc_blue}\002%s" "=";
-    fi
-    if echo "${STATUS}" | grep -c "renamed:"  &> /dev/null; then
-      printf "\001${unesc_red}\002%s" "%";
-    fi
-    if echo "${STATUS}" | grep -c "deleted:"  &> /dev/null; then
-      printf "\001${unesc_red}\002%s" "-";
-    fi
-    if echo "${STATUS}" | grep -c "new file:" &> /dev/null; then
-      printf "\001${unesc_green}\002%s" "+";
-    fi
-    if echo "${STATUS}" | grep -c "branch is ahead:" &> /dev/null; then
-      printf "\001${unesc_yellow}\002%s" ">";
-    fi
-    if echo "${STATUS}" | grep -c "branch is behind" &> /dev/null; then
-      printf "\001${unesc_yellow}\002%s" "<";
-    fi
-    if echo "${STATUS}" | grep -c "Untracked files:" &> /dev/null; then
-      printf "\001${unesc_yellow}\002%s" "?";
-    fi
-    if echo "${STATUS}" | grep -c "modified:"        &> /dev/null; then
-      printf "\001${unesc_yellow}\002%s" "*";
-    fi
+    if echo "${STATUS}" | grep -c "nothing to commit" &> /dev/null; then printf "\001${unesc_blue}\002%s" "="; fi
+    if echo "${STATUS}" | grep -c "renamed:"  &> /dev/null; then printf "\001${unesc_red}\002%s" "%"; fi
+    if echo "${STATUS}" | grep -c "deleted:"  &> /dev/null; then printf "\001${unesc_red}\002%s" "-"; fi
+    if echo "${STATUS}" | grep -c "new file:" &> /dev/null; then printf "\001${unesc_green}\002%s" "+"; fi
+    if echo "${STATUS}" | grep -c "branch is ahead:" &> /dev/null; then printf "\001${unesc_yellow}\002%s" ">"; fi
+    if echo "${STATUS}" | grep -c "branch is behind" &> /dev/null; then printf "\001${unesc_yellow}\002%s" "<"; fi
+    if echo "${STATUS}" | grep -c "Untracked files:" &> /dev/null; then printf "\001${unesc_yellow}\002%s" "?"; fi
+    if echo "${STATUS}" | grep -c "modified:"        &> /dev/null; then printf "\001${unesc_yellow}\002%s" "*"; fi
     printf "\001${unesc_white}\002%s" "]"
   fi
 }
@@ -290,8 +274,8 @@ parse_git() {
 # PS1="\u@\h:\W\\$ "
 
 # ***color prompts***
-# PS1="${blue}\W ${yellow}\\$ "
-# PS1="${purple}\u${yellow}@${cyan}\h${white}:${blue}\W ${yellow}\\$ "
+# PS1="${bold}${blue}\W ${yellow}\\$ ${reset}"
+# PS1="${bold}${purple}\u${yellow}@${cyan}\h${white}:${blue}\W ${yellow}\\$ ${reset}"
 
 # ***git prompts***
 # PS1="${bold}${blue}\W\$(parse_git)${green} \\$ ${reset}"
@@ -309,24 +293,31 @@ if ! shopt -oq posix; then
   fi
 fi
 
-# PATH APPENDING
+# EXTRA PATHS
 # --------------
-appendpath "$HOME/.local/bin"
-appendpath "$HOME/.local/scripts"
 
+# Languages
+
+# Ruby
 if command -v ruby > /dev/null && command -v gem > /dev/null; then
   appendpath "$(ruby -r rubygems -e 'puts Gem.user_dir')/bin"
 fi
 
+# Go
 if command -v go > /dev/null; then
   [ -d "$HOME/go" ] && mv "$HOME/go" "$HOME/.go"
   export GOPATH="$HOME/.go"
   appendpath "$(go env GOPATH)/bin"
 fi
 
+# Rust
 if command -v cargo > /dev/null; then
   appendpath "$HOME/.cargo/bin"
 fi
+
+# Local
+appendpath "$HOME/.local/bin"
+appendpath "$HOME/.local/scripts"
 
 # SOURCE LOCAL RC
 # --------
