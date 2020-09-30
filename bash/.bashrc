@@ -186,7 +186,7 @@ parse_git() {
 # PS1="\u@\h:\W\\$ "
 
 # ***color prompts***
-PS1="${bold}${blue}\W ${yellow}\\$ ${reset}"
+# PS1="${bold}${blue}\W ${yellow}\\$ ${reset}"
 # PS1="${bold}${purple}\u${yellow}@${cyan}\h${white}:${blue}\W ${yellow}\\$ ${reset}"
 
 # ***git prompts***
