@@ -1,31 +1,9 @@
-[ -f "$HOME/.bashrc" ] && source "$HOME/.bashrc"
+# .bash_profile is *not* sourced when launching bash from some GUI terminal emulators
+# However, it *is* sourced when logging in via TTY or ssh.
 
-appendpath () {
-  if [ -d "$1" ]; then
-    case ":$PATH:" in
-        *:"$1":*)
-            ;;
-        *)
-            PATH="${PATH:+$PATH:}$1"
-    esac
-  fi
-}
+# Due to this somewhat inconsistent behaviour, I ended up putting everything in
+# .bashrc, which is more or less guarunteed to be sourced no matter what.
 
-appendpath "$HOME/.local/bin"
-appendpath "$HOME/.local/scripts"
-
-if command -v ruby > /dev/null && command -v gem > /dev/null; then
-  appendpath "$(ruby -r rubygems -e 'puts Gem.user_dir')/bin"
-fi
-
-if command -v go > /dev/null; then
-  export GOPATH="$HOME/.go"
-  [ -d "$HOME/go" ] && mv "$HOME/go" "$HOME/.go"
-  appendpath "$(go env GOPATH)/bin"
-fi
-
-if command -v cargo > /dev/null; then
-  appendpath "$HOME/.cargo/bin"
-fi
+# [ -f "$HOME/.bashrc" ] && source "$HOME/.bashrc"
 
 # vim:ft=sh
