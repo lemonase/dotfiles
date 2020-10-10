@@ -1,10 +1,14 @@
-# My Dotfiles
+# My dotfiles
 
-Using [GNU Stow](https://www.gnu.org/software/stow/) to symlink files in this
-repo to their correct locations under `$HOME`
+I am using [GNU Stow](https://www.gnu.org/software/stow/) to symlink
+my dotfiles to their correct locations in my `$HOME` directory.
 
-Clone this repo in `~` and run the following:
+## Instructions
 
-```shell
-cd ~/dotfiles && stow *
+First `cd` into the `stow` directory and run the following command
+
+```sh
+stow * -t "$HOME"
 ```
+
+If there are no errors, everything in that directory should be symlinked.
