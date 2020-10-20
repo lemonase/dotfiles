@@ -3,10 +3,119 @@
 " \ V /| | | | | | | | | (__
 "  \_/ |_|_| |_| |_|_|  \___|
 
-"sources defaults if available
+"source system defaults
 if filereadable(expand('$VIMRUNTIME/defaults.vim'))
     unlet! g:skip_defaults_vim
     source $VIMRUNTIME/defaults.vim
+endif
+
+"os settings
+"-----------
+if has('win32')
+    let &runtimepath.=",$HOME/.vim"
+endif
+
+"gui settings
+"------------
+if has("gui_running")
+    set guioptions -=m
+    set guioptions -=T
+    if has("gui_gtk2")
+        set guifont=Inconsolata\ 12
+    elseif has("gui_macvim")
+        set guifont=Menlo\ Regular:h14
+    elseif has("gui_win32")
+        " set guifont=Consolas:h10
+        set guifont=Cascadia\ Code:h10
+    endif
+endif
+
+"general settings
+"----------------
+"encoding/format
+set encoding=utf-8
+set fileformats=unix,dos,mac
+
+"file/buffer
+set autoread
+set autowrite
+set confirm
+
+"display
+set background=light
+set number
+set wrap
+set foldmethod=marker
+set listchars=tab:→\ ,extends:›,precedes:‹,nbsp:·,space:·,trail:·,eol:¬
+" set list
+
+"drawing
+set lazyredraw
+set regexpengine=1
+set redrawtime=10000
+
+"tab/indent
+set tabstop=4
+set softtabstop=4
+set shiftwidth=4
+set expandtab
+set autoindent
+
+"status bar
+set showcmd
+set wildmenu
+set ruler
+set laststatus=2
+
+"search
+set incsearch
+set hlsearch
+set ignorecase
+set smartcase
+
+"cursor behaviour
+set virtualedit=block
+set backspace=indent,eol,start
+set showmatch
+set scrolloff=2
+set sidescrolloff=4
+
+"input/timeout
+set esckeys
+set timeoutlen=1000 "for mappings
+set ttimeoutlen=20 "for keycodes
+
+"window behaviour (ltr)
+set splitbelow
+set splitright
+
+"cleanup files created by vim
+
+"swap
+let mySwapDir = expand("$HOME/.vim/.swap")
+if !isdirectory(mySwapDir)
+    silent! call mkdir(mySwapDir, "p")
+endif
+let &directory=mySwapDir
+
+"undo
+if has('persistent_undo')
+    let myUndoDir = expand("$HOME/.vim/.undo")
+    if !isdirectory(myUndoDir)
+        silent! call mkdir(myUndoDir, "p")
+    endif
+    let &undodir=myUndoDir
+    set undofile
+endif
+
+"backup
+if has('writebackup')
+    let myBackupDir = expand("$HOME/.vim/.backup")
+    if !isdirectory(myBackupDir)
+        silent! call mkdir(myBackupDir, "p")
+    endif
+    let &backupdir=myBackupDir
+    set backup
 endif
 
 "plugins (vim-plug)
@@ -41,6 +150,7 @@ call plug#begin(pluginDir)
     Plug 'flazz/vim-colorschemes'
     "linting
     Plug 'w0rp/ale'
+
     "javascript/css/html
     Plug 'pangloss/vim-javascript'
     Plug 'mattn/emmet-vim'
@@ -54,6 +164,12 @@ call plug#begin(pluginDir)
     "toml
     Plug 'cespare/vim-toml'
 call plug#end()
+
+"syntax/filetype settings
+"---------------
+" syntax on
+" filetype plugin indent on
+" runtime macros/matchit.vim
 
 "plugin settings
 "---------------
@@ -111,100 +227,11 @@ let g:vim_markdown_toc_autofit = 1
 " colorscheme monokai-phoenix
 " }}}
 
-"general settings
-"----------------
-"encoding/format
-set encoding=utf-8
-set fileformats=unix,dos,mac
-
-"file/buffer
-set autoread
-set autowrite
-set confirm
-
-"display
-set background=dark
-set number
-set wrap
-set foldmethod=marker
-set listchars=tab:→\ ,extends:›,precedes:‹,nbsp:·,space:·,trail:·,eol:¬
-" set list
-
-"drawing
-set lazyredraw
-set regexpengine=1
-set redrawtime=10000
-
-"tab/indent
-set tabstop=4
-set softtabstop=4
-set shiftwidth=4
-set expandtab
-set autoindent
-
-"status bar
-set showcmd
-set wildmenu
-set ruler
-set laststatus=2
-
-"search
-set incsearch
-set hlsearch
-set ignorecase
-set smartcase
-
-"cursor behaviour
-set virtualedit=block
-set backspace=indent,eol,start
-set showmatch
-set scrolloff=2
-set sidescrolloff=4
-
-"input/timeout
-set esckeys
-set timeoutlen=1000 "for mappings
-set ttimeoutlen=20 "for keycodes
-
-"window behaviour (ltr)
-set splitbelow
-set splitright
-
-"vim feature cleanup
-"-------------------
-"swap
-let mySwapDir = expand("$HOME/.vim/.swap")
-if !isdirectory(mySwapDir)
-    silent! call mkdir(mySwapDir, "p")
-endif
-let &directory=mySwapDir
-
-"undo
-if has('persistent_undo')
-    let myUndoDir = expand("$HOME/.vim/.undo")
-    if !isdirectory(myUndoDir)
-        silent! call mkdir(myUndoDir, "p")
-    endif
-    let &undodir=myUndoDir
-    set undofile
-endif
-
-"backup
-if has('writebackup')
-    let myBackupDir = expand("$HOME/.vim/.backup")
-    if !isdirectory(myBackupDir)
-        silent! call mkdir(myBackupDir, "p")
-    endif
-    let &backupdir=myBackupDir
-    set backup
-endif
-
-
-"normal/visual mode keybinds
-"---------------------------
 "leader key
 let mapleader=' '
 
+"normal/visual mode keybinds
+"---------------------------
 "paste and search
 nnoremap <silent><leader><space> :let @/ = ""<CR>
 nnoremap <leader>p :set invpaste<CR>
@@ -291,25 +318,36 @@ function! ToggleNetrw() "make netrw toggleable <https://vi.stackexchange.com/que
     endif
 endfunction
 
-"syntax/filetype
-"---------------
-syntax on
-filetype plugin indent on
-runtime macros/matchit.vim
+"autogroup filetype functions
+"------------------
+function BashSettings()
+    set syntax=sh
+endfunction
 
-"gui settings
-"------------
-if has("gui_running")
-    set guioptions -=m
-    set guioptions -=T
-    if has("gui_gtk2")
-        set guifont=Inconsolata\ 12
-    elseif has("gui_macvim")
-        set guifont=Menlo\ Regular:h14
-    elseif has("gui_win32")
-        set guifont=Consolas:h10
-    endif
-endif
+function PythonSettings()
+    xnoremap <leader>r <esc>:'<,'>:w !python3<CR>
+endfunction
+
+function GoSettings()
+    set noexpandtab
+    let g:go_auto_type_info = 1
+    let g:go_imports_autosave = 1
+endfunction
+
+function HtmlSettings()
+    syntax sync fromstart
+endfunction
+
+"autogroup group functions
+"-------------------------
+
+function SpellSettings()
+    setlocal spell
+endfunction
+
+function HalftabSettings()
+    setlocal ts=2 sts=2 sw=2 expandtab
+endfunction
 
 "auto commands
 "-------------
@@ -324,18 +362,27 @@ if has("autocmd")
                     \ <= line("$") | exe "normal! g'\"" | endif
     augroup END
 
-    "language/filetype
-    augroup languages
-        autocmd!
-        autocmd BufNewFile,BufRead *bash* set syntax=sh
-        autocmd FileType python xnoremap <leader>r <esc>:'<,'>:w !python3<CR>
-        autocmd FileType go set noexpandtab |
-                    \ let g:go_auto_type_info = 1 |
-                    \ let g:go_imports_autosave = 1
-        autocmd FileType html :syntax sync fromstart
-        autocmd FileType html,javascript,css,json,yaml,markdown
-                    \ setlocal ts=2 sts=2 sw=2 expandtab |
-                    \ nnoremap <leader>f :%!prettier %<CR>
-        autocmd Filetype markdown setlocal spell
+    augroup filetype_bash
+        autocmd! BufNewFile,BufRead *.bash call BashSettings()
+    augroup END
+
+    augroup filetype_python
+        autocmd! FileType python call PythonSettings()
+    augroup END
+
+    augroup filetype_go
+        autocmd! FileType go call GoSettings()
+    augroup END
+
+    augroup filetype_html
+        autocmd! FileType html call HtmlSettings()
+    augroup END
+
+    augroup filetype_spell
+        autocmd! FileType markdown call SpellSettings()
+    augroup END
+
+    augroup filetype_halftab
+        autocmd! FileType html,javascript,css,json,yaml,sh call HalftabSettings()
     augroup END
 endif
