@@ -1,22 +1,22 @@
-"__   _(_)_ __ ___  _ __ ___
-"\ \ / / | '_ ` _ \| '__/ __|
-" \ V /| | | | | | | | | (__
-"  \_/ |_|_| |_| |_|_|  \___|
+"__   _(_)_ __ ___  _ __ ___ "
+"\ \ / / | '_ ` _ \| '__/ __|"
+" \ V /| | | | | | | | | (__ "
+"  \_/ |_|_| |_| |_|_|  \___|"
 
 "source system defaults
+"{{{
 if filereadable(expand('$VIMRUNTIME/defaults.vim'))
     unlet! g:skip_defaults_vim
     source $VIMRUNTIME/defaults.vim
 endif
+"}}}
 
-"os settings
-"-----------
+"os/gui settings
+"{{{
 if has('win32')
     let &runtimepath.=",$HOME/.vim"
 endif
 
-"gui settings
-"------------
 if has("gui_running")
     set guioptions -=m
     set guioptions -=T
@@ -29,9 +29,10 @@ if has("gui_running")
         set guifont=Cascadia\ Code:h10
     endif
 endif
+"}}}
 
 "general settings
-"----------------
+"{{{
 "encoding/format
 set encoding=utf-8
 set fileformats=unix,dos,mac
@@ -88,9 +89,10 @@ set ttimeoutlen=20 "for keycodes
 "window behaviour (ltr)
 set splitbelow
 set splitright
+"}}}
 
-"cleanup files created by vim
-
+"cleanup messy (swap, undo, backup) files created by vim
+"{{{
 "swap
 let mySwapDir = expand("$HOME/.vim/.swap")
 if !isdirectory(mySwapDir)
@@ -117,9 +119,10 @@ if has('writebackup')
     let &backupdir=myBackupDir
     set backup
 endif
+"}}}
 
 "plugins (vim-plug)
-"------------------
+"{{{
 "vim-plug paths
 let plugDir = expand("$HOME/.vim/autoload/plug.vim")
 let pluginDir = expand("$HOME/.vim/plugged")
@@ -164,15 +167,10 @@ call plug#begin(pluginDir)
     "toml
     Plug 'cespare/vim-toml'
 call plug#end()
-
-"syntax/filetype settings
-"---------------
-" syntax on
-" filetype plugin indent on
-" runtime macros/matchit.vim
+"}}}
 
 "plugin settings
-"---------------
+"{{{
 "netrw
 let g:netrw_banner = 0
 let g:netrw_winsize = 24
@@ -182,8 +180,6 @@ let g:netrw_alto = 0
 let g:netrw_usetab = 1
 let g:netrw_browsex_viewer = "xdg-open"
 let g:NetrwIsOpen = 0 "for toggle function
-
-"replace netrw gx command
 let g:netrw_nogx = 1
 nmap gx <Plug>(openbrowser-smart-search)
 vmap gx <Plug>(openbrowser-smart-search)
@@ -209,6 +205,7 @@ let g:ale_fix_on_save = 1
 let g:vim_markdown_folding_disabled = 1
 let g:vim_markdown_no_default_key_mappings = 1
 let g:vim_markdown_toc_autofit = 1
+"}}}
 
 " colorschemes
 " {{{
@@ -227,11 +224,13 @@ let g:vim_markdown_toc_autofit = 1
 " colorscheme monokai-phoenix
 " }}}
 
+"keybinds
+"{{{
 "leader key
 let mapleader=' '
 
-"normal/visual mode keybinds
-"---------------------------
+"normal/visual
+"-------------
 "paste and search
 nnoremap <silent><leader><space> :let @/ = ""<CR>
 nnoremap <leader>p :set invpaste<CR>
@@ -256,13 +255,13 @@ nnoremap =j :%!python -m json.tool<CR>
 nnoremap <silent><leader>e :call ToggleNetrw()<CR>
 nnoremap <leader>at :ALEToggle<CR>
 
-
-"insert mode keybinds/abbreviations
-"--------------------
+"insert mode
+"-----------
 inoreabbrev <expr> #!! "#!/usr/bin/env"
+"}}}
 
 "custom commands
-"---------------
+"{{{
 "common typos and abbreviations
 cnoremap w!! w !sudo tee % > /dev/null
 command! W w !sudo tee % > /dev/null
@@ -270,10 +269,12 @@ command! Trim %s/\s\+$//
 command! Q q
 command! WQ wq
 command! Q1 q!
+"}}}
 
 "general functions
-"-----------------
+"{{{
 "toggle functions
+"{{{
 function! ToggleColorColumn()
     if &cc == ''
         set cc=80
@@ -317,9 +318,10 @@ function! ToggleNetrw() "make netrw toggleable <https://vi.stackexchange.com/que
         silent Lexplore
     endif
 endfunction
+"}}}
 
-"autogroup filetype functions
-"------------------
+"filetype functions
+"------------------{{{
 function BashSettings()
     set syntax=sh
 endfunction
@@ -337,10 +339,10 @@ endfunction
 function HtmlSettings()
     syntax sync fromstart
 endfunction
+"}}}
 
-"autogroup group functions
-"-------------------------
-
+"group functions
+"-------------------------{{{
 function SpellSettings()
     setlocal spell
 endfunction
@@ -348,9 +350,18 @@ endfunction
 function HalftabSettings()
     setlocal ts=2 sts=2 sw=2 expandtab
 endfunction
+"}}}
+"}}}
 
-"auto commands
-"-------------
+"syntax/filetype settings (just in case they haven't been set yet)
+"{{{
+syntax on
+filetype plugin indent on
+runtime macros/matchit.vim
+"}}}
+
+"autocommands
+"{{{
 if has("autocmd")
     "global
     augroup global
@@ -386,3 +397,4 @@ if has("autocmd")
         autocmd! FileType html,javascript,css,json,yaml,sh call HalftabSettings()
     augroup END
 endif
+"}}}
