@@ -43,7 +43,7 @@ set autowrite
 set confirm
 
 "display
-set background=light
+set background=dark
 set number
 set wrap
 set foldmethod=marker
