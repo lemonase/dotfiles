@@ -184,7 +184,7 @@ let g:netrw_nogx = 1
 
 "ale
 let g:ale_linters = {
-\   'python': ['flake8', 'pylint'],
+\   'python': ['flake8'],
 \   'javascript': ['eslint'],
 \   'markdown': ['mdl', 'write-good']
 \}
@@ -203,12 +203,14 @@ let g:ale_sign_warning = '--'
 let g:ale_lint_on_save = 1
 let g:ale_fix_on_save_ignore = 1
 highlight clear SignColumn
-let g:ale_set_highlights = 0
 
 "vim-markdown
 let g:vim_markdown_folding_disabled = 1
 let g:vim_markdown_no_default_key_mappings = 1
 let g:vim_markdown_toc_autofit = 1
+
+"vim-emmet
+let g:user_emmet_leader_key = ','
 "}}}
 
 "syntax/filetype settings (just in case they haven't been set yet)
