@@ -193,6 +193,8 @@ let g:ale_fixers = {
 \   '*': ['remove_trailing_lines', 'trim_whitespace'],
 \   'python': ['yapf', 'black'],
 \   'javascript': ['prettier', 'eslint'],
+\   'css': ['prettier'],
+\   'html': ['prettier'],
 \   'markdown': ['prettier']
 \}
 
@@ -201,6 +203,7 @@ let g:ale_sign_warning = '--'
 let g:ale_lint_on_save = 1
 let g:ale_fix_on_save_ignore = 1
 highlight clear SignColumn
+let g:ale_set_highlights = 0
 
 "vim-markdown
 let g:vim_markdown_folding_disabled = 1
