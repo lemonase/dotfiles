@@ -43,7 +43,7 @@ set autowrite
 set confirm
 
 "display
-set background=light
+set background=dark
 set number
 set wrap
 set foldmethod=marker
@@ -150,7 +150,7 @@ call plug#begin(pluginDir)
     "git
     Plug 'tpope/vim-fugitive'
     "visual
-    Plug 'flazz/vim-colorschemes'
+    "Plug 'flazz/vim-colorschemes'
     "linting
     Plug 'w0rp/ale'
 
@@ -181,33 +181,46 @@ let g:netrw_usetab = 1
 let g:netrw_browsex_viewer = "xdg-open"
 let g:NetrwIsOpen = 0 "for toggle function
 let g:netrw_nogx = 1
-nmap gx <Plug>(openbrowser-smart-search)
-vmap gx <Plug>(openbrowser-smart-search)
 
 "ale
 let g:ale_linters = {
-\   'javascript': ['prettier', 'eslint'],
+\   'python': ['flake8'],
+\   'javascript': ['eslint'],
 \   'markdown': ['mdl', 'write-good']
 \}
 
 let g:ale_fixers = {
 \   '*': ['remove_trailing_lines', 'trim_whitespace'],
-\   'javascript': ['eslint'],
+\   'python': ['yapf', 'black'],
+\   'javascript': ['prettier', 'eslint'],
+\   'css': ['prettier'],
+\   'html': ['prettier'],
 \   'markdown': ['prettier']
 \}
 
 let g:ale_sign_error = '->'
 let g:ale_sign_warning = '--'
 let g:ale_lint_on_save = 1
-let g:ale_fix_on_save = 1
+let g:ale_fix_on_save_ignore = 1
+highlight clear SignColumn
 
 "vim-markdown
 let g:vim_markdown_folding_disabled = 1
 let g:vim_markdown_no_default_key_mappings = 1
 let g:vim_markdown_toc_autofit = 1
+
+"vim-emmet
+let g:user_emmet_leader_key = ','
 "}}}
 
-" colorschemes
+"syntax/filetype settings (just in case they haven't been set yet)
+"{{{
+syntax on
+filetype plugin indent on
+runtime macros/matchit.vim
+"}}}
+
+"colorschemes
 " {{{
 " colorscheme 1989
 " colorscheme PaperColor
@@ -229,8 +242,6 @@ let g:vim_markdown_toc_autofit = 1
 "leader key
 let mapleader=' '
 
-"normal/visual
-"-------------
 "paste and search
 nnoremap <silent><leader><space> :let @/ = ""<CR>
 nnoremap <leader>p :set invpaste<CR>
@@ -253,10 +264,12 @@ nnoremap =j :%!python -m json.tool<CR>
 
 "plugin keybinds
 nnoremap <silent><leader>e :call ToggleNetrw()<CR>
+nmap gx <Plug>(openbrowser-smart-search)
+vmap gx <Plug>(openbrowser-smart-search)
 nnoremap <leader>at :ALEToggle<CR>
+nmap <leader>af <Plug>(ale_fix)
 
 "insert mode
-"-----------
 inoreabbrev <expr> #!! "#!/usr/bin/env"
 "}}}
 
@@ -319,7 +332,7 @@ endfunction
 "}}}
 
 "filetype functions
-"------------------{{{
+"{{{
 function BashSettings()
     set syntax=sh
 endfunction
@@ -337,10 +350,7 @@ endfunction
 function HtmlSettings()
     syntax sync fromstart
 endfunction
-"}}}
 
-"group functions
-"-------------------------{{{
 function SpellSettings()
     setlocal spell
 endfunction
@@ -348,13 +358,6 @@ endfunction
 function HalftabSettings()
     setlocal ts=2 sts=2 sw=2 expandtab
 endfunction
-"}}}
-
-"syntax/filetype settings (just in case they haven't been set yet)
-"{{{
-syntax on
-filetype plugin indent on
-runtime macros/matchit.vim
 "}}}
 
 "autocommands
