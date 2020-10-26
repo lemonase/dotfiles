@@ -271,8 +271,6 @@ command! WQ wq
 command! Q1 q!
 "}}}
 
-"general functions
-"{{{
 "toggle functions
 "{{{
 function! ToggleColorColumn()
@@ -350,7 +348,6 @@ endfunction
 function HalftabSettings()
     setlocal ts=2 sts=2 sw=2 expandtab
 endfunction
-"}}}
 "}}}
 
 "syntax/filetype settings (just in case they haven't been set yet)
