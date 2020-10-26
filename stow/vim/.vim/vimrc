@@ -15,6 +15,7 @@ endif
 "{{{
 if has('win32')
     let &runtimepath.=",$HOME/.vim"
+    set shell=pwsh
 endif
 
 if has("gui_running")
@@ -25,8 +26,13 @@ if has("gui_running")
     elseif has("gui_macvim")
         set guifont=Menlo\ Regular:h14
     elseif has("gui_win32")
-        " set guifont=Consolas:h10
-        set guifont=Cascadia\ Code:h10
+        set guifont=Consolas:h10
+        " set guifont=Cascadia\ Code:h10
+
+        "start full-screened
+        augroup WINGUI
+            autocmd! GUIEnter * simalt ~x
+        augroup END
     endif
 endif
 "}}}
@@ -159,6 +165,8 @@ call plug#begin(pluginDir)
     Plug 'mattn/emmet-vim'
     "gdscript
     Plug 'calviken/vim-gdscript3'
+    "powershell
+    Plug 'PProvost/vim-ps1'
     "go
     Plug 'fatih/vim-go'
     "md
