@@ -298,6 +298,9 @@ vmap gx <Plug>(openbrowser-smart-search)
 "ale
 nnoremap <leader>at :ALEToggle<CR>
 nmap <leader>af <Plug>(ale_fix)
+nmap <leader>aK <Plug>(ale_hover)
+nmap <leader>agd <Plug>(ale_go_to_definition)
+nmap <leader>agd <Plug>(ale_go_to_definition)
 
 "lsp
 function! s:on_lsp_buffer_enabled() abort
@@ -313,6 +316,7 @@ function! s:on_lsp_buffer_enabled() abort
     nmap <buffer> ]g <Plug>(lsp-next-diagnostic)
     nmap <buffer> K <plug>(lsp-hover)
     nmap <buffer> <leader>lf <plug>(lsp-document-format)
+    nmap <buffer> <leader>lst <plug>(lsp-status)
 endfunction
 
 "}}}
