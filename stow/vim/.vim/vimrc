@@ -233,7 +233,7 @@ runtime macros/matchit.vim
 " {{{
 " colorscheme 1989
 " colorscheme PaperColor
-colorscheme gruvbox
+" colorscheme gruvbox
 " colorscheme jellybeans
 " colorscheme molokai
 " colorscheme Benokai
