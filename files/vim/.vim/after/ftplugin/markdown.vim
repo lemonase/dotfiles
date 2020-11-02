@@ -1,0 +1,3 @@
+"settings
+
+setlocal spell
