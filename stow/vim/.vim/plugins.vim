@@ -48,3 +48,47 @@ call plug#begin(pluginDir)
     "tables
     Plug 'godlygeek/tabular'
 call plug#end()
+
+"plugin settings
+"---------------{{{
+"netrw
+let g:netrw_banner = 0
+let g:netrw_winsize = 24
+let g:netrw_liststyle = 3
+let g:netrw_preview = 1
+let g:netrw_alto = 0
+let g:netrw_usetab = 1
+let g:netrw_browsex_viewer = "xdg-open"
+let g:NetrwIsOpen = 0 "for toggle function
+let g:netrw_nogx = 1
+
+"ale
+let g:ale_linters = {
+\   'python': ['flake8'],
+\   'javascript': ['eslint'],
+\   'markdown': ['mdl', 'write-good']
+\}
+
+let g:ale_fixers = {
+\   '*': ['remove_trailing_lines', 'trim_whitespace'],
+\   'python': ['yapf', 'black'],
+\   'javascript': ['prettier', 'eslint'],
+\   'css': ['prettier'],
+\   'html': ['prettier'],
+\   'markdown': ['prettier']
+\}
+
+let g:ale_sign_error = '->'
+let g:ale_sign_warning = '--'
+let g:ale_lint_on_save = 1
+let g:ale_fix_on_save_ignore = 1
+highlight clear SignColumn
+
+"vim-markdown
+let g:vim_markdown_folding_disabled = 1
+let g:vim_markdown_no_default_key_mappings = 1
+let g:vim_markdown_toc_autofit = 1
+
+"vim-emmet
+let g:user_emmet_leader_key = ','
+"}}}

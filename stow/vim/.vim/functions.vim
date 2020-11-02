@@ -44,32 +44,3 @@ function! ToggleNetrw() "make netrw toggleable <https://vi.stackexchange.com/que
     endif
 endfunction
 "}}}
-
-"filetype functions
-"------------------{{{
-function BashSettings()
-    set syntax=sh
-endfunction
-
-function PythonSettings()
-    xnoremap <leader>r <esc>:'<,'>:w !python3<CR>
-endfunction
-
-function GoSettings()
-    set noexpandtab
-    let g:go_auto_type_info = 1
-    let g:go_imports_autosave = 1
-endfunction
-
-function HtmlSettings()
-    syntax sync fromstart
-endfunction
-
-function SpellSettings()
-    setlocal spell
-endfunction
-
-function HalftabSettings()
-    setlocal ts=2 sts=2 sw=2 expandtab
-endfunction
-"}}}
