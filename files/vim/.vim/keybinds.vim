@@ -46,6 +46,9 @@ nmap <leader>aK <Plug>(ale_hover)
 nmap <leader>agd <Plug>(ale_go_to_definition)
 nmap <leader>agd <Plug>(ale_go_to_definition)
 
+"vim-emmet
+let g:user_emmet_leader_key = ','
+
 "lsp
 function! s:on_lsp_buffer_enabled() abort
     setlocal omnifunc=lsp#complete

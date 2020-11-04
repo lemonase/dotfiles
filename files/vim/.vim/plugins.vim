@@ -90,5 +90,6 @@ let g:vim_markdown_no_default_key_mappings = 1
 let g:vim_markdown_toc_autofit = 1
 
 "vim-emmet
-let g:user_emmet_leader_key = ','
+let g:user_emmet_install_global = 0
+
 "}}}
