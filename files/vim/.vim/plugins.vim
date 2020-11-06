@@ -31,14 +31,14 @@ call plug#begin(pluginDir)
 
     "   linting and lsp
     Plug 'w0rp/ale'
-    " Plug 'prabirshrestha/vim-lsp'
-    " Plug 'mattn/vim-lsp-settings'
 
     "   extra language plugins
     "go
     Plug 'fatih/vim-go'
     "html
     Plug 'mattn/emmet-vim'
+    "markdown
+    Plug 'plasticboy/vim-markdown'
 
     "   other useful things
     "editorconfig
@@ -86,8 +86,9 @@ highlight clear SignColumn
 
 "vim-markdown
 let g:vim_markdown_folding_disabled = 1
-let g:vim_markdown_no_default_key_mappings = 1
 let g:vim_markdown_toc_autofit = 1
+let g:vim_markdown_conceal = 0
+let g:vim_markdown_frontmatter = 1
 
 "vim-emmet
 let g:user_emmet_install_global = 0
