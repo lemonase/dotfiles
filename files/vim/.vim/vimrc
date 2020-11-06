@@ -10,3 +10,4 @@ source ~/.vim/commands.vim
 source ~/.vim/keybinds.vim
 source ~/.vim/colorschemes.vim
 source ~/.vim/autocmds.vim
+source ~/.config/vimrc
