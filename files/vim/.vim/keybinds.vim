@@ -19,6 +19,7 @@ nnoremap <leader>dt :r !date<CR>
 "rc files
 nnoremap <leader>rc :vsplit $MYVIMRC<CR>
 nnoremap <leader>so :source $MYVIMRC<CR>
+nnoremap <leader>ft :vsplit $HOME/.vim/after/ftplugin/<CR>
 
 "formatting tools
 nnoremap =j :%!python -m json.tool<CR>
@@ -49,20 +50,4 @@ nmap <leader>agd <Plug>(ale_go_to_definition)
 "vim-emmet
 let g:user_emmet_leader_key = ','
 
-"lsp
-function! s:on_lsp_buffer_enabled() abort
-    setlocal omnifunc=lsp#complete
-    setlocal signcolumn=yes
-    if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
-    nmap <buffer> gd <plug>(lsp-definition)
-    nmap <buffer> gr <plug>(lsp-references)
-    nmap <buffer> gi <plug>(lsp-implementation)
-    nmap <buffer> gt <plug>(lsp-type-definition)
-    nmap <buffer> rn <plug>(lsp-rename)
-    nmap <buffer> [g <Plug>(lsp-previous-diagnostic)
-    nmap <buffer> ]g <Plug>(lsp-next-diagnostic)
-    nmap <buffer> K <plug>(lsp-hover)
-    nmap <buffer> <leader>lf <plug>(lsp-document-format)
-    nmap <buffer> <leader>lst <plug>(lsp-status)
-endfunction
 "}}}

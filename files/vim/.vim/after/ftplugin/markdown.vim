@@ -1,3 +1,2 @@
 "settings
-
 setlocal spell

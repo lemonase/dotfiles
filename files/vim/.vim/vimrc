@@ -4,9 +4,9 @@
 "  \_/ |_|_| |_| |_|_|  \___|"
 
 source ~/.vim/settings.vim
-source ~/.vim/plugins.vim
 source ~/.vim/functions.vim
 source ~/.vim/commands.vim
+source ~/.vim/plugins.vim
 source ~/.vim/keybinds.vim
 source ~/.vim/colorschemes.vim
 source ~/.vim/autocmds.vim

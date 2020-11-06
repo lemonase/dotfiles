@@ -11,9 +11,9 @@ if has("autocmd")
                     \ <= line("$") | exe "normal! g'\"" | endif
     augroup END
 
-	" augroup lsp_install
-	" 	autocmd!
-	" 	autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
-	" augroup END
+    augroup emmet_group
+        autocmd!
+        autocmd FileType html,css EmmetInstall
+    augroup END
 endif
 "}}}
