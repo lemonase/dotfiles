@@ -22,8 +22,10 @@ nnoremap <leader>rck :vsplit ~/.vim/keybinds.vim<CR>
 nnoremap <leader>rcb :vsplit ~/.vim/keybinds.vim<CR>
 nnoremap <leader>rcp :vsplit ~/.vim/plugins.vim<CR>
 nnoremap <leader>rcf :vsplit $HOME/.vim/after/ftplugin/<CR>
-
 nnoremap <leader>so :source $MYVIMRC<CR>
+
+"windows
+nnoremap <leader>cl :close<CR>
 
 "formatting tools
 nnoremap =j :%!python -m json.tool<CR>

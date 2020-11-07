@@ -230,6 +230,10 @@ fi
 appendpath "$HOME/.local/bin"
 appendpath "$HOME/.local/scripts"
 
+# EXTRA TOOLS
+# -----------
+export FZF_DEFAULT_OPTS="--bind=ctrl-f:page-up,ctrl-d:page-down"
+
 # SOURCE LOCAL RC
 # --------
 [ -f "$HOME/.config/bashrc" ] && source "$HOME/.config/bashrc"

@@ -31,7 +31,9 @@ call plug#begin(pluginDir)
     "fzf
     Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
     Plug 'junegunn/fzf.vim'
-
+    "snippet engine
+    Plug 'SirVer/ultisnips'
+    Plug 'honza/vim-snippets'
 
     "   syntax and colorscheme packs
     Plug 'flazz/vim-colorschemes'
@@ -101,6 +103,11 @@ let g:vim_markdown_frontmatter = 1
 "vim-emmet
 let g:user_emmet_install_global = 0
 
+"UltiSnips
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<c-n>"
+let g:UltiSnipsJumpBackwardTrigger="<c-p>"
+
 "}}}
 
 "plugin keybinds
@@ -114,6 +121,8 @@ nnoremap <leader>pu :source $MYVIMRC <BAR> :PlugUpdate<CR>
 nnoremap <leader>pc :source $MYVIMRC <BAR> :PlugClean<CR>
 
 "openbrowser
+nnoremap <leader>ob :OpenBrowser
+nnoremap <leader>obs :OpenBrowserSearch
 nmap gx <Plug>(openbrowser-smart-search)
 vmap gx <Plug>(openbrowser-smart-search)
 
@@ -142,9 +151,10 @@ nnoremap <leader>gcm :Gcommit<CR>
 
 "fzf
 nnoremap <leader>f :GitFiles<CR>
-nnoremap <leader>b :Buffers<CR>
 nnoremap <leader>F :Files<CR>
-nnoremap <leader>H :Helptags<CR>
-nnoremap <leader>M :Maps<CR>
+nnoremap <leader>b :Buffers<CR>
+nnoremap <leader>h :Helptags<CR>
+nnoremap <leader>m :Maps<CR>
+nnoremap <leader>sn :Snippets<CR>
 
 "}}}
