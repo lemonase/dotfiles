@@ -4,7 +4,7 @@ let mapleader=' '
 "normal keybinds
 "-------------{{{
 "paste and search
-nnoremap <silent><leader><space> :let @/ = ""<CR>
+nnoremap <silent><leader><space> :noh <BAR> :let @/ = ""<CR>
 nnoremap <leader>i :set invpaste<CR>
 
 "toggles
@@ -19,6 +19,7 @@ nnoremap <leader>dt :r !date<CR>
 "rc files
 nnoremap <leader>rc :vsplit $MYVIMRC<CR>
 nnoremap <leader>rck :vsplit ~/.vim/keybinds.vim<CR>
+nnoremap <leader>rcb :vsplit ~/.vim/keybinds.vim<CR>
 nnoremap <leader>rcp :vsplit ~/.vim/plugins.vim<CR>
 nnoremap <leader>rcf :vsplit $HOME/.vim/after/ftplugin/<CR>
 

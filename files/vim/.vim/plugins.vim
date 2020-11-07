@@ -26,6 +26,8 @@ call plug#begin(pluginDir)
     Plug 'tpope/vim-dispatch'
     "git
     Plug 'tpope/vim-fugitive'
+    Plug 'tpope/vim-rhubarb'
+    Plug 'airblade/vim-gitgutter'
     "fzf
     Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
     Plug 'junegunn/fzf.vim'
@@ -125,10 +127,18 @@ nmap <leader>agd <Plug>(ale_go_to_definition)
 "vim-emmet
 let g:user_emmet_leader_key = ','
 
+"git-gutter
+nnoremap <leader>ggt :GitGutterToggle<CR>
+
 "vim-fugitive
+nnoremap <leader>gw :Gwrite<CR>
 nnoremap <leader>gl :Glog<CR>
 nnoremap <leader>gs :Gstatus<CR>
+nnoremap <leader>gd :Gdiffsplit<CR>
 nnoremap <leader>gp :Gpush<CR>
+nnoremap <leader>ga :Git add %<CR>
+nnoremap <leader>ga. :Git add .<CR>
+nnoremap <leader>gcm :Gcommit<CR>
 
 "fzf
 nnoremap <leader>f :GitFiles<CR>
