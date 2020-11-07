@@ -155,10 +155,10 @@ nnoremap <leader>F :Files<CR>
 nnoremap <leader>b :Buffers<CR>
 nnoremap <leader>h :Helptags<CR>
 nnoremap <leader>m :Maps<CR>
-nnoremap <leader>sn :Snippets<CR>
 
 "UltiSnips
 inoremap <C-S> <ESC> :Snippets<CR>
-nnoremap <leader>sne <ESC>:UltiSnipsEdit<CR>
+nnoremap <leader>sn :Snippets<CR>
+nnoremap <leader>se <ESC>:UltiSnipsEdit<CR>
 
 "}}}
