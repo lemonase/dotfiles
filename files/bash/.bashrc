@@ -232,7 +232,7 @@ appendpath "$HOME/.local/scripts"
 
 # EXTRA TOOLS
 # -----------
-export FZF_DEFAULT_OPTS="--bind=ctrl-f:page-up,ctrl-d:page-down"
+export FZF_DEFAULT_OPTS="--bind=ctrl-f:page-down,ctrl-b:page-up"
 
 # SOURCE LOCAL RC
 # --------
