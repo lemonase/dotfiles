@@ -24,6 +24,10 @@ call plug#begin(pluginDir)
     Plug 'tpope/vim-repeat'
     "git
     Plug 'tpope/vim-fugitive'
+    "fzf
+    Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+    Plug 'junegunn/fzf.vim'
+
 
     "   syntax and colorscheme packs
     Plug 'flazz/vim-colorschemes'
@@ -92,5 +96,42 @@ let g:vim_markdown_frontmatter = 1
 
 "vim-emmet
 let g:user_emmet_install_global = 0
+
+"}}}
+
+"plugin keybinds
+"{{{
+"netrw
+nnoremap <silent><leader>e :call ToggleNetrw()<CR>
+
+"vim-plug
+nnoremap <leader>pi :source $MYVIMRC <BAR> :PlugInstall<CR>
+nnoremap <leader>pu :source $MYVIMRC <BAR> :PlugUpdate<CR>
+nnoremap <leader>pc :source $MYVIMRC <BAR> :PlugClean<CR>
+
+"openbrowser
+nmap gx <Plug>(openbrowser-smart-search)
+vmap gx <Plug>(openbrowser-smart-search)
+
+"ale
+nnoremap <leader>at :ALEToggle<CR>
+nmap <leader>af <Plug>(ale_fix)
+nmap <leader>aK <Plug>(ale_hover)
+nmap <leader>agd <Plug>(ale_go_to_definition)
+nmap <leader>agd <Plug>(ale_go_to_definition)
+
+"vim-emmet
+let g:user_emmet_leader_key = ','
+
+"vim-fugitive
+nnoremap <leader>gl :Glog<CR>
+nnoremap <leader>gs :Gstatus<CR>
+
+"fzf
+nnoremap <leader>f :GitFiles<CR>
+nnoremap <leader>b :Buffers<CR>
+nnoremap <leader>F :Files<CR>
+nnoremap <leader>H :Helptags<CR>
+nnoremap <leader>M :Maps<CR>
 
 "}}}
