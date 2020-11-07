@@ -22,6 +22,8 @@ call plug#begin(pluginDir)
     Plug 'tpope/vim-rsi'
     Plug 'tpope/vim-eunuch'
     Plug 'tpope/vim-repeat'
+    "async task runner
+    Plug 'tpope/vim-dispatch'
     "git
     Plug 'tpope/vim-fugitive'
     "fzf
@@ -126,6 +128,7 @@ let g:user_emmet_leader_key = ','
 "vim-fugitive
 nnoremap <leader>gl :Glog<CR>
 nnoremap <leader>gs :Gstatus<CR>
+nnoremap <leader>gp :Gpush<CR>
 
 "fzf
 nnoremap <leader>f :GitFiles<CR>
