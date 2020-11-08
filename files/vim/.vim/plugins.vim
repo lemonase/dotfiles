@@ -150,8 +150,8 @@ nnoremap <leader>ga. :Git add .<CR>
 nnoremap <leader>gcm :Gcommit<CR>
 
 "fzf
-nnoremap <leader>f :GitFiles<CR>
-nnoremap <leader>F :Files<CR>
+nnoremap <leader>gf :GitFiles<CR>
+nnoremap <leader>f :Files<CR>
 nnoremap <leader>b :Buffers<CR>
 nnoremap <leader>h :Helptags<CR>
 nnoremap <leader>m :Maps<CR>
