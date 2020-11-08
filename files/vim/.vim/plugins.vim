@@ -155,6 +155,7 @@ nnoremap <leader>f :Files<CR>
 nnoremap <leader>b :Buffers<CR>
 nnoremap <leader>h :Helptags<CR>
 nnoremap <leader>m :Maps<CR>
+nnoremap <leader>rg :Rg<CR>
 
 "UltiSnips
 inoremap <C-S> <ESC> :Snippets<CR>

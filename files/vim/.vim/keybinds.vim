@@ -23,6 +23,7 @@ nnoremap <leader>rcf :vsplit ~/.vim/functions.vim<CR>
 nnoremap <leader>rcc :vsplit ~/.vim/commands.vim<CR>
 nnoremap <leader>rck :vsplit ~/.vim/keybinds.vim<CR>
 nnoremap <leader>rcp :vsplit ~/.vim/plugins.vim<CR>
+nnoremap <leader>rca :vsplit ~/.vim/autocmds.vim<CR>
 nnoremap <leader>rcft :vsplit $HOME/.vim/after/ftplugin/<CR>
 nnoremap <leader>rcl :vsplit ~/.config/vimrc<CR>
 nnoremap <leader>so :source $MYVIMRC<CR>

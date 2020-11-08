@@ -15,5 +15,11 @@ if has("autocmd")
         autocmd!
         autocmd FileType html,css EmmetInstall
     augroup END
+
+    augroup half_tab_group
+        autocmd FileType html,css,javascript,json,toml,yaml
+                    \ setlocal ts=2 sts=2 sw=2 expandtab
+    augroup END
+
 endif
 "}}}

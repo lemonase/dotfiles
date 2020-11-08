@@ -52,7 +52,6 @@ set smartcase
 "cursor behaviour
 set virtualedit=block
 set backspace=indent,eol,start
-set showmatch
 set scrolloff=2
 set sidescrolloff=4
 
