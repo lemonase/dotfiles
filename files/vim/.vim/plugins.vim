@@ -35,14 +35,12 @@ call plug#begin(pluginDir)
     Plug 'SirVer/ultisnips'
     Plug 'honza/vim-snippets'
 
-    "   syntax and colorscheme packs
+    "syntax pack
     Plug 'flazz/vim-colorschemes'
-    Plug 'sheerun/vim-polyglot'
-
-    "   linting and lsp
+    "linting and lsp
     Plug 'w0rp/ale'
 
-    "   extra language plugins
+    "extra language plugins
     "go
     Plug 'fatih/vim-go'
     "html
@@ -50,7 +48,7 @@ call plug#begin(pluginDir)
     "markdown
     Plug 'plasticboy/vim-markdown'
 
-    "   other useful things
+    "other useful things
     "editorconfig
     Plug 'editorconfig/editorconfig-vim'
     "browser/url opener
