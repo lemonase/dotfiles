@@ -78,6 +78,7 @@ let g:ale_fixers = {
 \   'python': ['yapf', 'black'],
 \   'javascript': ['prettier', 'eslint'],
 \   'css': ['prettier'],
+\   'scss': ['prettier'],
 \   'html': ['prettier'],
 \   'markdown': ['prettier']
 \}
