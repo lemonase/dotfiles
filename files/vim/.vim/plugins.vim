@@ -13,48 +13,44 @@ endif
 
 call plug#begin(pluginDir)
     Plug 'junegunn/vim-plug'
-    "   quality of life
+
     "normal mode keybinds
     Plug 'tpope/vim-commentary'
     Plug 'tpope/vim-surround'
     Plug 'tpope/vim-unimpaired'
+
     "command mode keybinds
     Plug 'tpope/vim-rsi'
     Plug 'tpope/vim-eunuch'
     Plug 'tpope/vim-repeat'
-    "async task runner
-    Plug 'tpope/vim-dispatch'
+
     "git
     Plug 'tpope/vim-fugitive'
     Plug 'tpope/vim-rhubarb'
+    Plug 'tpope/vim-dispatch'
     Plug 'airblade/vim-gitgutter'
+
     "fzf
     Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
     Plug 'junegunn/fzf.vim'
-    "snippet engine
-    Plug 'SirVer/ultisnips'
-    Plug 'honza/vim-snippets'
 
-    "syntax pack
-    Plug 'flazz/vim-colorschemes'
-    "linting and lsp
-    Plug 'w0rp/ale'
-
-    "extra language plugins
     "go
     Plug 'fatih/vim-go'
     "html
     Plug 'mattn/emmet-vim'
     "markdown
     Plug 'plasticboy/vim-markdown'
-
-    "other useful things
-    "editorconfig
-    Plug 'editorconfig/editorconfig-vim'
-    "browser/url opener
-    Plug 'tyru/open-browser.vim'
-    "tables
     Plug 'godlygeek/tabular'
+
+    "colorpack
+    Plug 'flazz/vim-colorschemes'
+
+    "linting and lsp
+    Plug 'w0rp/ale'
+
+    "qol
+    Plug 'editorconfig/editorconfig-vim'
+    Plug 'tyru/open-browser.vim'
 call plug#end()
 
 "plugin settings
@@ -100,11 +96,6 @@ let g:vim_markdown_frontmatter = 1
 
 "vim-emmet
 let g:user_emmet_install_global = 0
-
-"UltiSnips
-let g:UltiSnipsExpandTrigger="<tab>"
-let g:UltiSnipsJumpForwardTrigger="<c-n>"
-let g:UltiSnipsJumpBackwardTrigger="<c-p>"
 
 "}}}
 
@@ -154,10 +145,5 @@ nnoremap <leader>b :Buffers<CR>
 nnoremap <leader>h :Helptags<CR>
 nnoremap <leader>m :Maps<CR>
 nnoremap <leader>rg :Rg<CR>
-
-"UltiSnips
-inoremap <C-S> <ESC> :Snippets<CR>
-nnoremap <leader>sn :Snippets<CR>
-nnoremap <leader>se <ESC>:UltiSnipsEdit<CR>
 
 "}}}
