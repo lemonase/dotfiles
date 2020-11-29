@@ -42,6 +42,8 @@ call plug#begin(pluginDir)
     "markdown
     Plug 'plasticboy/vim-markdown'
     Plug 'godlygeek/tabular'
+    "toml
+    Plug 'cespare/vim-toml'
     "linting and lsp
     Plug 'w0rp/ale'
 

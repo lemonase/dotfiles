@@ -1,5 +1,3 @@
-"autocmds
-"--------{{{
 if has("autocmd")
     "global
     augroup global
@@ -16,9 +14,9 @@ if has("autocmd")
         autocmd FileType html,css EmmetInstall
     augroup END
 
-    augroup half_tab_group
+    augroup indent_group
         autocmd!
-        autocmd FileType html,css,javascript,json,toml,yaml
+        autocmd FileType html,css,scss,javascript,json,toml,yaml
                     \ setlocal ts=2 sts=2 sw=2 expandtab
     augroup END
 
@@ -37,4 +35,3 @@ if has("autocmd")
     augroup END
 
 endif
-"}}}
