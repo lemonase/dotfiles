@@ -10,4 +10,7 @@ source ~/.vim/keybinds.vim
 source ~/.vim/plugins.vim
 source ~/.vim/colorschemes.vim
 source ~/.vim/autocmds.vim
-source ~/.config/vimrc
+
+if filereadable(expand("~/.config/vimrc"))
+    source ~/.config/vimrc
+endif
