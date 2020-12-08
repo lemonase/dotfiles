@@ -100,8 +100,6 @@ fi
 # FUNCTIONS
 # ---------
 # common commands improved
-cll() { cd -P "$@" && ls -alshF; }
-cls() { cd -P "$@" && ls; }
 mkcd() { mkdir -p -- "$1" && cd "$1"; }
 cdd() { [ -n "$1" ] && for i in $(seq 1 "$1"); do cd ..; done; }
 touchx() { touch "$@" && chmod +x "$@"; }
@@ -138,7 +136,6 @@ appendpath () {
   fi
 }
 
-
 # easy backup
 bkup() {
   if [ -f "$1" ]; then
@@ -161,7 +158,7 @@ parse_git() {
   BRANCH="$(git rev-parse --abbrev-ref HEAD 2> /dev/null)"
   STATUS="$(git status 2> /dev/null)"
 
-  if [[ $? -ne 0 ]]; then
+  if [[ "$?" -ne 0 ]]; then
     return
   else
     printf "\001${unesc_reset}${unesc_bold}\002:(%s)" "${BRANCH}"
@@ -207,7 +204,6 @@ fi
 
 # EXTRA PATHS
 # --------------
-
 # Ruby
 if command -v ruby > /dev/null && command -v gem > /dev/null; then
   appendpath "$(ruby -r rubygems -e 'puts Gem.user_dir')/bin"
@@ -218,6 +214,7 @@ if command -v go > /dev/null; then
   [ -d "$HOME/go" ] && mv "$HOME/go" "$HOME/.go"
   export GOPATH="$HOME/.go"
   export GOWD="$GOPATH/src/github.com/lemonase"
+  export GOMOD="$GOPATH/pkg/mod/github.com/lemonase/"
   appendpath "$(go env GOPATH)/bin"
 fi
 
@@ -226,7 +223,7 @@ if command -v cargo > /dev/null; then
   appendpath "$HOME/.cargo/bin"
 fi
 
-# Local
+# Local Bins
 appendpath "$HOME/.local/bin"
 appendpath "$HOME/.local/scripts"
 
@@ -236,5 +233,5 @@ export FZF_DEFAULT_OPTS="--bind=ctrl-f:page-down,ctrl-b:page-up"
 
 # SOURCE LOCAL RC
 # --------
-[ -f "$HOME/.config/bashrc" ] && source "$HOME/.config/bashrc"
-[ -f "$HOME/.local/bashrc" ] && source "$HOME/.local/bashrc"
+[ -r "$HOME/.config/bashrc" ] && source "$HOME/.config/bashrc"
+[ -r "$HOME/.local/bashrc" ] && source "$HOME/.local/bashrc"
