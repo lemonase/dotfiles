@@ -19,7 +19,7 @@ shopt -s cmdhist histappend
 
 # VARIABLES
 # ---------
-# PROGRAMS
+# programs
 export EDITOR="/usr/bin/vim"
 export VISUAL="/usr/bin/vim"
 export PAGER="less"
@@ -71,28 +71,50 @@ alias venvac='source venv/bin/activate'
 # check if tput is available
 if [ -x "$(command -v tput)" ]; then
   num_colors=$(tput colors)
-  if [ -n "$num_colors" ] && [ "$num_colors" -ge 8 ]; then
-    black="\[$(tput setaf 0)\]"; unesc_black="$(tput setaf 0)"
-    red="\[$(tput setaf 1)\]"; unesc_red="$(tput setaf 1)"
-    green="\[$(tput setaf 2)\]"; unesc_green="$(tput setaf 2)"
-    yellow="\[$(tput setaf 3)\]"; unesc_yellow="$(tput setaf 3)"
-    blue="\[$(tput setaf 4)\]"; unesc_blue="$(tput setaf 4)"
-    purple="\[$(tput setaf 5)\]"; unesc_purple="$(tput setaf 5)"
-    cyan="\[$(tput setaf 6)\]"; unesc_cyan="$(tput setaf 6)"
-    white="\[$(tput setaf 7)\]"; unesc_white="$(tput setaf 7)"
+  if [ -n "$num_colors" ]; then
+
+    if [ "$num_colors" -ge 8 ]; then
+      black="\[$(tput setaf 0)\]"; unesc_black="$(tput setaf 0)"
+      red="\[$(tput setaf 1)\]"; unesc_red="$(tput setaf 1)"
+      green="\[$(tput setaf 2)\]"; unesc_green="$(tput setaf 2)"
+      brown="\[$(tput setaf 3)\]"; unesc_brown="$(tput setaf 3)"
+      blue="\[$(tput setaf 4)\]"; unesc_blue="$(tput setaf 4)"
+      purple="\[$(tput setaf 5)\]"; unesc_purple="$(tput setaf 5)"
+      cyan="\[$(tput setaf 6)\]"; unesc_cyan="$(tput setaf 6)"
+      grey="\[$(tput setaf 7)\]"; unesc_grey="$(tput setaf 7)"
+      dark_grey="\[$(tput setaf 8)\]"; unesc_dark_grey="$(tput setaf 8)"
+    fi
+
+    if [ "$num_colors" -ge 16 ]; then
+      bright_red="\[$(tput setaf 9)\]"; unesc_bright_red="$(tput setaf 9)"
+      bright_green="\[$(tput setaf 10)\]"; unesc_bright_green="$(tput setaf 10)"
+      bright_yellow="\[$(tput setaf 11)\]"; unesc_bright_yellow="$(tput setaf 11)"
+      bright_blue="\[$(tput setaf 12)\]"; unesc_bright_blue="$(tput setaf 12)"
+      bright_magenta="\[$(tput setaf 13)\]"; unesc_bright_magenta="$(tput setaf 13)"
+      bright_cyan="\[$(tput setaf 14)\]"; unesc_bright_cyan="$(tput setaf 14)"
+      white="\[$(tput setaf 15)\]"; unesc_bright_white="$(tput setaf 15)"
+    fi
+
     reset="\[$(tput sgr0)\]"; unesc_reset="$(tput sgr0)"
     bold="\[$(tput bold)\]"; unesc_bold="$(tput bold)"
   fi
-else
-  # fallback to ANSI esacpe codes
+else # or fallback to ANSI esacpe codes
   black="\[\033[0;30m\]"; unesc_black="\033[0;30m"
   red="\[\033[1;31m\]"; unesc_red="\033[1;31m"
   green="\[\033[1;32m\]"; unesc_green="\033[1;32m"
-  yellow="\[\033[1;33m\]"; unesc_yellow="\033[1;33m"
+  brown="\[\033[1;33m\]"; unesc_brown="\033[1;33m"
   blue="\[\033[1;34m\]"; unesc_blue="\033[1;34m"
   purple="\[\033[1;35m\]"; unesc_purple="\033[1;35m"
   cyan="\[\033[1;36m\]"; unesc_cyan="\033[1;36m"
-  white="\[\033[1;37m\]"; unesc_white="\033[1;37m"
+  grey="\[\033[1;37m\]"; unesc_grey="\033[1;37m"
+  dark_grey="\[\033[1;90m\]"; unesc_dark_grey="\033[1;90m"
+  bright_red="\[\033[1;91m\]"; unesc_bright_red="\033[1;91m"
+  bright_green="\[\033[1;92m\]"; unesc_bright_yellow="\033[1;92m"
+  bright_yellow="\[\033[1;93m\]"; unesc_bright_yellow="\033[1;93m"
+  bright_blue="\[\033[1;94m\]"; unesc_bright_blue="\033[1;94m"
+  bright_magenta="\[\033[1;95m\]"; unesc_bright_magenta="\033[1;95m"
+  bright_cyan="\[\033[1;96m\]"; unesc_bright_cyan="\033[1;96m"
+  white="\[\033[1;97m\]"; unesc_white="\033[1;97m"
   reset="\[\033[0m\]"; unesc_reset="\033[0m"
   bold="\[\033[1m\]"; unesc_bold="\033[1m"
 fi
@@ -167,11 +189,11 @@ parse_git() {
     if echo "${STATUS}" | grep -c "renamed:"  &> /dev/null; then printf "\001${unesc_red}\002%s" "%"; fi
     if echo "${STATUS}" | grep -c "deleted:"  &> /dev/null; then printf "\001${unesc_red}\002%s" "-"; fi
     if echo "${STATUS}" | grep -c "new file:" &> /dev/null; then printf "\001${unesc_green}\002%s" "+"; fi
-    if echo "${STATUS}" | grep -c "branch is ahead:" &> /dev/null; then printf "\001${unesc_yellow}\002%s" ">"; fi
-    if echo "${STATUS}" | grep -c "branch is behind" &> /dev/null; then printf "\001${unesc_yellow}\002%s" "<"; fi
-    if echo "${STATUS}" | grep -c "Untracked files:" &> /dev/null; then printf "\001${unesc_yellow}\002%s" "?"; fi
-    if echo "${STATUS}" | grep -c "modified:"        &> /dev/null; then printf "\001${unesc_yellow}\002%s" "*"; fi
-    printf "\001${unesc_white}\002%s" "]"
+    if echo "${STATUS}" | grep -c "branch is ahead:" &> /dev/null; then printf "\001${unesc_bright_yellow}\002%s" ">"; fi
+    if echo "${STATUS}" | grep -c "branch is behind" &> /dev/null; then printf "\001${unesc_bright_yellow}\002%s" "<"; fi
+    if echo "${STATUS}" | grep -c "Untracked files:" &> /dev/null; then printf "\001${unesc_bright_yellow}\002%s" "?"; fi
+    if echo "${STATUS}" | grep -c "modified:"        &> /dev/null; then printf "\001${unesc_bright_yellow}\002%s" "*"; fi
+    printf "\001${unesc_white}${unesc_reset}\002%s" "]"
   fi
 }
 
