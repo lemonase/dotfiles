@@ -185,7 +185,7 @@ parse_git() {
   else
     printf "\001${unesc_reset}${unesc_bold}\002:(%s)" "${BRANCH}"
     printf "\001${unesc_white}\002%s" "["
-    if echo "${STATUS}" | grep -c "nothing to commit" &> /dev/null; then printf "\001${unesc_blue}\002%s" "="; fi
+    if echo "${STATUS}" | grep -c "nothing to commit" &> /dev/null; then printf "\001${unesc_bright_blue}\002%s" "="; fi
     if echo "${STATUS}" | grep -c "renamed:"  &> /dev/null; then printf "\001${unesc_red}\002%s" "%"; fi
     if echo "${STATUS}" | grep -c "deleted:"  &> /dev/null; then printf "\001${unesc_red}\002%s" "-"; fi
     if echo "${STATUS}" | grep -c "new file:" &> /dev/null; then printf "\001${unesc_green}\002%s" "+"; fi
