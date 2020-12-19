@@ -193,7 +193,7 @@ parse_git() {
     if echo "${STATUS}" | grep -c "branch is behind" &> /dev/null; then printf "\001${unesc_bright_yellow}\002%s" "<"; fi
     if echo "${STATUS}" | grep -c "Untracked files:" &> /dev/null; then printf "\001${unesc_bright_yellow}\002%s" "?"; fi
     if echo "${STATUS}" | grep -c "modified:"        &> /dev/null; then printf "\001${unesc_bright_yellow}\002%s" "*"; fi
-    printf "\001${unesc_white}${unesc_reset}\002%s" "]"
+    printf "\001${unesc_reset}${unesc_bold}${unesc_white}\002%s" "]"
   fi
 }
 
