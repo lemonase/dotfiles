@@ -4,75 +4,73 @@ case $- in
   *) return;;
 esac
 
-# HISTORY OPTIONS
-# ---------------
+# history
 HISTSIZE= ;
 HISTFILESIZE=
 HISTCONTROL="ignoreboth:erasedups"
 HISTTIMEFORMAT="%F %T  "
 
-# SHELL OPTIONS
-# -------------
+# shell options
 shopt -s checkhash checkjobs checkwinsize
 shopt -s dirspell extglob globstar
 shopt -s cmdhist histappend
 
-# VARIABLES
-# ---------
-# programs
+# command variables
 export EDITOR="/usr/bin/vim"
 export VISUAL="/usr/bin/vim"
 export PAGER="less"
 
-# ALIASES
-# -------
-# common options
+# command options
 LS_OPTS="-F --color=auto"
 GREP_OPTS="--color=auto"
 
-# ls
-alias l='ls ${LS_OPTS}'
-alias ls='ls ${LS_OPTS}'
-alias ll='ls -lsh ${LS_OPTS}'
-alias la='ls -Alsh ${LS_OPTS}'
-alias al='ls -A ${LS_OPTS}'
-alias sl='ls -lsSh ${LS_OPTS}'
-alias sal='ls -AlsSh ${LS_OPTS}'
+## aliases ##
 
-# grep
-alias grep='grep ${GREP_OPTS}'
-alias fgrep='fgrep ${GREP_OPTS}'
-alias egrep='egrep ${GREP_OPTS}'
+alias l="ls ${LS_OPTS}"
+alias ls="ls ${LS_OPTS}"
+alias ll="ls -lsh ${LS_OPTS}"
+alias la="ls -Alsh ${LS_OPTS}"
+alias al="ls -A ${LS_OPTS}"
+alias sl="ls -lsSh ${LS_OPTS}"
+alias sal="ls -AlsSh ${LS_OPTS}"
+alias mkdir="mkdir -p"
 
-# utility aliases
-alias tree='tree -C'
-alias treel='tree -C | less -R'
-alias df='df -h'
-alias lsmnt='mount | column -t'
-alias mkdir='mkdir -p'
+alias grep="grep ${GREP_OPTS}"
+alias fgrep="fgrep ${GREP_OPTS}"
+alias egrep="egrep ${GREP_OPTS}"
 
-# git
-alias g=git
-alias groot='cd $(git rev-parse --show-toplevel 2> /dev/null || echo -n ".")'
+alias tree="tree -C"
+alias treel="tree -C | less -R"
+alias lsmnt="mount | column -t"
+alias df="df -h"
 
-# tmux
-alias tmls='tmux ls'
-alias tmlsc='tmux lsc'
-alias tmks='tmux kill-session -t' # kill one session
-alias tmka='tmux kill-server' # aka killall
+alias g="git"
+alias groot="cd $(git rev-parse --show-toplevel 2> /dev/null || echo -n ".")"
 
-# python venv
-alias venvac='source venv/bin/activate'
+alias tmls="tmux ls"
+alias tmlsc="tmux lsc"
+alias tmks="tmux kill-session -t" # kill one session
+alias tmka="tmux kill-server" # aka killall
 
-# COLORS
-# ------
+alias s="systemctl"
+alias sud="sudo su"
+
+if [ "$(grep -Ei 'debian|buntu|mint' /etc/*release)" ]; then
+  alias a="sudo apt"
+  alias aup="sudo apt update"
+  alias aupg="sudo apt upgrade -y"
+  alias alu="apt list --upgradable"
+fi
+
+alias venvac="source venv/bin/activate"
+
+## colors ##
+
 # color vars using tput or ANSI/VT100 Control sequences
-
 # check if tput is available
 if [ -x "$(command -v tput)" ]; then
   num_colors=$(tput colors)
   if [ -n "$num_colors" ]; then
-
     if [ "$num_colors" -ge 8 ]; then
       black="\[$(tput setaf 0)\]"; unesc_black="$(tput setaf 0)"
       red="\[$(tput setaf 1)\]"; unesc_red="$(tput setaf 1)"
@@ -84,7 +82,6 @@ if [ -x "$(command -v tput)" ]; then
       grey="\[$(tput setaf 7)\]"; unesc_grey="$(tput setaf 7)"
       dark_grey="\[$(tput setaf 8)\]"; unesc_dark_grey="$(tput setaf 8)"
     fi
-
     if [ "$num_colors" -ge 16 ]; then
       bright_red="\[$(tput setaf 9)\]"; unesc_bright_red="$(tput setaf 9)"
       bright_green="\[$(tput setaf 10)\]"; unesc_bright_green="$(tput setaf 10)"
@@ -94,7 +91,6 @@ if [ -x "$(command -v tput)" ]; then
       bright_cyan="\[$(tput setaf 14)\]"; unesc_bright_cyan="$(tput setaf 14)"
       white="\[$(tput setaf 15)\]"; unesc_bright_white="$(tput setaf 15)"
     fi
-
     reset="\[$(tput sgr0)\]"; unesc_reset="$(tput sgr0)"
     bold="\[$(tput bold)\]"; unesc_bold="$(tput bold)"
   fi
@@ -119,8 +115,8 @@ else # or fallback to ANSI esacpe codes
   bold="\[\033[1m\]"; unesc_bold="\033[1m"
 fi
 
-# FUNCTIONS
-# ---------
+## functions ##
+
 # common commands improved
 mkcd() { mkdir -p -- "$1" && cd "$1"; }
 cdd() { [ -n "$1" ] && for i in $(seq 1 "$1"); do cd ..; done; }
@@ -174,8 +170,9 @@ lg() {
   lazygit "$*";
 }
 
-# GIT PROMPT FUNCTION
-# -------
+## prompt stuff ##
+
+# git prompt function
 parse_git() {
   BRANCH="$(git rev-parse --abbrev-ref HEAD 2> /dev/null)"
   STATUS="$(git status 2> /dev/null)"
@@ -197,25 +194,22 @@ parse_git() {
   fi
 }
 
-# PROMPTS
-# -------
-# ***common prompts***
+# *plain prompts*
 # PS1="\W \\$ "
 # PS1="[\u@\h:\W]\\$ "
 # PS1="\u@\h:\W\\$ "
 
-# ***color prompts***
+# *color prompts*
 # PS1="${bold}${blue}\W ${yellow}\\$ ${reset}"
 # PS1="${bold}${purple}\u${yellow}@${cyan}\h${white}:${blue}\W ${yellow}\\$ ${reset}"
 
-# ***git prompts***
+# *git color prompts*
 # PS1="${bold}${blue}\W\$(parse_git)${green} \\$ ${reset}"
 # PS1="${bold}${white}\t ${blue}\W\$(parse_git) ${cyan}\\$ ${reset}"
 # PS1="${bold}${purple}\u${yellow}@${cyan}\h${white}:${blue}\W\$(parse_git)${green} \\$ ${reset}"
 # PS1="${bold}\n${cyan}\u ${white}at ${yellow}\h ${white}in ${blue}\w ${white}on \$(parse_git)\n${yellow}\\$ ${reset}"
 
-# BASH AUTOCOMPLETION
-# -------------------
+# bash autocompletion
 if ! shopt -oq posix; then
   if [ -f /usr/share/bash-completion/bash_completion ]; then
     source /usr/share/bash-completion/bash_completion
@@ -224,14 +218,14 @@ if ! shopt -oq posix; then
   fi
 fi
 
-# EXTRA PATHS
-# --------------
-# Ruby
+## extra paths ##
+
+# ruby
 if command -v ruby > /dev/null && command -v gem > /dev/null; then
   appendpath "$(ruby -r rubygems -e 'puts Gem.user_dir')/bin"
 fi
 
-# Go
+# go
 if command -v go > /dev/null; then
   [ -d "$HOME/go" ] && mv "$HOME/go" "$HOME/.go"
   export GOPATH="$HOME/.go"
@@ -240,20 +234,20 @@ if command -v go > /dev/null; then
   appendpath "$(go env GOPATH)/bin"
 fi
 
-# Rust
+# rust
 if command -v cargo > /dev/null; then
   appendpath "$HOME/.cargo/bin"
 fi
 
-# Local Bins
+# local bins
 appendpath "$HOME/.local/bin"
 appendpath "$HOME/.local/scripts"
 
-# EXTRA TOOLS
-# -----------
+## extra tools ##
+
 export FZF_DEFAULT_OPTS="--bind=ctrl-f:page-down,ctrl-b:page-up"
 
-# SOURCE LOCAL RC
-# --------
+# local rc ##
+
 [ -r "$HOME/.config/bashrc" ] && source "$HOME/.config/bashrc"
 [ -r "$HOME/.local/bashrc" ] && source "$HOME/.local/bashrc"
