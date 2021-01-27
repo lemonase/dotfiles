@@ -19,7 +19,7 @@ Set-PsFzfOption -PSReadlineChordProvider 'Ctrl+t' -PSReadlineChordReverseHistory
 #----------------------
 # Environment Varaibles
 #----------------------
-$WD = "$env:USERPROFILE\source\repos"
+$S = "$env:USERPROFILE\src"
 $GOWD = "$env:USERPROFILE\go\src\github.com\lemonase"
 $GODOTWD = "$env:USERPROFILE\Google Drive\Game Dev"
 $EDITOR = "gvim"
