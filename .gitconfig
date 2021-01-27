@@ -8,9 +8,6 @@
 [user]
     email = notjamesdixon@gmail.com
     name = James Dixon
-[credential]
-    username = lemonase
-    helper = store
 [color]
     ui = true
     status = auto
@@ -19,8 +16,6 @@
     tool = vimdiff
 [difftool]
     prompt = false
-[pull]
-    ff = only
 [alias]
     a = add
     aa = add --all
@@ -40,3 +35,12 @@
     pl = log --all --decorate --oneline --graph
     gr = log --all --decorate --oneline --graph
     graph = log --all --decorate --oneline --graph
+[winUpdater]
+	recentlySeenVersion = 2.25.0.windows.1
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+[core]
+	autocrlf = true
