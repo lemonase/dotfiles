@@ -9,12 +9,6 @@ if filereadable(expand('$VIMRUNTIME/defaults.vim'))
     source $VIMRUNTIME/defaults.vim
 endif
 
-"os settings
-"-----------
-if has('win32')
-    let &runtimepath.=",$HOME/.vim"
-endif
-
 "gui settings
 "------------
 if has("gui_running")
@@ -43,7 +37,7 @@ set autowrite
 set confirm
 
 "display
-set background=light
+set background=dark
 set number
 set wrap
 set foldmethod=marker
@@ -93,7 +87,7 @@ set splitright
 "cleanup files created by vim
 
 "swap
-let mySwapDir = expand("$HOME/.vim/.swap")
+let mySwapDir = expand("$HOME/vimfiles/.swap")
 if !isdirectory(mySwapDir)
     silent! call mkdir(mySwapDir, "p")
 endif
@@ -101,7 +95,7 @@ let &directory=mySwapDir
 
 "undo
 if has('persistent_undo')
-    let myUndoDir = expand("$HOME/.vim/.undo")
+    let myUndoDir = expand("$HOME/vimfiles/.undo")
     if !isdirectory(myUndoDir)
         silent! call mkdir(myUndoDir, "p")
     endif
@@ -111,7 +105,7 @@ endif
 
 "backup
 if has('writebackup')
-    let myBackupDir = expand("$HOME/.vim/.backup")
+    let myBackupDir = expand("$HOME/vimfiles/.backup")
     if !isdirectory(myBackupDir)
         silent! call mkdir(myBackupDir, "p")
     endif
@@ -122,8 +116,8 @@ endif
 "plugins (vim-plug)
 "------------------
 "vim-plug paths
-let plugDir = expand("$HOME/.vim/autoload/plug.vim")
-let pluginDir = expand("$HOME/.vim/plugged")
+let plugDir = expand("$HOME/vimfiles/autoload/plug.vim")
+let pluginDir = expand("$HOME/vimfiles/plugged")
 let plugRemote = "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
 
 "ensure vim-plug is installed on VimEnter
@@ -215,7 +209,7 @@ let g:vim_markdown_toc_autofit = 1
 " {{{
 " colorscheme 1989
 " colorscheme PaperColor
-" colorscheme gruvbox
+colorscheme gruvbox
 " colorscheme jellybeans
 " colorscheme molokai
 " colorscheme Benokai
@@ -341,7 +335,6 @@ endfunction
 
 "autogroup group functions
 "-------------------------
-
 function SpellSettings()
     setlocal spell
 endfunction
@@ -362,6 +355,7 @@ if has("autocmd")
         autocmd BufReadPost * if line("'\"") > 1 && line("'\"")
                     \ <= line("$") | exe "normal! g'\"" | endif
     augroup END
+
 
     augroup filetype_bash
         autocmd! BufNewFile,BufRead *.bash call BashSettings()
