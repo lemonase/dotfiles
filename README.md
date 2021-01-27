@@ -1,10 +1,8 @@
-# My dotfiles
-
-I am using [GNU Stow](https://www.gnu.org/software/stow/) to symlink
-my dotfiles to their correct locations in my `$HOME` directory.
+# My (Windows) dotfiles
 
 ## Instructions
 
+<<<<<<< HEAD
 ```sh
 $ git clone https://github.com/lemonase/dotfiles.git
 $ cd dotfiles/files
@@ -29,3 +27,6 @@ $ stow --restow *
 ```
 
 If there are no errors, everything in that directory should be symlinked.
+=======
+Just copy relevant files to %USERPROFILE% dir.
+>>>>>>> new-win10
