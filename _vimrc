@@ -28,6 +28,7 @@ if has("gui_running")
         " set guifont=Consolas:h10
         set guifont=Cascadia\ Code:h10
     endif
+    autocmd GUIEnter * simalt ~x
 endif
 
 "general settings
@@ -167,9 +168,9 @@ call plug#end()
 
 "syntax/filetype settings
 "---------------
-" syntax on
-" filetype plugin indent on
-" runtime macros/matchit.vim
+syntax on
+filetype plugin indent on
+runtime macros/matchit.vim
 
 "plugin settings
 "---------------
