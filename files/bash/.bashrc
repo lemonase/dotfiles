@@ -228,6 +228,12 @@ fi
 # ruby
 if command -v ruby > /dev/null && command -v gem > /dev/null; then
   appendpath "$(ruby -r rubygems -e 'puts Gem.user_dir')/bin"
+
+  # rbenv shim
+  if [ -d "$HOME/.rbenv/bin" ]; then
+    appendpath "$HOME/.rbenv/bin"
+    eval "$(rbenv init -)"
+  fi
 fi
 
 # go
