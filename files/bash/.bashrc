@@ -232,7 +232,7 @@ if command -v ruby > /dev/null && command -v gem > /dev/null; then
   # rbenv shim
   if [ -d "$HOME/.rbenv/bin" ]; then
     appendpath "$HOME/.rbenv/bin"
-    eval "$(rbenv init -)"
+    [[ ":$PATH:" != *":$HOME/.rbenv/shims:"* ]] && eval "$(rbenv init -)"
   fi
 fi
 
