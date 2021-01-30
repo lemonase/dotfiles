@@ -62,6 +62,11 @@ if [ "$(grep -Ei 'debian|buntu|mint' /etc/*release)" ]; then
   alias alu="apt list --upgradable"
 fi
 
+alias vi="$EDITOR"
+alias imv="$EDITOR"
+alias ivm="$EDITOR"
+alias vmi="$EDITOR"
+
 alias venvac="source venv/bin/activate"
 
 ## colors ##
