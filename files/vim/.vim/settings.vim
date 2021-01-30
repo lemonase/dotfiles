@@ -1,13 +1,12 @@
 "source system defaults
-"----------------------{{{
+"----------------------
 if filereadable(expand('$VIMRUNTIME/defaults.vim'))
     unlet! g:skip_defaults_vim
     source $VIMRUNTIME/defaults.vim
 endif
-"}}}
 
 "general settings
-"----------------{{{
+"----------------
 "encoding/format
 set encoding=utf-8
 set fileformats=unix,dos,mac
@@ -63,10 +62,9 @@ set ttimeoutlen=20 "for keycodes
 "window behaviour (ltr)
 set splitbelow
 set splitright
-"}}}
 
 "os/gui settings
-"---------------{{{
+"---------------
 if has('win32')
     let &runtimepath.=",$HOME/.vim"
 endif
@@ -88,17 +86,15 @@ if has("gui_running")
         augroup END
     endif
 endif
-"}}}
 
 "syntax/filetype/matchit
-"-----------------------{{{
+"-----------------------
 syntax on
 filetype plugin indent on
 runtime macros/matchit.vim
-"}}}
 
 "file cleanup
-"------------{{{
+"------------
 "swap
 let mySwapDir = expand("$HOME/.vim/.swap")
 if !isdirectory(mySwapDir)
@@ -125,5 +121,4 @@ if has('writebackup')
     let &backupdir=myBackupDir
     set backup
 endif
-"}}}
 

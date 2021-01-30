@@ -1,8 +1,8 @@
 "leader key
 let mapleader=' '
 
-"normal keybinds
-"-------------{{{
+"normal mode keybinds
+"---------------
 "paste and search
 nnoremap <silent><leader><space> :noh <BAR> :let @/ = ""<CR>
 nnoremap <leader>i :set invpaste<CR>
@@ -35,14 +35,13 @@ nnoremap <leader>cl :close<CR>
 nnoremap =j :%!python -m json.tool<CR>
 "}}}
 
-"insert mode
-"-----------{{{
+"insert mode keybinds
+"--------------------
 "abbrevations
 inoreabbrev <expr> #!! "#!/usr/bin/env"
-"}}}
 
 "plugin keybinds
-"{{{
+"---------------
 "netrw
 nnoremap <silent><leader>e :call ToggleNetrw()<CR>
 
@@ -87,5 +86,3 @@ nnoremap <leader>b :Buffers<CR>
 nnoremap <leader>h :Helptags<CR>
 nnoremap <leader>m :Maps<CR>
 nnoremap <leader>rg :Rg<CR>
-
-"}}}

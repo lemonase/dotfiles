@@ -12,7 +12,10 @@ if empty(glob(plugDir))
 endif
 
 "pre plugin settings
+"-------------------
 
+"load plugins
+"------------
 call plug#begin(pluginDir)
     Plug 'junegunn/vim-plug'
 
@@ -25,6 +28,8 @@ call plug#begin(pluginDir)
     Plug 'tpope/vim-rsi'
     Plug 'tpope/vim-eunuch'
     Plug 'tpope/vim-repeat'
+
+    " == external tools ==
     "git
     Plug 'tpope/vim-fugitive'
     Plug 'tpope/vim-rhubarb'
@@ -37,6 +42,8 @@ call plug#begin(pluginDir)
     " == language support ==
     "go
     Plug 'fatih/vim-go'
+    "ruby
+    Plug 'vim-ruby/vim-ruby'
     "html
     Plug 'mattn/emmet-vim'
     "markdown
@@ -47,14 +54,14 @@ call plug#begin(pluginDir)
     "linting and lsp
     Plug 'w0rp/ale'
 
-    " == extra ==
+    " == misc ==
     Plug 'flazz/vim-colorschemes'
     Plug 'editorconfig/editorconfig-vim'
     Plug 'tyru/open-browser.vim'
 call plug#end()
 
 "post plugin settings
-"---------------{{{
+"--------------------
 "netrw
 let g:netrw_banner = 0
 let g:netrw_winsize = 24
@@ -70,6 +77,7 @@ let g:netrw_nogx = 1
 let g:ale_linters = {
 \   'python': ['flake8', 'pylint'],
 \   'javascript': ['eslint'],
+\   'ruby': ['rubocop'],
 \   'markdown': ['mdl', 'write-good']
 \}
 
@@ -77,6 +85,7 @@ let g:ale_fixers = {
 \   '*': ['remove_trailing_lines', 'trim_whitespace'],
 \   'python': ['yapf', 'black'],
 \   'javascript': ['prettier', 'eslint'],
+\   'ruby': ['rubocop'],
 \   'css': ['prettier'],
 \   'scss': ['prettier'],
 \   'html': ['prettier'],
@@ -97,5 +106,3 @@ let g:vim_markdown_frontmatter = 1
 
 "vim-emmet
 let g:user_emmet_install_global = 0
-
-"}}}

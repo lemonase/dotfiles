@@ -1,13 +1,6 @@
 if has("autocmd")
     "filetype functions
     "------------------
-    function FT_halftab()
-        setlocal expandtab
-        setlocal tabstop=2
-        setlocal softtabstop=2
-        setlocal shiftwidth=2
-    endfunction
-
     function FT_python()
         setlocal autoindent
         setlocal formatprg=yapf
@@ -15,6 +8,10 @@ if has("autocmd")
         iabbr true True
 
         xnoremap <leader>r <esc>:'<,'>:w !python3<CR>
+    endfunction
+
+    function FT_ruby()
+        setlocal tabstop=2 softtabstop=2 shiftwidth=2 expandtab
     endfunction
 
     function FT_go()
@@ -29,6 +26,10 @@ if has("autocmd")
 
     function FT_markdown()
         setlocal spell
+    endfunction
+
+    function FT_halftab()
+        setlocal tabstop=2 softtabstop=2 shiftwidth=2 expandtab
     endfunction
 
     "global autocmds
@@ -71,6 +72,7 @@ if has("autocmd")
     "--------------------------
     augroup language_group
         autocmd FileType python call FT_python()
+        autocmd FileType ruby,eruby call FT_ruby()
         autocmd FileType go call FT_go()
         autocmd FileType html call FT_html()
         autocmd FileType markdown call FT_markdown()

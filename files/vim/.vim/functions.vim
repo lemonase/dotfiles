@@ -1,5 +1,5 @@
 "toggle functions
-"----------------{{{
+"----------------
 function! ToggleColorColumn()
     if &cc == ''
         set cc=80
@@ -43,4 +43,3 @@ function! ToggleNetrw() "make netrw toggleable <https://vi.stackexchange.com/que
         silent Lexplore
     endif
 endfunction
-"}}}
