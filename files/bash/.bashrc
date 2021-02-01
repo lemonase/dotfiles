@@ -52,8 +52,6 @@ alias tmlsc="tmux lsc"
 alias tmks="tmux kill-session -t" # kill one session
 alias tmka="tmux kill-server" # aka killall
 
-alias s="systemctl"
-alias sud="sudo su"
 
 if [ "$(grep -Ei 'debian|buntu|mint' /etc/*release)" ]; then
   alias a="sudo apt"
@@ -62,10 +60,16 @@ if [ "$(grep -Ei 'debian|buntu|mint' /etc/*release)" ]; then
   alias alu="apt list --upgradable"
 fi
 
+alias sud="sudo su"
+alias s="systemctl"
+alias xo="xdg-open"
+alias open="xdg-open"
+
+alias v="$EDITOR"
 alias vi="$EDITOR"
+alias vmi="$EDITOR"
 alias imv="$EDITOR"
 alias ivm="$EDITOR"
-alias vmi="$EDITOR"
 
 alias venvac="source venv/bin/activate"
 
