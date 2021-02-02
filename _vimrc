@@ -129,45 +129,49 @@ endif
 call plug#begin(pluginDir)
     Plug 'junegunn/vim-plug'
 
-    "quality of life
-    Plug 'tpope/vim-surround'
+    " == quality of life ==
+    "normal mode keybinds
     Plug 'tpope/vim-commentary'
+    Plug 'tpope/vim-surround'
     Plug 'tpope/vim-unimpaired'
+    "command mode keybinds
     Plug 'tpope/vim-rsi'
     Plug 'tpope/vim-eunuch'
     Plug 'tpope/vim-repeat'
-    Plug 'editorconfig/editorconfig-vim'
-    "browser/url opener
-    Plug 'tyru/open-browser.vim'
+
+    " == external tools ==
     "git
     Plug 'tpope/vim-fugitive'
-    "visual
-    Plug 'flazz/vim-colorschemes'
-    "linting
-    Plug 'w0rp/ale'
+    Plug 'tpope/vim-rhubarb'
+    Plug 'tpope/vim-dispatch'
+    Plug 'airblade/vim-gitgutter'
+    "fzf
+    Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+    Plug 'junegunn/fzf.vim'
 
-    "javascript/css/html
-    Plug 'pangloss/vim-javascript'
-    Plug 'mattn/emmet-vim'
-    "gdscript
-    Plug 'calviken/vim-gdscript3'
+    " == language support ==
     "go
     Plug 'fatih/vim-go'
-    "md
-    Plug 'godlygeek/tabular'
+    "ruby
+    Plug 'vim-ruby/vim-ruby'
+    "html
+    Plug 'mattn/emmet-vim'
+    "markdown
     Plug 'plasticboy/vim-markdown'
+    Plug 'godlygeek/tabular'
     "toml
     Plug 'cespare/vim-toml'
+    "linting and lsp
+    Plug 'w0rp/ale'
+
+    " == misc ==
+    Plug 'flazz/vim-colorschemes'
+    Plug 'editorconfig/editorconfig-vim'
+    Plug 'tyru/open-browser.vim'
 call plug#end()
 
-"syntax/filetype settings
-"---------------
-syntax on
-filetype plugin indent on
-runtime macros/matchit.vim
-
-"plugin settings
-"---------------
+"post plugin settings
+"--------------------
 "netrw
 let g:netrw_banner = 0
 let g:netrw_winsize = 24
@@ -177,39 +181,47 @@ let g:netrw_alto = 0
 let g:netrw_usetab = 1
 let g:netrw_browsex_viewer = "xdg-open"
 let g:NetrwIsOpen = 0 "for toggle function
-
-"replace netrw gx command
 let g:netrw_nogx = 1
-nmap gx <Plug>(openbrowser-smart-search)
-vmap gx <Plug>(openbrowser-smart-search)
 
 "ale
 let g:ale_linters = {
-\   'javascript': ['prettier', 'eslint'],
+\   'python': ['flake8', 'pylint'],
+\   'javascript': ['eslint'],
+\   'ruby': ['rubocop'],
 \   'markdown': ['mdl', 'write-good']
 \}
 
 let g:ale_fixers = {
 \   '*': ['remove_trailing_lines', 'trim_whitespace'],
-\   'javascript': ['eslint'],
+\   'python': ['yapf', 'black'],
+\   'javascript': ['prettier', 'eslint'],
+\   'ruby': ['rubocop'],
+\   'css': ['prettier'],
+\   'scss': ['prettier'],
+\   'html': ['prettier'],
 \   'markdown': ['prettier']
 \}
 
 let g:ale_sign_error = '->'
 let g:ale_sign_warning = '--'
 let g:ale_lint_on_save = 1
-let g:ale_fix_on_save = 1
+let g:ale_fix_on_save_ignore = 1
+highlight clear SignColumn
 
 "vim-markdown
 let g:vim_markdown_folding_disabled = 1
-let g:vim_markdown_no_default_key_mappings = 1
 let g:vim_markdown_toc_autofit = 1
+let g:vim_markdown_conceal = 0
+let g:vim_markdown_frontmatter = 1
+
+"vim-emmet
+let g:user_emmet_install_global = 0
 
 " colorschemes
-" {{{
+" colorscheme adventurous
 " colorscheme 1989
 " colorscheme PaperColor
-colorscheme gruvbox
+" colorscheme gruvbox
 " colorscheme jellybeans
 " colorscheme molokai
 " colorscheme Benokai
@@ -220,7 +232,7 @@ colorscheme gruvbox
 " colorscheme wargrey
 " colorscheme Tomorrow-Night-Bright
 " colorscheme monokai-phoenix
-" }}}
+colorscheme solarized8_dark
 
 "leader key
 let mapleader=' '
@@ -313,40 +325,41 @@ function! ToggleNetrw() "make netrw toggleable <https://vi.stackexchange.com/que
     endif
 endfunction
 
-"autogroup filetype functions
-"------------------
-function BashSettings()
-    set syntax=sh
-endfunction
-
-function PythonSettings()
-    xnoremap <leader>r <esc>:'<,'>:w !python3<CR>
-endfunction
-
-function GoSettings()
-    set noexpandtab
-    let g:go_auto_type_info = 1
-    let g:go_imports_autosave = 1
-endfunction
-
-function HtmlSettings()
-    syntax sync fromstart
-endfunction
-
-"autogroup group functions
-"-------------------------
-function SpellSettings()
-    setlocal spell
-endfunction
-
-function HalftabSettings()
-    setlocal ts=2 sts=2 sw=2 expandtab
-endfunction
-
-"auto commands
-"-------------
 if has("autocmd")
-    "global
+    "filetype functions
+    "------------------
+    function FT_halftab()
+        setlocal expandtab
+        setlocal tabstop=2
+        setlocal softtabstop=2
+        setlocal shiftwidth=2
+    endfunction
+
+    function FT_python()
+        setlocal autoindent
+        setlocal formatprg=yapf
+        iabbr false False
+        iabbr true True
+
+        xnoremap <leader>r <esc>:'<,'>:w !python3<CR>
+    endfunction
+
+    function FT_go()
+        set noexpandtab
+        let g:go_auto_type_info = 1
+        let g:go_imports_autosave = 1
+    endfunction
+
+    function FT_html()
+        syntax sync fromstart
+    endfunction
+
+    function FT_markdown()
+        setlocal spell
+    endfunction
+
+    "global autocmds
+    "-----------------
     augroup global
         autocmd!
         "keep equal proportions when windows resized
@@ -356,28 +369,37 @@ if has("autocmd")
                     \ <= line("$") | exe "normal! g'\"" | endif
     augroup END
 
-
-    augroup filetype_bash
-        autocmd! BufNewFile,BufRead *.bash call BashSettings()
+    "general filetype autocmds
+    "-------------------------
+    augroup emmet_group
+        autocmd!
+        autocmd FileType html,css EmmetInstall
     augroup END
 
-    augroup filetype_python
-        autocmd! FileType python call PythonSettings()
+    augroup prettier_format_group
+        autocmd!
+        autocmd FileType javascript setlocal formatprg=prettier
+        autocmd FileType typescript setlocal formatprg=prettier\ --parser\ typescript
+        autocmd FileType vue setlocal formatprg=prettier\ --parser\ vue
+        autocmd FileType html setlocal formatprg=prettier\ --parser\ html
+        autocmd FileType css setlocal formatprg=prettier\ --parser\ css
+        autocmd FileType scss setlocal formatprg=prettier\ --parser\ scss
+        autocmd FileType markdown setlocal formatprg=prettier\ --parser\ markdown
+        autocmd FileType json setlocal formatprg=prettier\ --parser\ json
+        autocmd FileType yaml setlocal formatprg=prettier\ --parser\ yaml
     augroup END
 
-    augroup filetype_go
-        autocmd! FileType go call GoSettings()
+    augroup halftab_indent_group
+        autocmd!
+        autocmd FileType sh,bash,html,css,scss,javascript,json,toml,yaml call FT_halftab()
     augroup END
 
-    augroup filetype_html
-        autocmd! FileType html call HtmlSettings()
-    augroup END
-
-    augroup filetype_spell
-        autocmd! FileType markdown call SpellSettings()
-    augroup END
-
-    augroup filetype_halftab
-        autocmd! FileType html,javascript,css,json,yaml,sh call HalftabSettings()
+    "language specific autocmds
+    "--------------------------
+    augroup language_group
+        autocmd FileType python call FT_python()
+        autocmd FileType go call FT_go()
+        autocmd FileType html call FT_html()
+        autocmd FileType markdown call FT_markdown()
     augroup END
 endif
