@@ -36,15 +36,13 @@ set_vars() {
   full_post_url="$local_url/posts/$postname"
 }
 
-serve_and_open() {
-  killall hugo > /dev/null 2>&1
-  hugo serve -s "$blog_dir" -D  > /dev/null 2>&1 &
-  xdg-open "$full_post_url"
+hugo_serve() {
+  xdg-open "$full_post_url" &> /dev/null
+  hugo serve -s "$blog_dir"
 }
 
 edit_post() {
-  serve_and_open
-  $EDITOR "$full_post_dir" && kill %1
+  $EDITOR "$full_post_dir"
 }
 
 new_post() {
@@ -53,14 +51,14 @@ new_post() {
 }
 
 deploy_blog() {
-  if [ -z "$blog_remote_host" ]; then echo "Please set blog_remote_host variable"; exit 1; fi
-  if [ -z "$blog_remote_user" ]; then echo "Please set blog_remote_user variable"; exit 1; fi
-  if [ -z "$blog_remote_dir" ]; then echo "Please set blog_remote_dir variable (relative to \$HOME)"; exit 1; fi
+  if [ -z "$blog_remote_host" ]; then echo "Please set \$blog_remote_host variable"; exit 1; fi
+  if [ -z "$blog_remote_user" ]; then echo "Please set \$blog_remote_user variable"; exit 1; fi
+  if [ -z "$blog_remote_dir" ]; then echo "Please set \$blog_remote_dir variable (relative to \$HOME)"; exit 1; fi
 
   green="$(tput setaf 2)"
   reset="$(tput sgr0)"
 
-  printf "${green}%s\n${reset}" "Deploying..."
+  printf "%s\n%s\n" "${green}[Deploying]${reset}" "Running \"git pull && hugo\" at \"$blog_remote_user@$blog_remote_host:~/$blog_remote_dir\"..."
 
   ssh "$blog_remote_user@$blog_remote_host" "(cd \$HOME/$blog_remote_dir && git pull && hugo)"
 }
@@ -75,7 +73,6 @@ print_help() {
   printf "\t%s:\n\t\t%s\n\n" "list-posts (aliases: list,li,lp,ls,l)"                "list all posts in content directory"
   printf "\t%s:\n\t\t%s\n\n" "list-drafts (alises: listdraft,ld)"               "list all posts in content directory"
   printf "\t%s:\n\t\t%s\n\n" "server (alises: serve,s)"                         "serve blog from your blog directory"
-  printf "\t%s:\n\t\t%s\n\n" "kill (alises: killlall,ka,k)"                     "kill all hugo processes"
   printf "\t%s:\n\t\t%s\n\n" "deploy (aliases: dep,d)"                          "deploy to a remote server"
   printf "\n"
 }
@@ -109,11 +106,7 @@ while (($#)); do
       break
       ;;
     server|serve|s)
-      serve_and_open
-      break
-      ;;
-    kill|killall|ka|k)
-      killall "hugo"
+      hugo_serve
       break
       ;;
     deploy|dep|d)
