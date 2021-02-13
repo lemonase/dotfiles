@@ -151,16 +151,12 @@ tma() {
   fi
 }
 
-# checks if directory exists and path duplication
+# checks for path duplication
 appendpath () {
-  if [ -d "$1" ]; then
-    case ":$PATH:" in
-      *:"$1":*)
-        ;;
-      *)
-        PATH="${PATH:+$PATH:}$1"
-    esac
-  fi
+  [[ ":$PATH:" != *":$1:"* ]] && PATH="${PATH}:$1"
+}
+prependpath() {
+  [[ ":$PATH:" != *":$1:"* ]] && PATH="$1:${PATH}"
 }
 
 # easy backup
@@ -229,29 +225,29 @@ fi
 
 ## extra paths ##
 
-# ruby (rbenv)
-if command -v ruby > /dev/null && command -v gem > /dev/null; then
-  appendpath "$(ruby -r rubygems -e 'puts Gem.user_dir')/bin"
-  # rbenv shim
-  if [ -d "$HOME/.rbenv/bin" ]; then
-    appendpath "$HOME/.rbenv/bin"
-    [[ ":$PATH:" != *":$HOME/.rbenv/shims:"* ]] && eval "$(rbenv init -)"
-  fi
-fi
+# # ruby (rbenv)
+# if command -v ruby > /dev/null && command -v gem > /dev/null; then
+#   appendpath "$(ruby -r rubygems -e 'puts Gem.user_dir')/bin"
+#   # rbenv shim
+#   if [ -d "$HOME/.rbenv/bin" ]; then
+#     appendpath "$HOME/.rbenv/bin"
+#     [[ ":$PATH:" != *":$HOME/.rbenv/shims:"* ]] && eval "$(rbenv init -)"
+#   fi
+# fi
 
-# node (nvm)
-if [ -d "$HOME/.nvm" ]; then
-  export NVM_DIR="$HOME/.nvm"
-  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-  [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
-fi
+# # node (nvm)
+# if [ -d "$HOME/.nvm" ]; then
+#   export NVM_DIR="$HOME/.nvm"
+#   [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+#   [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+# fi
 
-# python (pyenv)
-if [ -d "$HOME/.pyenv" ]; then
-  export PYENV_ROOT="$HOME/.pyenv"
-  appendpath "$PYENV_ROOT/bin"
-  command -v pyenv > /dev/null && eval "$(pyenv init -)"
-fi
+# # python (pyenv)
+# if [ -d "$HOME/.pyenv" ]; then
+#   export PYENV_ROOT="$HOME/.pyenv"
+#   appendpath "$PYENV_ROOT/bin"
+#   command -v pyenv > /dev/null && eval "$(pyenv init -)"
+# fi
 
 # go
 if command -v go > /dev/null; then
@@ -268,8 +264,8 @@ if command -v cargo > /dev/null; then
 fi
 
 # local bins
-appendpath "$HOME/.local/bin"
-appendpath "$HOME/.local/scripts"
+[ -d "$HOME/.local/bin" ] && appendpath "$HOME/.local/bin"
+[ -d "$HOME/.local/scripts" ] && appendpath "$HOME/.local/scripts"
 
 ## extra tools ##
 
