@@ -105,4 +105,4 @@ let g:vim_markdown_conceal = 0
 let g:vim_markdown_frontmatter = 1
 
 "vim-emmet
-let g:user_emmet_install_global = 0
+let g:user_emmet_install_global = 1

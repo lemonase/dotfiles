@@ -229,15 +229,28 @@ fi
 
 ## extra paths ##
 
-# ruby
+# ruby (rbenv)
 if command -v ruby > /dev/null && command -v gem > /dev/null; then
   appendpath "$(ruby -r rubygems -e 'puts Gem.user_dir')/bin"
-
   # rbenv shim
   if [ -d "$HOME/.rbenv/bin" ]; then
     appendpath "$HOME/.rbenv/bin"
     [[ ":$PATH:" != *":$HOME/.rbenv/shims:"* ]] && eval "$(rbenv init -)"
   fi
+fi
+
+# node (nvm)
+if [ -d "$HOME/.nvm" ]; then
+  export NVM_DIR="$HOME/.nvm"
+  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+  [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+fi
+
+# python (pyenv)
+if [ -d "$HOME/.pyenv" ]; then
+  export PYENV_ROOT="$HOME/.pyenv"
+  appendpath "$PYENV_ROOT/bin"
+  command -v pyenv > /dev/null && eval "$(pyenv init -)"
 fi
 
 # go
