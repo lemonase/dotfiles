@@ -38,8 +38,11 @@ call plug#begin(pluginDir)
     "fzf
     Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
     Plug 'junegunn/fzf.vim'
+    "browser
+    Plug 'tyru/open-browser.vim'
+    Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 
-    " == language support ==
+    " == extra language support ==
     "go
     Plug 'fatih/vim-go'
     "ruby
@@ -57,7 +60,6 @@ call plug#begin(pluginDir)
     " == misc ==
     Plug 'flazz/vim-colorschemes'
     Plug 'editorconfig/editorconfig-vim'
-    Plug 'tyru/open-browser.vim'
 call plug#end()
 
 "post plugin settings
