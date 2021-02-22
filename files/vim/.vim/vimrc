@@ -8,8 +8,8 @@ source ~/.vim/functions.vim
 source ~/.vim/commands.vim
 source ~/.vim/keybinds.vim
 source ~/.vim/plugins.vim
-source ~/.vim/colorschemes.vim
 source ~/.vim/autocmds.vim
+source ~/.vim/colorschemes.vim
 
 if filereadable(expand("~/.config/vimrc"))
     source ~/.config/vimrc

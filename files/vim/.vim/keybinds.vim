@@ -64,7 +64,7 @@ nmap <leader>agd <Plug>(ale_go_to_definition)
 nmap <leader>agd <Plug>(ale_go_to_definition)
 
 "vim-emmet
-let g:user_emmet_leader_key = ','
+let g:user_emmet_leader_key = '<C-E>'
 
 "git-gutter
 nnoremap <leader>ggt :GitGutterToggle<CR>
