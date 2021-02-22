@@ -77,7 +77,7 @@ nnoremap <leader>gd :Gdiffsplit<CR>
 nnoremap <leader>gp :Gpush<CR>
 nnoremap <leader>ga :Git add %<CR>
 nnoremap <leader>ga. :Git add .<CR>
-nnoremap <leader>gcm :Gcommit<CR>
+nnoremap <leader>gcm :Git commit<CR>
 
 "fzf
 nnoremap <leader>gf :GitFiles<CR>
