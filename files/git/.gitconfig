@@ -10,7 +10,7 @@
     name = James Dixon
 [credential]
     username = lemonase
-    helper = store
+    helper = cache
 [color]
     ui = true
     status = auto
