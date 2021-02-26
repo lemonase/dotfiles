@@ -10,7 +10,7 @@
     name = James Dixon
 [credential]
     username = lemonase
-    helper = store --file ~/.secrets/git-credentials
+    helper = store
 [color]
     ui = true
     status = auto
