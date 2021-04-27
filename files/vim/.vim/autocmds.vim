@@ -1,3 +1,7 @@
+"============
+"Autocommands
+"============
+
 if has("autocmd")
     "global autocmds
     "-----------------

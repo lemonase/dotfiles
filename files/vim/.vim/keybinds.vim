@@ -1,8 +1,14 @@
+"========
+"Keybinds
+"========
+
 "leader key
 let mapleader=' '
 
-"normal mode keybinds
-"---------------
+"----------------
+"regular keybinds
+"----------------
+
 "paste and search
 nnoremap <silent><leader><space> :noh <BAR> :let @/ = ""<CR>
 nnoremap <leader>i :set invpaste<CR>
@@ -18,30 +24,23 @@ nnoremap <leader>dt :r !date<CR>
 
 "rc files
 nnoremap <leader>rc :vsplit $MYVIMRC<CR>
-nnoremap <leader>rcs :vsplit ~/.vim/settings.vim<CR>
-nnoremap <leader>rcf :vsplit ~/.vim/functions.vim<CR>
-nnoremap <leader>rcc :vsplit ~/.vim/commands.vim<CR>
-nnoremap <leader>rck :vsplit ~/.vim/keybinds.vim<CR>
-nnoremap <leader>rcp :vsplit ~/.vim/plugins.vim<CR>
-nnoremap <leader>rca :vsplit ~/.vim/autocmds.vim<CR>
-nnoremap <leader>rcft :vsplit $HOME/.vim/after/ftplugin/<CR>
-nnoremap <leader>rcl :vsplit ~/.config/vimrc<CR>
 nnoremap <leader>so :source $MYVIMRC<CR>
+nnoremap <leader>rcl :vsplit ~/.config/vimrc<CR>
+nnoremap <leader>rcft :vsplit $HOME/.vim/after/ftplugin/<CR>
 
 "windows
 nnoremap <leader>cl :close<CR>
 
 "formatting tools
 nnoremap =j :%!python -m json.tool<CR>
-"}}}
 
-"insert mode keybinds
-"--------------------
 "abbrevations
 inoreabbrev <expr> #!! "#!/usr/bin/env"
 
+"---------------
 "plugin keybinds
 "---------------
+
 "netrw
 nnoremap <silent><leader>e :call ToggleNetrw()<CR>
 

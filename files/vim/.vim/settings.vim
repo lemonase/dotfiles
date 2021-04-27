@@ -1,33 +1,16 @@
+"================
+"general settings
+"================
+
 "source system defaults
-"----------------------
 if filereadable(expand('$VIMRUNTIME/defaults.vim'))
     unlet! g:skip_defaults_vim
     source $VIMRUNTIME/defaults.vim
 endif
 
-"general settings
-"----------------
 "encoding/format
 set encoding=utf-8
 set fileformats=unix,dos,mac
-
-"file/buffer
-set autoread
-set autowrite
-set confirm
-
-"display
-set background=dark
-set number
-set wrap
-set foldmethod=marker
-set listchars=tab:→\ ,extends:›,precedes:‹,nbsp:·,space:·,trail:·,eol:¬
-" set list
-
-"drawing
-set lazyredraw
-set regexpengine=1
-set redrawtime=10000
 
 "tab/indent
 set tabstop=4
@@ -48,20 +31,43 @@ set hlsearch
 set ignorecase
 set smartcase
 
+"file/buffer
+set autoread
+set autowrite
+set confirm
+
 "cursor behaviour
 set virtualedit=block
 set backspace=indent,eol,start
 set scrolloff=2
 set sidescrolloff=4
 
+"window behaviour (ltr)
+set splitbelow
+set splitright
+
 "input/timeout
 set esckeys
 set timeoutlen=1000 "for mappings
 set ttimeoutlen=20 "for keycodes
 
-"window behaviour (ltr)
-set splitbelow
-set splitright
+"drawing
+set lazyredraw
+set regexpengine=1
+set redrawtime=10000
+
+"display
+set background=dark
+set number
+set wrap
+set foldmethod=marker
+set listchars=tab:→\ ,extends:›,precedes:‹,nbsp:·,space:·,trail:·,eol:¬
+" set list
+
+"syntax/filetype/matchit
+syntax on
+filetype plugin indent on
+runtime macros/matchit.vim
 
 "os/gui settings
 "---------------
@@ -86,12 +92,6 @@ if has("gui_running")
         augroup END
     endif
 endif
-
-"syntax/filetype/matchit
-"-----------------------
-syntax on
-filetype plugin indent on
-runtime macros/matchit.vim
 
 "file cleanup
 "------------

@@ -1,5 +1,7 @@
-"plugins (vim-plug)
-"------------------
+"==================
+"Plugins (vim-plug)
+"==================
+
 "vim-plug paths
 let plugDir = expand("$HOME/.vim/autoload/plug.vim")
 let pluginDir = expand("$HOME/.vim/plugged")

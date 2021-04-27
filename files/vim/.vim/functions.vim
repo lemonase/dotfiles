@@ -1,3 +1,7 @@
+"=========
+"Functions
+"=========
+
 "toggle functions
 "----------------
 function! ToggleColorColumn()
