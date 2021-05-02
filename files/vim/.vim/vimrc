@@ -185,6 +185,51 @@ nnoremap <leader>obs :OpenBrowserSearch
 nmap gx <Plug>(openbrowser-smart-search)
 vmap gx <Plug>(openbrowser-smart-search)
 
+"ale
+nnoremap <leader>at :ALEToggle<CR>
+nmap <leader>af <Plug>(ale_fix)
+nmap <leader>aK <Plug>(ale_hover)
+nmap <leader>an <Plug>(ale_next_wrap)
+nmap <leader>ap <Plug>(ale_previous_wrap)
+
+"lsp
+function! s:on_lsp_buffer_enabled() abort
+    setlocal omnifunc=lsp#complete
+    setlocal signcolumn=yes
+    if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
+    nmap <buffer> gd <plug>(lsp-definition)
+    nmap <buffer> gs <plug>(lsp-document-symbol-search)
+    nmap <buffer> gS <plug>(lsp-workspace-symbol-search)
+    nmap <buffer> gr <plug>(lsp-references)
+    nmap <buffer> gi <plug>(lsp-implementation)
+    nmap <buffer> gt <plug>(lsp-type-definition)
+    nmap <buffer> [g <plug>(lsp-previous-diagnostic)
+    nmap <buffer> ]g <plug>(lsp-next-diagnostic)
+    nmap <buffer> gp <plug>(lsp-previous-diagnostic)
+    nmap <buffer> gn <plug>(lsp-next-diagnostic)
+    nmap <buffer> K <plug>(lsp-hover)
+
+    nmap <buffer> <leader>pdf <plug>(lsp-peek-definition)
+    nmap <buffer> <leader>pdc <plug>(lsp-peek-declaration)
+    nmap <buffer> <leader>pdi <plug>(lsp-peek-implementation)
+    nmap <buffer> <leader>ca <plug>(lsp-code-action)
+    nmap <buffer> <leader>cl <plug>(lsp-code-lens)
+    nmap <buffer> <leader>rn <plug>(lsp-rename)
+    nmap <buffer> <leader>ls <plug>(lsp-status)
+    nmap <buffer> <leader>lt <plug>(lsp-stop-server)
+    nmap <buffer> <leader>di <plug>(lsp-document-diagnostics)
+    nmap <buffer> <leader>df <plug>(lsp-document-format)
+
+    inoremap <buffer> <expr><c-f> lsp#scroll(+4)
+    inoremap <buffer> <expr><c-d> lsp#scroll(-4)
+
+    " highlight lspReference ctermfg=red guifg=red ctermbg=green guibg=green
+
+    " refer to doc to add more commands
+    " https://github.com/prabirshrestha/vim-lsp#supported-commands
+endfunction
+
+
 "vim-emmet
 let g:user_emmet_leader_key = '<C-E>'
 
@@ -194,12 +239,12 @@ nnoremap <leader>ggt :GitGutterToggle<CR>
 "vim-fugitive
 nnoremap <leader>gw :Gwrite<CR>
 nnoremap <leader>gl :Glog<CR>
-nnoremap <leader>g :Git<CR>
+nnoremap <leader>gs :Git<CR>
 nnoremap <leader>gd :Gdiffsplit<CR>
 nnoremap <leader>gp :Gpush<CR>
 nnoremap <leader>ga :Git add %<CR>
 nnoremap <leader>ga. :Git add .<CR>
-nnoremap <leader>gcm :Git commit<CR>
+nnoremap <leader>gc :Git commit<CR>
 
 "fzf
 nnoremap <leader>gf :GitFiles<CR>
@@ -272,6 +317,7 @@ call plug#begin(pluginDir)
 
     " ==== general language support ====
     "linting and lsp
+    Plug 'dense-analysis/ale'
     Plug 'prabirshrestha/vim-lsp'
     Plug 'mattn/vim-lsp-settings'
 
@@ -293,46 +339,37 @@ let g:netrw_browsex_viewer = "xdg-open"
 let g:NetrwIsOpen = 0 "for toggle function
 let g:netrw_nogx = 1
 
+"ale
+let g:ale_linters = {
+\   'python': ['flake8', 'pylint'],
+\   'javascript': ['eslint'],
+\   'ruby': ['rubocop'],
+\   'markdown': ['mdl', 'write-good']
+\}
+
+let g:ale_fixers = {
+\   '*': ['remove_trailing_lines', 'trim_whitespace'],
+\   'python': ['yapf', 'black'],
+\   'javascript': ['prettier', 'eslint'],
+\   'ruby': ['rubocop'],
+\   'css': ['prettier'],
+\   'scss': ['prettier'],
+\   'html': ['prettier'],
+\   'markdown': ['prettier']
+\}
+
+let g:ale_sign_error = '->'
+let g:ale_sign_warning = '--'
+let g:ale_lint_on_save = 1
+let g:ale_fix_on_save_ignore = 1
+highlight clear SignColumn
+
 "vim-lsp
-function! s:on_lsp_buffer_enabled() abort
-    setlocal omnifunc=lsp#complete
-    setlocal signcolumn=yes
-    if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
-    nmap <buffer> gd <plug>(lsp-definition)
-    nmap <buffer> gs <plug>(lsp-document-symbol-search)
-    nmap <buffer> gS <plug>(lsp-workspace-symbol-search)
-    nmap <buffer> gr <plug>(lsp-references)
-    nmap <buffer> gi <plug>(lsp-implementation)
-    nmap <buffer> gt <plug>(lsp-type-definition)
-    nmap <buffer> [g <plug>(lsp-previous-diagnostic)
-    nmap <buffer> ]g <plug>(lsp-next-diagnostic)
-    nmap <buffer> gp <plug>(lsp-previous-diagnostic)
-    nmap <buffer> gn <plug>(lsp-next-diagnostic)
-    nmap <buffer> K <plug>(lsp-hover)
+let g:lsp_format_sync_timeout = 1000
+let g:lsp_diagnostics_enabled = 0
+let g:lsp_document_highlight_enabled = 0
 
-    nmap <buffer> <leader>pdf <plug>(lsp-peek-definition)
-    nmap <buffer> <leader>pdc <plug>(lsp-peek-declaration)
-    nmap <buffer> <leader>pdi <plug>(lsp-peek-implementation)
-    nmap <buffer> <leader>ca <plug>(lsp-code-action)
-    nmap <buffer> <leader>cl <plug>(lsp-code-lens)
-    nmap <buffer> <leader>r <plug>(lsp-rename)
-    nmap <buffer> <leader>s <plug>(lsp-status)
-    nmap <buffer> <leader>di <plug>(lsp-document-diagnostics)
-    nmap <buffer> <leader>df <plug>(lsp-document-format)
-
-    inoremap <buffer> <expr><c-f> lsp#scroll(+4)
-    inoremap <buffer> <expr><c-d> lsp#scroll(-4)
-
-    let g:lsp_format_sync_timeout = 1000
-    " let g:lsp_document_highlight_enabled = 0
-    " let g:lsp_diagnostics_enabled = 0
-    " highlight lspReference ctermfg=red guifg=red ctermbg=green guibg=green
-
-    " refer to doc to add more commands
-    " https://github.com/prabirshrestha/vim-lsp#supported-commands
-endfunction
-
-"lsp-settings configs
+"vim-lsp-settings specific configs
 " let g:lsp_settings = {
 " \   'pyls-all': {
 " \     'workspace_config': {
@@ -344,7 +381,6 @@ endfunction
 " \}
 
 " let g:lsp_settings_filetype_python = ['pyls-all', 'pyright-langserver', 'jedi-language-server']
-
 
 "vim-markdown
 let g:vim_markdown_folding_disabled = 1
@@ -452,7 +488,7 @@ if has("autocmd")
     endfunction
 
     function FT_markdown()
-        " setlocal spell
+        setlocal spell
     endfunction
 
     function FT_halftab()
@@ -513,7 +549,7 @@ endif
 " colorscheme 1989
 " colorscheme PaperColor
 " colorscheme gruvbox
-colorscheme jellybeans
+" colorscheme jellybeans
 " colorscheme molokai
 " colorscheme Benokai
 " colorscheme Monokai
