@@ -151,6 +151,13 @@ tma() {
   fi
 }
 
+# vim
+swp_vimrc(){
+  mv ~/.vim/vimrc ~/.vim/vimrc.swp
+  mv ~/.vim/vimrc.min ~/.vim/vimrc
+  mv ~/.vim/vimrc.swp ~/.vim/vimrc.min
+}
+
 # checks for path duplication
 appendpath () {
   [[ ":$PATH:" != *":$1:"* ]] && PATH="${PATH}:$1"
