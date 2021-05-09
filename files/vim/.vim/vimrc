@@ -314,6 +314,8 @@ call plug#begin(pluginDir)
     Plug 'godlygeek/tabular'
     "toml
     Plug 'cespare/vim-toml'
+    "sol
+    Plug 'tomlion/vim-solidity'
 
     " ==== general language support ====
     "linting and lsp
