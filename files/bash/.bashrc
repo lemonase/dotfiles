@@ -33,16 +33,13 @@ alias la="ls -Alsh ${LS_OPTS}"
 alias al="ls -A ${LS_OPTS}"
 alias sl="ls -lsSh ${LS_OPTS}"
 alias sal="ls -AlsSh ${LS_OPTS}"
-alias mkdir="mkdir -p"
 
 alias grep="grep ${GREP_OPTS}"
 alias fgrep="fgrep ${GREP_OPTS}"
 alias egrep="egrep ${GREP_OPTS}"
 
-alias tree="tree -C"
 alias treel="tree -C | less -R"
 alias lsmnt="mount | column -t"
-alias df="df -h"
 
 alias g="git"
 alias groot="cd $(git rev-parse --show-toplevel 2> /dev/null || echo -n ".")"
@@ -51,7 +48,6 @@ alias tmls="tmux ls"
 alias tmlsc="tmux lsc"
 alias tmks="tmux kill-session -t" # kill one session
 alias tmka="tmux kill-server" # aka killall
-
 
 if [ "$(grep -Ei 'debian|buntu|mint' /etc/*release)" ]; then
   alias a="sudo apt"
@@ -71,6 +67,8 @@ alias vmi="$EDITOR"
 alias imv="$EDITOR"
 alias ivm="$EDITOR"
 
+alias py="python3"
+alias ipy="ipython3"
 alias venvac="source venv/bin/activate"
 
 ## colors ##
