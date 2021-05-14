@@ -370,6 +370,7 @@ highlight clear SignColumn
 let g:lsp_format_sync_timeout = 1000
 let g:lsp_diagnostics_enabled = 0
 let g:lsp_document_highlight_enabled = 0
+let g:lsp_settings_enable_suggestions = 0
 
 "vim-lsp-settings specific configs
 " let g:lsp_settings = {
