@@ -247,8 +247,9 @@ nnoremap <leader>ga. :Git add .<CR>
 nnoremap <leader>gc :Git commit<CR>
 
 "fzf
-nnoremap <leader>gf :GitFiles<CR>
-nnoremap <leader>f :Files<CR>
+nnoremap <leader>f :GitFiles<CR>
+nnoremap <leader>F :Files<CR>
+nnoremap <leader>c :Commands<CR>
 nnoremap <leader>b :Buffers<CR>
 nnoremap <leader>h :Helptags<CR>
 nnoremap <leader>m :Maps<CR>
@@ -357,7 +358,9 @@ let g:ale_fixers = {
 \   'css': ['prettier'],
 \   'scss': ['prettier'],
 \   'html': ['prettier'],
-\   'markdown': ['prettier']
+\   'markdown': ['prettier'],
+\   'yaml': ['prettier'],
+\   'json': ['prettier']
 \}
 
 let g:ale_sign_error = 'W>'
