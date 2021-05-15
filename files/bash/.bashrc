@@ -71,6 +71,8 @@ alias py="python3"
 alias ipy="ipython3"
 alias venvac="source venv/bin/activate"
 
+alias firefox-temp='firefox --profile $(mktemp -d) &> /dev/null &'
+
 ## colors ##
 
 # color vars using tput or ANSI/VT100 Control sequences
