@@ -5,6 +5,16 @@ my dotfiles to their correct locations in my `$HOME` directory.
 
 ## Instructions
 
+### Installing stow
+
+```bash
+apt install stow # debian based distros
+dnf install stow # fedora based distros
+pacman -S stow # arch based distros
+```
+
+### Cloning this repo
+
 ```sh
 $ git clone https://github.com/lemonase/dotfiles.git
 $ cd dotfiles/files
@@ -29,3 +39,4 @@ $ stow --restow *
 ```
 
 If there are no errors, everything in that directory should be symlinked.
+Check by doing a quick `ls -al ~/`
