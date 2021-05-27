@@ -182,6 +182,11 @@ lg() {
   lazygit "$*";
 }
 
+# colors
+colordump(){
+  for i in $(seq 0 255); do printf "$(tput setaf $i)$i "; done
+}
+
 ## prompt stuff ##
 
 # git prompt function
@@ -229,6 +234,9 @@ if ! shopt -oq posix; then
     source /etc/bash_completion
   fi
 fi
+
+# Add tab completion for SSH hostnames based on ~/.ssh/config, ignoring wildcards
+[ -e "$HOME/.ssh/config" ] && complete -o "default" -o "nospace" -W "$(grep "^Host" ~/.ssh/config | grep -v "[?*]" | cut -d " " -f2- | tr ' ' '\n')" scp sftp ssh;
 
 ## extra paths ##
 
