@@ -4,6 +4,11 @@ case $- in
   *) return;;
 esac
 
+# start in tmux session if possible
+if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]] && [ -z "$TMUX" ]; then
+  exec tmux
+fi
+
 # history
 HISTSIZE= ;
 HISTFILESIZE=
@@ -26,6 +31,7 @@ GREP_OPTS="--color=auto"
 
 ## aliases ##
 
+# core utils
 alias l="ls ${LS_OPTS}"
 alias ls="ls ${LS_OPTS}"
 alias ll="ls -lsh ${LS_OPTS}"
@@ -41,40 +47,35 @@ alias egrep="egrep ${GREP_OPTS}"
 alias treel="tree -C | less -R"
 alias lsmnt="mount | column -t"
 
+# git - vim - tmux
 alias g="git"
 alias groot="cd $(git rev-parse --show-toplevel 2> /dev/null || echo -n ".")"
+
+alias v="$EDITOR"
+alias vi="$EDITOR"
 
 alias tmls="tmux ls"
 alias tmlsc="tmux lsc"
 alias tmks="tmux kill-session -t" # kill one session
 alias tmka="tmux kill-server" # aka killall
 
-if [ "$(grep -Ei 'debian|buntu|mint' /etc/*release)" ]; then
-  alias a="sudo apt"
-  alias aup="sudo apt update"
-  alias aupg="sudo apt upgrade -y"
-  alias alu="apt list --upgradable"
-fi
-
-alias sud="sudo su"
-alias s="systemctl"
-alias xo="xdg-open"
-alias open="xdg-open"
-
-alias v="$EDITOR"
-alias vi="$EDITOR"
-alias vmi="$EDITOR"
-alias imv="$EDITOR"
-alias ivm="$EDITOR"
-
+# python
 alias py="python3"
 alias ipy="ipython3"
 alias venvac="source venv/bin/activate"
 
+# gui things
+alias xo="xdg-open"
+alias open="xdg-open"
 alias firefox-temp='firefox --profile $(mktemp -d) &> /dev/null &'
 
-## colors ##
+# compression/archives
+alias untar="tar -xvf"
+alias mktar="tar -caf"
+alias tarls="tar -tvf"
+alias ungzip="gunzip"
 
+## colors ##
 # color vars using tput or ANSI/VT100 Control sequences
 # check if tput is available
 if [ -x "$(command -v tput)" ]; then
@@ -125,11 +126,27 @@ else # or fallback to ANSI esacpe codes
 fi
 
 ## functions ##
-
-# common commands improved
+# concat common commands
 mkcd() { mkdir -p -- "$1" && cd "$1"; }
 cdd() { [ -n "$1" ] && for i in $(seq 1 "$1"); do cd ..; done; }
+cdl() { cd "$1" && ls -l; }
+cdla() { cd "$1" && ls -la; }
 touchx() { touch "$@" && chmod +x "$@"; }
+
+# git
+lazygit() {
+  git commit -a -m "$*" && git push;
+}
+lg() {
+  lazygit "$*";
+}
+
+# vim
+swp_vimrc(){
+  mv ~/.vim/vimrc ~/.vim/vimrc.swp
+  mv ~/.vim/vimrc.min ~/.vim/vimrc
+  mv ~/.vim/vimrc.swp ~/.vim/vimrc.min
+}
 
 # tmux
 tm() {
@@ -151,14 +168,7 @@ tma() {
   fi
 }
 
-# vim
-swp_vimrc(){
-  mv ~/.vim/vimrc ~/.vim/vimrc.swp
-  mv ~/.vim/vimrc.min ~/.vim/vimrc
-  mv ~/.vim/vimrc.swp ~/.vim/vimrc.min
-}
-
-# checks for path duplication
+# path helpers
 appendpath () {
   [[ ":$PATH:" != *":$1:"* ]] && PATH="${PATH}:$1"
 }
@@ -166,25 +176,54 @@ prependpath() {
   [[ ":$PATH:" != *":$1:"* ]] && PATH="$1:${PATH}"
 }
 
-# easy backup
+# etc functions
+colordump(){
+  for i in $(seq 0 255); do printf "$(tput setaf $i)$i "; done
+}
+
+extract() {
+  if [ -z "$1" ]; then
+    # display usage if no parameters given
+    echo "Usage: extract <path/file_name>.<zip|rar|bz2|gz|tar|tbz2|tgz|Z|7z|xz|ex|tar.bz2|tar.gz|tar.xz>"
+    echo "       extract <path/file_name_1.ext> [path/file_name_2.ext] [path/file_name_3.ext]"
+    return 1
+  else
+    for n in "$@"; do
+      if [ -f "$n" ] ; then
+        case "${n%,}" in
+          *.tar.bz2|*.tar.gz|*.tar.xz|*.tbz2|*.tgz|*.txz|*.tar)
+            tar xvf "$n"       ;;
+          *.lzma)      unlzma ./"$n"      ;;
+          *.bz2)       bunzip2 ./"$n"     ;;
+          *.rar)       unrar x -ad ./"$n" ;;
+          *.gz)        gunzip ./"$n"      ;;
+          *.zip)       unzip ./"$n"       ;;
+          *.z)         uncompress ./"$n"  ;;
+          *.7z|*.arj|*.cab|*.chm|*.deb|*.dmg|*.iso|*.lzh|*.msi|*.rpm|*.udf|*.wim|*.xar)
+            7z x ./"$n"        ;;
+          *.xz)        unxz ./"$n"        ;;
+          *.exe)       cabextract ./"$n"  ;;
+          *)
+            echo "extract: '$n' - unknown archive method"
+            return 1
+            ;;
+        esac
+      else
+        echo "'$n' - file does not exist"
+        return 1
+      fi
+    done
+  fi
+}
+
 bkup() {
   if [ -f "$1" ]; then
     cp "${1}" "${1}.bkup.$(date +'%F.%R')";
   fi
 }
 
-# git
-lazygit() {
-  git commit -a -m "$*" && git push;
-}
-
-lg() {
-  lazygit "$*";
-}
-
-# colors
-colordump(){
-  for i in $(seq 0 255); do printf "$(tput setaf $i)$i "; done
+cheatsh() {
+  curl cheat.sh/"$1"
 }
 
 ## prompt stuff ##
