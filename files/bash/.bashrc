@@ -47,6 +47,8 @@ alias egrep="egrep ${GREP_OPTS}"
 alias treel="tree -C | less -R"
 alias lsmnt="mount | column -t"
 
+alias pathls='printf "%b\n" "${PATH//:/\\n}"'
+
 # git - vim - tmux
 alias g="git"
 alias groot="cd $(git rev-parse --show-toplevel 2> /dev/null || echo -n ".")"
@@ -222,8 +224,34 @@ bkup() {
   fi
 }
 
+datauri() {
+  local mimeType=""
+  if [ -f "$1" ]; then
+    mimeType=$(file -b --mime-type "$1")
+
+    if [[ $mimeType == text/* ]]; then
+      mimeType="$mimeType;charset=utf-8"
+    fi
+
+    printf "data:%s;base64,%s" \
+      "$mimeType" \
+      "$(openssl base64 -in "$1" | tr -d "\n")"
+        else
+          printf "%s is not a file.\n" "$1"
+  fi
+}
+
+grepless(){
+  grep -ir --color=always "$*" --exclude-dir=".git" --exclude-dir="node_modules" . | less -RX
+}
+
 cheatsh() {
   curl cheat.sh/"$1"
+}
+
+watip() {
+  curl ifconfig.co
+  # dig +short myip.opendns.com @resolver1.opendns.com
 }
 
 ## prompt stuff ##
