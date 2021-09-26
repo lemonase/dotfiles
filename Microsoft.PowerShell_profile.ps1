@@ -19,10 +19,7 @@ Set-PsFzfOption -PSReadlineChordProvider 'Ctrl+t' -PSReadlineChordReverseHistory
 #----------------------
 # Environment Varaibles
 #----------------------
-$S = "$env:USERPROFILE\src"
-$GOWD = "$env:USERPROFILE\go\src\github.com\lemonase"
-$GODOTWD = "$env:USERPROFILE\Google Drive\Game Dev"
-$EDITOR = "gvim"
+$EDITOR = "code"
 
 #--------
 # Aliases
@@ -35,8 +32,4 @@ New-Alias venvac ".\venv\Scripts\Activate.ps1"
 #----------
 # Functions
 #----------
-function wd { Set-Location $WD }
-function gowd { Set-Location $GOWD }
-function godotwd { Set-Location $GODOTWD }
-
 function ep { Start-Process "$EDITOR" "$PROFILE" }
