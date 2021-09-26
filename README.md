@@ -16,26 +16,26 @@ pacman -S stow # arch based distros
 ### Cloning this repo
 
 ```sh
-$ git clone https://github.com/lemonase/dotfiles.git
-$ cd dotfiles/files
+git clone https://github.com/lemonase/dotfiles.git
+cd dotfiles/files
 ```
 
 ### Installing
 
 ```sh
-$ stow --target="$HOME" *
+stow --target="$HOME" *
 ```
 
 ### Uninstalling
 
 ```sh
-$ stow --delete *
+stow --delete *
 ```
 
 ### Repair Links
 
 ```sh
-$ stow --restow *
+stow --restow *
 ```
 
 If there are no errors, everything in that directory should be symlinked.
