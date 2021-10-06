@@ -362,3 +362,5 @@ export FZF_DEFAULT_OPTS="--bind=ctrl-f:page-down,ctrl-b:page-up"
 
 [ -r "$HOME/.config/bashrc" ] && source "$HOME/.config/bashrc"
 [ -r "$HOME/.local/bashrc" ] && source "$HOME/.local/bashrc"
+
+# vim:ft=sh
