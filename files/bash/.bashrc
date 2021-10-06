@@ -245,6 +245,8 @@ grepless(){
   grep -ir --color=always "$*" --exclude-dir=".git" --exclude-dir="node_modules" . | less -RX
 }
 
+
+# curl shortcuts
 cheatsh() {
   curl cheat.sh/"$1"
 }
@@ -252,6 +254,11 @@ cheatsh() {
 watip() {
   curl ifconfig.co
   # dig +short myip.opendns.com @resolver1.opendns.com
+}
+
+ethgasprice() {
+  avg=$(curl -sSL https://ethgasstation.info/api/ethgasAPI.json? | jq .average)
+  echo "Average Price in GWEI: $((avg/10))"
 }
 
 ## prompt stuff ##
