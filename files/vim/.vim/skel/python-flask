@@ -1,9 +1,102 @@
-from flask import Flask
+from flask import Flask, url_for
+from markupsafe import escape
 
 app = Flask(__name__)
 
 
-@app.route('/')
-@app.route('/index')
+# using plain routes
+# https://flask.palletsprojects.com/en/2.0.x/quickstart/#variable-rules
+# -------------------------------------------------------------------------------
+@app.route("/")
 def index():
-    return "Hello, World!"
+    return "Index Page"
+
+
+@app.route("/hello")
+def hello():
+    return "Hello, World"
+
+
+# returning JSON (dictionary and objects)
+# -------------------------------------------------------------------------------
+# can be done with a python dictionary object
+@app.route("/me")
+def me_api():
+    return {
+        "username": "bob",
+        "theme": "black",
+        "image": "user_image.png",
+    }
+
+
+# or with `jsonify` function
+from flask import jsonify
+
+
+@app.route("/users")
+def users_api():
+    users = get_all_users()
+    return jsonify([user.to_json() for user in users])
+
+
+# using routes with variables
+# https://flask.palletsprojects.com/en/2.0.x/quickstart/#variable-rules
+# -------------------------------------------------------------------------------
+@app.route("/user/<username>")
+def show_user_profile(username):
+    # show the user profile for that user
+    return f"User {escape(username)}"
+
+
+@app.route("/post/<int:post_id>")
+def show_post(post_id):
+    # show the post with the given id, the id is an integer
+    return f"Post {post_id}"
+
+
+@app.route("/path/<path:subpath>")
+def show_subpath(subpath):
+    # show the subpath after /path/
+    return f"Subpath {escape(subpath)}"
+
+
+def using_url_for():
+    print(url_for("index"))
+
+
+# processing HTTP methods
+# https://flask.palletsprojects.com/en/2.0.x/quickstart/#http-methods
+# -------------------------------------------------------------------------------
+from flask import request
+
+
+def do_the_login():
+    pass
+
+
+def show_the_login_form():
+    pass
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        return do_the_login()
+    else:
+        return show_the_login_form()
+
+
+# basic file uploads
+# https://flask.palletsprojects.com/en/2.0.x/quickstart/#file-uploads
+# -------------------------------------------------------------------------------
+from flask import request
+
+
+@app.route("/upload", methods=["GET", "POST"])
+def upload_file():
+    if request.method == "POST":
+        f = request.files["the_file"]
+        f.save("/var/www/uploads/uploaded_file.txt")
+
+
+# vim:ft=python
