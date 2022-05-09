@@ -5,13 +5,6 @@ my dotfiles to their correct locations in my `$HOME` directory.
 
 ## Installing `stow`
 
-## Cloning this repo
-
-```bash
-git clone https://github.com/lemonase/dotfiles.git
-cd dotfiles/files
-```
-
 ### Ubuntu/Debian
 
 ```bash
@@ -35,6 +28,15 @@ pacman -S stow
 ```bash
 brew install stow
 ```
+
+## Cloning this repo
+
+```bash
+git clone https://github.com/lemonase/dotfiles.git
+cd dotfiles/files
+```
+
+## Using `stow`
 
 ### Installing symlinks
 
