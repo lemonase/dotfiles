@@ -3,41 +3,69 @@
 I am using [GNU Stow](https://www.gnu.org/software/stow/) to symlink
 my dotfiles to their correct locations in my `$HOME` directory.
 
-## Instructions
+## Installing `stow`
 
-### Installing stow
+### Ubuntu/Debian
 
 ```bash
-apt install stow # debian based distros
-dnf install stow # fedora based distros
-pacman -S stow # arch based distros
-brew install stow # macos
+apt install stow
 ```
 
-### Cloning this repo
+### Fedora/RHEL
 
-```sh
+```bash
+dnf install stow
+```
+
+### Arch
+
+```bash
+pacman -S stow
+```
+
+### MacOS
+
+```bash
+brew install stow
+```
+
+## Cloning this repo
+
+```bash
 git clone https://github.com/lemonase/dotfiles.git
 cd dotfiles/files
 ```
 
-### Installing
+### Installing symlinks
 
-```sh
+```bash
 stow --target="$HOME" *
 ```
 
-### Uninstalling
+### Uninstalling symlinks
 
-```sh
+```bash
 stow --delete *
 ```
 
-### Repair Links
+### Repairing symlinks
 
-```sh
+```bash
 stow --restow *
 ```
 
 If there are no errors, everything in that directory should be symlinked.
 Check by doing a quick `ls -al ~/`
+
+## Troubleshooting
+
+### Error: File conflicts
+
+```
+WARNING! stowing git would cause conflicts:
+  * existing target is neither a link nor a directory: .gitconfig
+```
+
+### Solution
+
+Delete or move file in question
