@@ -11,6 +11,7 @@ my dotfiles to their correct locations in my `$HOME` directory.
 apt install stow # debian based distros
 dnf install stow # fedora based distros
 pacman -S stow # arch based distros
+brew install stow # macos
 ```
 
 ### Cloning this repo
