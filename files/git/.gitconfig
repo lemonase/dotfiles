@@ -1,42 +1,43 @@
-#Have git remember credentials
-#  git config --global credential.helper (store|cache|libsecret)
-#
-#Setting up a new repo *make first commit*
+# Have git remember credentials
+#  git config --global credential.helper (store|cache|libsecret|git-credential-manager-core)
+
+# Setting up a new repo *make first commit*
 #  git remote add origin <url/path to git project>
 #  git push -u origin master
 
 [user]
-    email = notjamesdixon@gmail.com
-    name = James Dixon
+	email = notjamesdixon@gmail.com
+	name = James Dixon
 [credential]
-    username = lemonase
-    helper = store
+	username = lemonase
+	helper = store
+	helper = /usr/local/share/gcm-core/git-credential-manager-core
 [color]
-    ui = true
-    status = auto
-    branch = auto
+	ui = true
+	status = auto
+	branch = auto
 [diff]
-    tool = vimdiff
+	tool = vimdiff
 [difftool]
-    prompt = false
+	prompt = false
 [pull]
-    ff = only
+	ff = only
 [alias]
-    a = add
-    aa = add --all
-    ai = add -i
-    s = status
-    st = status
-    c = commit
-    ca = commit -a
-    cm = commit -m
-    cam = commit -am
-    br = branch
-    co = checkout
-    d = diff
-    df = diff
-    dt = difftool
-    lg = log
-    pl = log --all --decorate --oneline --graph
-    gr = log --all --decorate --oneline --graph
-    graph = log --all --decorate --oneline --graph
+	a = add
+	aa = add --all
+	ai = add -i
+	s = status
+	st = status
+	c = commit
+	ca = commit -a
+	cm = commit -m
+	cam = commit -am
+	br = branch
+	co = checkout
+	d = diff
+	df = diff
+	dt = difftool
+	lg = log
+	pl = log --all --decorate --oneline --graph
+	gr = log --all --decorate --oneline --graph
+	graph = log --all --decorate --oneline --graph
