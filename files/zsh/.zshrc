@@ -13,7 +13,7 @@ GREP_OPTS="--color=auto"
 EDITOR=vim
 VISUAL=vim
 PAGER=less
-PROMPT='%n@%m %~ %# '
+# PROMPT='%n@%m %~ %# '
 
 ## Shell Options ##
 
@@ -82,3 +82,8 @@ alias untar="tar -xvf"
 alias mktar="tar -caf"
 alias tarls="tar -tvf"
 alias ungzip="gunzip"
+
+# ruby
+if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
+
+PATH+=":/Users/james/Library/Python/3.8/bin"
