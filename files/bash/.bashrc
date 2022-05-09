@@ -24,10 +24,17 @@ shopt -s cmdhist histappend
 export EDITOR="/usr/bin/vim"
 export VISUAL="/usr/bin/vim"
 export PAGER="less"
+export FZF_DEFAULT_OPTS="--bind=ctrl-f:page-down,ctrl-b:page-up"
 
 # command options
-LS_OPTS="-F --color=auto"
-GREP_OPTS="--color=auto"
+
+ls --version &>/dev/null
+if [ $? -eq 0 ]; then
+  LS_OPTS="--color=auto --group-directories-first -F"
+else
+  LS_OPTS="-GF"
+  export CLICOLOR=1
+fi
 
 ## aliases ##
 
@@ -68,7 +75,6 @@ alias venvac="source venv/bin/activate"
 
 # gui things
 alias xo="xdg-open"
-alias open="xdg-open"
 alias firefox-temp='firefox --profile $(mktemp -d) &> /dev/null &'
 
 # compression/archives
@@ -286,7 +292,7 @@ parse_git() {
 }
 
 # *plain prompts*
-# PS1="\W \\$ "
+PS1="\W \\$ "
 # PS1="[\u@\h:\W]\\$ "
 # PS1="\u@\h:\W\\$ "
 
@@ -312,11 +318,42 @@ fi
 # Add tab completion for SSH hostnames based on ~/.ssh/config, ignoring wildcards
 [ -e "$HOME/.ssh/config" ] && complete -o "default" -o "nospace" -W "$(grep "^Host" ~/.ssh/config | grep -v "[?*]" | cut -d " " -f2- | tr ' ' '\n')" scp sftp ssh;
 
-## extra paths ##
+## paths ##
 
-# local bins
-[ -d "$HOME/.local/bin" ] && appendpath "$HOME/.local/bin"
-[ -d "$HOME/.local/scripts" ] && appendpath "$HOME/.local/scripts"
+## package managers ##
+
+# homebrew
+[ -d "/opt/homebrew/bin" ] && appendpath "/opt/homebrew/bin"
+
+# rbenv (ruby)
+src_rbenv(){
+  if command -v ruby > /dev/null && command -v gem > /dev/null; then
+    appendpath "$(ruby -r rubygems -e 'puts Gem.user_dir')/bin"
+    # rbenv shim
+    if [ -d "$HOME/.rbenv/bin" ]; then
+      appendpath "$HOME/.rbenv/bin"
+      [[ ":$PATH:" != *":$HOME/.rbenv/shims:"* ]] && eval "$(rbenv init -)"
+    fi
+  fi
+}
+
+# nvm (node)
+src_nvm(){
+  if [ -d "$HOME/.nvm" ]; then
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+  fi
+}
+
+# pyenv (python3)
+src_pyenv() {
+  if [ -d "$HOME/.pyenv" ]; then
+    export PYENV_ROOT="$HOME/.pyenv"
+    appendpath "$PYENV_ROOT/bin"
+    command -v pyenv > /dev/null && eval "$(pyenv init -)"
+  fi
+}
 
 # go
 if command -v go > /dev/null; then
@@ -332,40 +369,13 @@ if command -v cargo > /dev/null; then
   appendpath "$HOME/.cargo/bin"
 fi
 
-## version managers ##
 
-src_rbenv(){
-  if command -v ruby > /dev/null && command -v gem > /dev/null; then
-    appendpath "$(ruby -r rubygems -e 'puts Gem.user_dir')/bin"
-    # rbenv shim
-    if [ -d "$HOME/.rbenv/bin" ]; then
-      appendpath "$HOME/.rbenv/bin"
-      [[ ":$PATH:" != *":$HOME/.rbenv/shims:"* ]] && eval "$(rbenv init -)"
-    fi
-  fi
-}
+# local bins
 
-src_nvm(){
-  if [ -d "$HOME/.nvm" ]; then
-    export NVM_DIR="$HOME/.nvm"
-    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
-  fi
-}
+[ -d "$HOME/.local/bin" ] && appendpath "$HOME/.local/bin"
+[ -d "$HOME/.local/scripts" ] && appendpath "$HOME/.local/scripts"
 
-src_pyenv() {
-  if [ -d "$HOME/.pyenv" ]; then
-    export PYENV_ROOT="$HOME/.pyenv"
-    appendpath "$PYENV_ROOT/bin"
-    command -v pyenv > /dev/null && eval "$(pyenv init -)"
-  fi
-}
-
-## extra tools ##
-
-export FZF_DEFAULT_OPTS="--bind=ctrl-f:page-down,ctrl-b:page-up"
-
-# local rc ##
+# local rc
 
 [ -r "$HOME/.config/bashrc" ] && source "$HOME/.config/bashrc"
 [ -r "$HOME/.local/bashrc" ] && source "$HOME/.local/bashrc"
