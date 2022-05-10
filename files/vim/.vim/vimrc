@@ -231,7 +231,7 @@ endfunction
 
 
 "vim-emmet
-let g:user_emmet_leader_key = '<C-E>'
+let g:user_emmet_leader_key = '<C-I>'
 
 "git-gutter
 nnoremap <leader>ggt :GitGutterToggle<CR>
@@ -303,7 +303,7 @@ call plug#begin(pluginDir)
     Plug 'tyru/open-browser.vim'
     Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
     "REPLs
-    Plug 'jpalardy/vim-slime'
+    " Plug 'jpalardy/vim-slime'
 
     " ==== specific language support ====
     "go
