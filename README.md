@@ -32,8 +32,7 @@ brew install stow
 ## Cloning this repo
 
 ```bash
-git clone https://github.com/lemonase/dotfiles.git
-cd dotfiles/files
+git clone https://github.com/lemonase/dotfiles.git && cd dotfiles/config
 ```
 
 ## Using `stow`
@@ -41,19 +40,19 @@ cd dotfiles/files
 ### Installing symlinks
 
 ```bash
-stow --target="$HOME" *
+stow -t "$HOME" -S *
 ```
 
 ### Uninstalling symlinks
 
 ```bash
-stow --delete *
+stow -t "$HOME" -D *
 ```
 
 ### Repairing symlinks
 
 ```bash
-stow --restow *
+stow -t "$HOME" -R *
 ```
 
 If there are no errors, everything in that directory should be symlinked.
