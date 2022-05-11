@@ -37,22 +37,28 @@ git clone https://github.com/lemonase/dotfiles.git && cd dotfiles/config
 
 ## Using `stow`
 
-### Installing symlinks
+### Installing all symlinks
 
 ```bash
 stow -t "$HOME" -S *
 ```
 
-### Uninstalling symlinks
+### Uninstalling all symlinks
 
 ```bash
 stow -t "$HOME" -D *
 ```
 
-### Repairing symlinks
+### Repairing all symlinks
 
 ```bash
 stow -t "$HOME" -R *
+```
+
+### Installing specific dotfiles
+
+```bash
+stow -t "$HOME" -S git
 ```
 
 If there are no errors, everything in that directory should be symlinked.
