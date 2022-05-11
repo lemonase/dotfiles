@@ -320,10 +320,7 @@ fi
 
 ## paths ##
 
-## package managers ##
-
-# homebrew
-[ -d "/opt/homebrew/bin" ] && appendpath "/opt/homebrew/bin"
+## language version managers ##
 
 # rbenv (ruby)
 src_rbenv(){
@@ -368,6 +365,15 @@ fi
 if command -v cargo > /dev/null; then
   appendpath "$HOME/.cargo/bin"
 fi
+
+
+## macOS package managers ##
+
+# homebrew
+[ -d "/opt/homebrew/bin" ] && appendpath "/opt/homebrew/bin"
+
+# python3 (macOS)
+[ -d "$HOME/Library/Python/3.8/bin" ] && appendpath "$HOME/Library/Python/3.8/bin"
 
 
 # local bins
