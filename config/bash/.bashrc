@@ -16,12 +16,12 @@ HISTCONTROL="ignoreboth:erasedups"
 HISTTIMEFORMAT="%F %T  "
 
 # shell options
-if ! shopt -q checkhash 2> /dev/null; then shopt -s checkhash fi
-if ! shopt -q checkwinsize 2> /dev/null; then shopt -s checkwinsize; fi
-if ! shopt -q cmdhist 2> /dev/null; then shopt -s cmdhist; fi
-if ! shopt -q histappend 2> /dev/null; then shopt -s histappend; fi
-if ! shopt -q extglob 2> /dev/null; then shopt -s extglob; fi
-if ! shopt -q globstar 2> /dev/null; then shopt -s globstar; fi
+# if ! shopt -q checkhash 2> /dev/null; then shopt -s checkhash fi
+# if ! shopt -q checkwinsize 2> /dev/null; then shopt -s checkwinsize; fi
+# if ! shopt -q cmdhist 2> /dev/null; then shopt -s cmdhist; fi
+# if ! shopt -q histappend 2> /dev/null; then shopt -s histappend; fi
+# if ! shopt -q extglob 2> /dev/null; then shopt -s extglob; fi
+# if ! shopt -q globstar 2> /dev/null; then shopt -s globstar; fi
 
 # command variables
 export EDITOR="/usr/bin/vim"
