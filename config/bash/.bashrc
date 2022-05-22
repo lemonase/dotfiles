@@ -4,34 +4,16 @@ case $- in
   *) return;;
 esac
 
-# start in tmux session if possible
-# if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]] && [ -z "$TMUX" ]; then
-#   exec tmux
-# fi
+##* environment variables *##
 
-# history
-HISTSIZE= ;
-HISTFILESIZE=
-HISTCONTROL="ignoreboth:erasedups"
-HISTTIMEFORMAT="%F %T  "
-
-# shell options
-# if ! shopt -q checkhash 2> /dev/null; then shopt -s checkhash fi
-# if ! shopt -q checkwinsize 2> /dev/null; then shopt -s checkwinsize; fi
-# if ! shopt -q cmdhist 2> /dev/null; then shopt -s cmdhist; fi
-# if ! shopt -q histappend 2> /dev/null; then shopt -s histappend; fi
-# if ! shopt -q extglob 2> /dev/null; then shopt -s extglob; fi
-# if ! shopt -q globstar 2> /dev/null; then shopt -s globstar; fi
-
-# command variables
+# environment variables for commands
 export EDITOR="/usr/bin/vim"
 export VISUAL="/usr/bin/vim"
 export PAGER="less"
 export FZF_DEFAULT_OPTS="--bind=ctrl-f:page-down,ctrl-b:page-up"
 
-# command options
-
-ls --version &>/dev/null
+# ls options
+ls --version &> /dev/null
 if [ $? -eq 0 ]; then
   LS_OPTS="--color=auto --group-directories-first -F"
 else
@@ -39,9 +21,15 @@ else
   export CLICOLOR=1
 fi
 
-## aliases ##
+# bash history options
+HISTSIZE= ;
+HISTFILESIZE=
+HISTCONTROL="ignoreboth:erasedups"
+HISTTIMEFORMAT="%F %T  "
 
-# core utils
+##* aliases *##
+
+# core utils (ls, grep, tree)
 alias l="ls ${LS_OPTS}"
 alias ls="ls ${LS_OPTS}"
 alias ll="ls -lsh ${LS_OPTS}"
@@ -59,7 +47,7 @@ alias lsmnt="mount | column -t"
 
 alias pathls='printf "%b\n" "${PATH//:/\\n}"'
 
-# git - vim - tmux
+# (git - vim - tmux)
 alias g="git"
 alias groot="cd $(git rev-parse --show-toplevel 2> /dev/null || echo -n ".")"
 
@@ -72,11 +60,15 @@ alias tmks="tmux kill-session -t" # kill one session
 alias tmka="tmux kill-server" # aka killall
 
 # python
-alias py="python3"
-alias ipy="ipython3"
+# python3 is python unless python is python
+if ! command -v python &> /dev/null && command -v python3 &> /dev/null;  then
+  alias python="python3"
+  alias py="python3"
+  alias ipy="ipython3"
+fi
 alias venvac="source venv/bin/activate"
 
-# gui things
+# linux gui things
 alias xo="xdg-open"
 alias firefox-temp='firefox --profile $(mktemp -d) &> /dev/null &'
 
@@ -86,7 +78,7 @@ alias mktar="tar -caf"
 alias tarls="tar -tvf"
 alias ungzip="gunzip"
 
-## colors ##
+##* color variables *##
 # color vars using tput or ANSI/VT100 Control sequences
 # check if tput is available
 if [ -x "$(command -v tput)" ]; then
@@ -136,12 +128,10 @@ else # or fallback to ANSI esacpe codes
   bold="\[\033[1m\]"; unesc_bold="\033[1m"
 fi
 
-## functions ##
+##* functions *##
 # concat common commands
 mkcd() { mkdir -p -- "$1" && cd "$1"; }
 cdd() { [ -n "$1" ] && for i in $(seq 1 "$1"); do cd ..; done; }
-cdl() { cd "$1" && ls -l; }
-cdla() { cd "$1" && ls -la; }
 touchx() { touch "$@" && chmod +x "$@"; }
 
 # git
@@ -167,7 +157,6 @@ tm() {
     tmux new-session
   fi
 }
-
 tma() {
   if [ "$#" -gt 0 ]; then
     tmux attach-session -d -t "$1"
@@ -187,11 +176,12 @@ prependpath() {
   [[ ":$PATH:" != *":$1:"* ]] && PATH="$1:${PATH}"
 }
 
-# etc functions
+# misc functions
 colordump(){
   for i in $(seq 0 255); do printf "$(tput setaf $i)$i "; done
 }
 
+# "smart" extract function
 extract() {
   if [ -z "$1" ]; then
     # display usage if no parameters given
@@ -250,27 +240,21 @@ datauri() {
   fi
 }
 
+# grep with color into less
 grepless(){
   grep -ir --color=always "$*" --exclude-dir=".git" --exclude-dir="node_modules" . | less -RX
 }
-
 
 # curl shortcuts
 cheatsh() {
   curl cheat.sh/"$1"
 }
-
 watip() {
   curl ifconfig.co
   # dig +short myip.opendns.com @resolver1.opendns.com
 }
 
-ethgasprice() {
-  avg=$(curl -sSL https://ethgasstation.info/api/ethgasAPI.json? | jq .average)
-  echo "Average Price in GWEI: $((avg/10))"
-}
-
-## prompt stuff ##
+##* prompt stuff *##
 
 # git prompt function
 parse_git() {
@@ -298,11 +282,9 @@ parse_git() {
 PS1="\W \\$ "
 # PS1="[\u@\h:\W]\\$ "
 # PS1="\u@\h:\W\\$ "
-
 # *color prompts*
 # PS1="${bold}${blue}\W ${yellow}\\$ ${reset}"
 # PS1="${bold}${purple}\u${yellow}@${cyan}\h${white}:${blue}\W ${yellow}\\$ ${reset}"
-
 # *git color prompts*
 # PS1="${bold}${blue}\W\$(parse_git)${green} \\$ ${reset}"
 # PS1="${bold}${white}\t ${blue}\W\$(parse_git) ${cyan}\\$ ${reset}"
@@ -322,9 +304,7 @@ fi
 [ -e "$HOME/.ssh/config" ] && complete -o "default" -o "nospace" -W "$(grep "^Host" ~/.ssh/config | grep -v "[?*]" | cut -d " " -f2- | tr ' ' '\n')" scp sftp ssh;
 
 ## paths ##
-
-## language version managers ##
-
+# language version managers #
 # rbenv (ruby)
 src_rbenv(){
   if command -v ruby > /dev/null && command -v gem > /dev/null; then
@@ -369,24 +349,30 @@ if command -v cargo > /dev/null; then
   appendpath "$HOME/.cargo/bin"
 fi
 
-
 ## macOS package managers ##
-
 # homebrew
 [ -d "/opt/homebrew/bin" ] && appendpath "/opt/homebrew/bin"
-
 # python3 (macOS)
 [ -d "$HOME/Library/Python/3.8/bin" ] && appendpath "$HOME/Library/Python/3.8/bin"
 
-
 # local bins
-
 [ -d "$HOME/.local/bin" ] && appendpath "$HOME/.local/bin"
 [ -d "$HOME/.local/scripts" ] && appendpath "$HOME/.local/scripts"
-
 # local rc
-
 [ -r "$HOME/.config/bashrc" ] && source "$HOME/.config/bashrc"
 [ -r "$HOME/.local/bashrc" ] && source "$HOME/.local/bashrc"
+
+# start in tmux session if possible
+# if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]] && [ -z "$TMUX" ]; then
+#   exec tmux
+# fi
+
+# shell options
+# if ! shopt -q checkhash 2> /dev/null; then shopt -s checkhash fi
+# if ! shopt -q checkwinsize 2> /dev/null; then shopt -s checkwinsize; fi
+# if ! shopt -q cmdhist 2> /dev/null; then shopt -s cmdhist; fi
+# if ! shopt -q histappend 2> /dev/null; then shopt -s histappend; fi
+# if ! shopt -q extglob 2> /dev/null; then shopt -s extglob; fi
+# if ! shopt -q globstar 2> /dev/null; then shopt -s globstar; fi
 
 # vim:ft=sh
