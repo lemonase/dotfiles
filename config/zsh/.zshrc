@@ -1,6 +1,6 @@
-## Variables ##
-#
-# Set some variables
+# * * * * * * * * *
+## Env Variables  *
+# * * * * * * * * *
 # ls and grep options
 ls --version &>/dev/null
 if [ $? -eq 0 ]; then
@@ -13,36 +13,34 @@ GREP_OPTS="--color=auto"
 EDITOR=vim
 VISUAL=vim
 PAGER=less
+# (Default prompt - git prompt set later)
 # PROMPT='%n@%m %~ %# '
 
-## Shell Options ##
-
+# * * * * * * * * *
+## Shell Options  *
+# * * * * * * * * *
 # History
 setopt append_history
 setopt extended_history
 setopt inc_append_history
 setopt share_history
-
 # Less Annoying
 setopt interactive_comments
 unsetopt correct_all
 export BLOCK_SIZE="'1"
-
 # Tab Completion
-autoload -Uz compinit && compinit
 setopt auto_menu
-
+autoload -Uz compinit && compinit
 # Prompt
 setopt prompt_subst
-
 # Deduplicate path
 typeset -U path
-
 # Set 'emacs' keybinds
 bindkey -e
 
-## Aliases ##
-
+# * * * * * *
+## Aliases  *
+# * * * * * *
 # core utils
 alias l="ls ${LS_OPTS}"
 alias ls="ls ${LS_OPTS}"
@@ -51,23 +49,18 @@ alias la="ls -alsh ${LS_OPTS}"
 alias al="ls -A ${LS_OPTS}"
 alias sl="ls -lsSh ${LS_OPTS}"
 alias sal="ls -AlsSh ${LS_OPTS}"
-
 alias grep="grep ${GREP_OPTS}"
 alias fgrep="fgrep ${GREP_OPTS}"
 alias egrep="egrep ${GREP_OPTS}"
-
 alias treel="tree -C | less -R"
 alias lsmnt="mount | column -t"
-
 alias pathls='printf "%b\n" "${PATH//:/\\n}"'
 
 # git - vim - tmux
 alias g="git"
 alias groot="cd $(git rev-parse --show-toplevel 2> /dev/null || echo -n ".")"
-
 alias v="$EDITOR"
 alias vi="$EDITOR"
-
 alias tmls="tmux ls"
 alias tmlsc="tmux lsc"
 alias tmks="tmux kill-session -t" # kill one session
@@ -78,7 +71,6 @@ alias py="python3"
 alias ipy="ipython3"
 alias venvac="source venv/bin/activate"
 
-alias firefox-temp='firefox --profile $(mktemp -d) &> /dev/null &'
 
 # compression/archives
 alias untar="tar -xvf"
@@ -86,13 +78,12 @@ alias mktar="tar -caf"
 alias tarls="tar -tvf"
 alias ungzip="gunzip"
 
-# ruby
-if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
+# misc
+alias firefox-temp='firefox --profile $(mktemp -d) &> /dev/null &'
 
-PATH+=":/Users/james/Library/Python/3.8/bin"
-PATH="/opt/homebrew/opt/sqlite/bin:$PATH"
-
-# functions
+# * * * * * *
+# Functions *
+# * * * * * *
 # concat common commands
 mkcd() { mkdir -p -- "$1" && cd "$1"; }
 cdd() { [ -n "$1" ] && for i in $(seq 1 "$1"); do cd ..; done; }
@@ -130,14 +121,6 @@ tma() {
   else
     tmux attach
   fi
-}
-
-# path helpers
-appendpath () {
-  [[ ":$PATH:" != *":$1:"* ]] && PATH="${PATH}:$1"
-}
-prependpath() {
-  [[ ":$PATH:" != *":$1:"* ]] && PATH="$1:${PATH}"
 }
 
 # misc functions
@@ -218,7 +201,9 @@ watip() {
   # dig +short myip.opendns.com @resolver1.opendns.com
 }
 
-# PROMPT/PS1
+# * * * * * * * * * * * *
+# PROMPT/PS1 Functions  *
+# * * * * * * * * * * * *
 git_prompt() {
   BRANCH=$(git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/*\(.*\)/\1/')
   if [ ! -z $BRANCH ]; then
@@ -230,4 +215,76 @@ git_prompt() {
   fi
 }
 PROMPT='%F{blue}%~$(git_prompt) %F{244}%# %F{reset}'
+
+# * * * * * * * * * * * * * * * * * * *
+# Language Specific Version Managers  *
+# * * * * * * * * * * * * * * * * * * *
+# rbenv (ruby)
+src_rbenv(){
+  if command -v ruby > /dev/null && command -v gem > /dev/null; then
+    PATH+=":$(ruby -r rubygems -e 'puts Gem.user_dir')/bin"
+    # rbenv shim
+    if [ -d "$HOME/.rbenv/bin" ]; then
+      PATH+=":$HOME/.rbenv/bin"
+      [[ ":$PATH:" != *":$HOME/.rbenv/shims:"* ]] && eval "$(rbenv init -)"
+    fi
+  fi
+}
+
+# nvm (node)
+src_nvm(){
+  if [ -d "$HOME/.nvm" ]; then
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+  fi
+}
+
+# pyenv (python3)
+src_pyenv() {
+  if [ -d "$HOME/.pyenv" ]; then
+    export PYENV_ROOT="$HOME/.pyenv"
+    PATH+=":$PYENV_ROOT/bin"
+    command -v pyenv > /dev/null && eval "$(pyenv init -)"
+  fi
+}
+
+# * * * * * * * * * * * * *
+# Language Specific Paths *
+# * * * * * * * * * * * * *
+#python
+# PATH+=":/Users/james/Library/Python/3.8/bin"
+
+# ruby
+if command -v rbenv > /dev/null; then eval "$(rbenv init -)"; fi
+
+# go
+if command -v go > /dev/null; then
+  [ -d "$HOME/go" ] && mv "$HOME/go" "$HOME/.go"
+  export GOPATH="$HOME/.go"
+  export GOWD="$GOPATH/src/github.com/lemonase"
+  export GOMOD="$GOPATH/pkg/mod/github.com/lemonase/"
+  PATH+=":$(go env GOPATH)/bin"
+fi
+
+# rust
+if command -v cargo > /dev/null; then
+  PATH+=":$HOME/.cargo/bin"
+fi
+
+# * * * * * * * * * * * *
+# MISC $PATH Additions  * 
+# * * * * * * * * * * * *
+# homebrew stuff
+[ -d "/opt/homebrew/bin" ] && PATH="/opt/homebrew/bin:$PATH"
+PATH="/opt/homebrew/opt/sqlite/bin:$PATH"
+
+# local bins
+[ -d "$HOME/.local/bin" ] && PATH+=":$HOME/.local/bin"
+[ -d "$HOME/.local/scripts" ] && PATH+=":$HOME/.local/scripts"
+
+# local rc
+[ -r "$HOME/.config/zshrc" ] && source "$HOME/.config/zshrc"
+[ -r "$HOME/.local/zshrc" ] && source "$HOME/.local/zshrc"
+
 
