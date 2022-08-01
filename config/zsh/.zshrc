@@ -32,6 +32,9 @@ export BLOCK_SIZE="'1"
 autoload -Uz compinit && compinit
 setopt auto_menu
 
+# Prompt
+setopt prompt_subst
+
 # Deduplicate path
 typeset -U path
 
@@ -87,3 +90,144 @@ alias ungzip="gunzip"
 if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
 
 PATH+=":/Users/james/Library/Python/3.8/bin"
+PATH="/opt/homebrew/opt/sqlite/bin:$PATH"
+
+# functions
+# concat common commands
+mkcd() { mkdir -p -- "$1" && cd "$1"; }
+cdd() { [ -n "$1" ] && for i in $(seq 1 "$1"); do cd ..; done; }
+touchx() { touch "$@" && chmod +x "$@"; }
+
+# git
+lazygit() {
+  git commit -a -m "$*" && git push;
+}
+lg() {
+  lazygit "$*";
+}
+
+# vim
+swp_vimrc(){
+  mv ~/.vim/vimrc ~/.vim/vimrc.swp
+  mv ~/.vim/vimrc.min ~/.vim/vimrc
+  mv ~/.vim/vimrc.swp ~/.vim/vimrc.min
+}
+
+# tmux
+tm() {
+  if [ "$#" -gt 0 ]; then
+    tmux new-session -As "$1"
+  else
+    tmux new-session
+  fi
+}
+tma() {
+  if [ "$#" -gt 0 ]; then
+    tmux attach-session -d -t "$1"
+    if [ "$?" -ne 0 ]; then
+      tmux new-session -As "$1"
+    fi
+  else
+    tmux attach
+  fi
+}
+
+# path helpers
+appendpath () {
+  [[ ":$PATH:" != *":$1:"* ]] && PATH="${PATH}:$1"
+}
+prependpath() {
+  [[ ":$PATH:" != *":$1:"* ]] && PATH="$1:${PATH}"
+}
+
+# misc functions
+colordump(){
+  for i in $(seq 0 255); do printf "$(tput setaf $i)$i "; done
+}
+
+# "smart" extract function
+extract() {
+  if [ -z "$1" ]; then
+    # display usage if no parameters given
+    echo "Usage: extract <path/file_name>.<zip|rar|bz2|gz|tar|tbz2|tgz|Z|7z|xz|ex|tar.bz2|tar.gz|tar.xz>"
+    echo "       extract <path/file_name_1.ext> [path/file_name_2.ext] [path/file_name_3.ext]"
+    return 1
+  else
+    for n in "$@"; do
+      if [ -f "$n" ] ; then
+        case "${n%,}" in
+          *.tar.bz2|*.tar.gz|*.tar.xz|*.tbz2|*.tgz|*.txz|*.tar)
+            tar xvf "$n"       ;;
+          *.lzma)      unlzma ./"$n"      ;;
+          *.bz2)       bunzip2 ./"$n"     ;;
+          *.rar)       unrar x -ad ./"$n" ;;
+          *.gz)        gunzip ./"$n"      ;;
+          *.zip)       unzip ./"$n"       ;;
+          *.z)         uncompress ./"$n"  ;;
+          *.7z|*.arj|*.cab|*.chm|*.deb|*.dmg|*.iso|*.lzh|*.msi|*.rpm|*.udf|*.wim|*.xar)
+            7z x ./"$n"        ;;
+          *.xz)        unxz ./"$n"        ;;
+          *.exe)       cabextract ./"$n"  ;;
+          *)
+            echo "extract: '$n' - unknown archive method"
+            return 1
+            ;;
+        esac
+      else
+        echo "'$n' - file does not exist"
+        return 1
+      fi
+    done
+  fi
+}
+
+bkup() {
+  if [ -f "$1" ]; then
+    cp "${1}" "${1}.bkup.$(date +'%F.%R')";
+  fi
+}
+
+datauri() {
+  local mimeType=""
+  if [ -f "$1" ]; then
+    mimeType=$(file -b --mime-type "$1")
+
+    if [[ $mimeType == text/* ]]; then
+      mimeType="$mimeType;charset=utf-8"
+    fi
+
+    printf "data:%s;base64,%s" \
+      "$mimeType" \
+      "$(openssl base64 -in "$1" | tr -d "\n")"
+        else
+          printf "%s is not a file.\n" "$1"
+  fi
+}
+
+# grep with color into less
+grepless(){
+  grep -ir --color=always "$*" --exclude-dir=".git" --exclude-dir="node_modules" . | less -RX
+}
+
+# curl shortcuts
+cheatsh() {
+  curl cheat.sh/"$1"
+}
+watip() {
+  curl ifconfig.co
+  # dig +short myip.opendns.com @resolver1.opendns.com
+}
+
+# PROMPT/PS1
+git_prompt() {
+  BRANCH=$(git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/*\(.*\)/\1/')
+  if [ ! -z $BRANCH ]; then
+    echo -n "%F{yellow}$BRANCH"
+
+    if [ ! -z "$(git status --short)" ]; then
+      echo " %F{red}✗"
+    fi
+  fi
+}
+PROMPT='%F{blue}%~$(git_prompt) %F{244}%# %F{reset}'
+
