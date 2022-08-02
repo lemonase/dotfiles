@@ -24,6 +24,7 @@ setopt append_history
 setopt extended_history
 setopt inc_append_history
 setopt share_history
+setopt histsavenodups
 # Less Annoying
 setopt interactive_comments
 unsetopt correct_all
@@ -37,6 +38,10 @@ setopt prompt_subst
 typeset -U path
 # Set 'emacs' keybinds
 bindkey -e
+bindkey '\e[3~' delete-char
+bindkey '^p' history-search-backward
+bindkey '^n' history-search-forward
+bindkey ' '  magic-space
 
 # * * * * * *
 ## Aliases  *
@@ -287,4 +292,6 @@ PATH="/opt/homebrew/opt/sqlite/bin:$PATH"
 [ -r "$HOME/.config/zshrc" ] && source "$HOME/.config/zshrc"
 [ -r "$HOME/.local/zshrc" ] && source "$HOME/.local/zshrc"
 
-
+# ZSH syntax highlighting plugin
+ZSH_SYNTAX_HIGHLIGHT_PATH="${HOMEBREW_PREFIX}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+[ -f "$ZSH_SYNTAX_HIGHLIGHT_PATH" ] && source $ZSH_SYNTAX_HIGHLIGHT_PATH
