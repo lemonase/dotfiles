@@ -219,7 +219,7 @@ git_prompt() {
     fi
   fi
 }
-PROMPT='%F{blue}%~$(git_prompt) %F{244}%# %F{reset}'
+PROMPT='%F{blue}%~$(git_prompt) %F{cyan}%# %F{reset}'
 
 # * * * * * * * * * * * * * * * * * * *
 # Language Specific Version Managers  *
@@ -227,10 +227,10 @@ PROMPT='%F{blue}%~$(git_prompt) %F{244}%# %F{reset}'
 # rbenv (ruby)
 src_rbenv(){
   if command -v ruby > /dev/null && command -v gem > /dev/null; then
-    PATH+=":$(ruby -r rubygems -e 'puts Gem.user_dir')/bin"
+	path+=("$(ruby -r rubygems -e 'puts Gem.user_dir')/bin")
     # rbenv shim
     if [ -d "$HOME/.rbenv/bin" ]; then
-      PATH+=":$HOME/.rbenv/bin"
+	  path+=("$HOME/.rbenv/bin")
       [[ ":$PATH:" != *":$HOME/.rbenv/shims:"* ]] && eval "$(rbenv init -)"
     fi
   fi
@@ -249,7 +249,7 @@ src_nvm(){
 src_pyenv() {
   if [ -d "$HOME/.pyenv" ]; then
     export PYENV_ROOT="$HOME/.pyenv"
-    PATH+=":$PYENV_ROOT/bin"
+	path+=("$PYENV_ROOT/bin")
     command -v pyenv > /dev/null && eval "$(pyenv init -)"
   fi
 }
@@ -258,7 +258,7 @@ src_pyenv() {
 # Language Specific Paths *
 # * * * * * * * * * * * * *
 #python
-# PATH+=":/Users/james/Library/Python/3.8/bin"
+# path+=("/Users/james/Library/Python/3.8/bin")
 
 # ruby
 if command -v rbenv > /dev/null; then eval "$(rbenv init -)"; fi
