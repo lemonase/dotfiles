@@ -269,24 +269,24 @@ if command -v go > /dev/null; then
   export GOPATH="$HOME/.go"
   export GOWD="$GOPATH/src/github.com/lemonase"
   export GOMOD="$GOPATH/pkg/mod/github.com/lemonase/"
-  PATH+=":$(go env GOPATH)/bin"
+  path+=("$(go env GOPATH)/bin")
 fi
 
 # rust
 if command -v cargo > /dev/null; then
-  PATH+=":$HOME/.cargo/bin"
+  path+=("$HOME/.cargo/bin")
 fi
 
 # * * * * * * * * * * * *
 # MISC $PATH Additions  * 
 # * * * * * * * * * * * *
 # homebrew stuff
-[ -d "/opt/homebrew/bin" ] && PATH="/opt/homebrew/bin:$PATH"
-PATH="/opt/homebrew/opt/sqlite/bin:$PATH"
+[ -d "/opt/homebrew/bin" ] && path+=("/opt/homebrew/bin" $path)
+[ -d "/opt/homebrew/opt/sqlite/bin" ] && path+=("/opt/homebrew/opt/sqlite/bin" $path)
 
 # local bins
-[ -d "$HOME/.local/bin" ] && PATH+=":$HOME/.local/bin"
-[ -d "$HOME/.local/scripts" ] && PATH+=":$HOME/.local/scripts"
+[ -d "$HOME/.local/bin" ] && path+=("$HOME/.local/bin")
+[ -d "$HOME/.local/scripts" ] && path+=("$HOME/.local/scripts")
 
 # local rc
 [ -r "$HOME/.config/zshrc" ] && source "$HOME/.config/zshrc"
