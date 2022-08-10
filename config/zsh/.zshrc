@@ -218,16 +218,18 @@ git_prompt() {
   fi
 
   if [ ! -z $BRANCH ]; then
-    echo -n "%F{yellow}$BRANCH"
-
-    if echo "${STATUS}" | grep -c "nothing to commit" &> /dev/null; then echo -n "%F{blue}%s" "="; fi
-    if echo "${STATUS}" | grep -c "renamed:"  &> /dev/null; then echo -n "%F{red}%s" "%"; fi
-    if echo "${STATUS}" | grep -c "deleted:"  &> /dev/null; then echo -n "%F{red}%s" "-"; fi
-    if echo "${STATUS}" | grep -c "new file:" &> /dev/null; then echo -n "%F{green}%s" "+"; fi
-    if echo "${STATUS}" | grep -c "branch is ahead:" &> /dev/null; then echo -n "%F{yellow}%s" ">"; fi
-    if echo "${STATUS}" | grep -c "branch is behind" &> /dev/null; then echo -n "%F{yellow}%s" "<"; fi
-    if echo "${STATUS}" | grep -c "Untracked files:" &> /dev/null; then echo -n "%F{yellow}%s" "?"; fi
-    if echo "${STATUS}" | grep -c "modified:"        &> /dev/null; then echo -n "%F{yellow}%s" "*"; fi
+    printf "%s" "%F{reset}%F{yellow}$BRANCH"
+    printf "%s" "%F{reset}["
+    if echo "${STATUS}" | grep -c "nothing to commit" &> /dev/null; then printf "(%s)" "%F{blue}="; fi
+    if echo "${STATUS}" | grep -c "renamed:"  &> /dev/null; then printf "%s" "%F{red}%"; fi
+    if echo "${STATUS}" | grep -c "deleted:"  &> /dev/null; then printf "%s" "%F{red}-"; fi
+    if echo "${STATUS}" | grep -c "new file:" &> /dev/null; then printf "%s" "%F{green}+"; fi
+    if echo "${STATUS}" | grep -c "branch is ahead:" &> /dev/null; then printf "%s" "%F{yellow}>"; fi
+    if echo "${STATUS}" | grep -c "branch is behind" &> /dev/null; then printf "%s" "%F{yellow}<"; fi
+    if echo "${STATUS}" | grep -c "Untracked files:" &> /dev/null; then printf "%s" "%F{yellow}?"; fi
+    if echo "${STATUS}" | grep -c "Changes not staged for commit:" &> /dev/null; then printf "%s" "%F{red}*"; fi
+    if echo "${STATUS}" | grep -c "Changes to be committed:" &> /dev/null; then printf "%s" "%F{green}="; fi
+    printf "%s" "%F{reset}]"
   fi
 }
 PROMPT='%F{blue}%~$(git_prompt) %F{cyan}%# %F{reset}'
