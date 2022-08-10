@@ -211,12 +211,23 @@ watip() {
 # * * * * * * * * * * * *
 git_prompt() {
   BRANCH=$(git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/*\(.*\)/\1/')
+  STATUS="$(git status 2> /dev/null)"
+
+  if [[ "$?" -ne 0 ]]; then
+    return
+  fi
+
   if [ ! -z $BRANCH ]; then
     echo -n "%F{yellow}$BRANCH"
 
-    if [ ! -z "$(git status --short)" ]; then
-      echo " %F{red}✗"
-    fi
+    if echo "${STATUS}" | grep -c "nothing to commit" &> /dev/null; then echo -n "%F{blue}%s" "="; fi
+    if echo "${STATUS}" | grep -c "renamed:"  &> /dev/null; then echo -n "%F{red}%s" "%"; fi
+    if echo "${STATUS}" | grep -c "deleted:"  &> /dev/null; then echo -n "%F{red}%s" "-"; fi
+    if echo "${STATUS}" | grep -c "new file:" &> /dev/null; then echo -n "%F{green}%s" "+"; fi
+    if echo "${STATUS}" | grep -c "branch is ahead:" &> /dev/null; then echo -n "%F{yellow}%s" ">"; fi
+    if echo "${STATUS}" | grep -c "branch is behind" &> /dev/null; then echo -n "%F{yellow}%s" "<"; fi
+    if echo "${STATUS}" | grep -c "Untracked files:" &> /dev/null; then echo -n "%F{yellow}%s" "?"; fi
+    if echo "${STATUS}" | grep -c "modified:"        &> /dev/null; then echo -n "%F{yellow}%s" "*"; fi
   fi
 }
 PROMPT='%F{blue}%~$(git_prompt) %F{cyan}%# %F{reset}'
@@ -278,7 +289,7 @@ if command -v cargo > /dev/null; then
 fi
 
 # * * * * * * * * * * * *
-# MISC $PATH Additions  * 
+# MISC $PATH Additions  *
 # * * * * * * * * * * * *
 # homebrew stuff
 [ -d "/opt/homebrew/bin" ] && path+=("/opt/homebrew/bin" $path)
@@ -291,6 +302,8 @@ fi
 # local rc
 [ -r "$HOME/.config/zshrc" ] && source "$HOME/.config/zshrc"
 [ -r "$HOME/.local/zshrc" ] && source "$HOME/.local/zshrc"
+
+[ -d "$HOME/.rbenv" ] && path+=("$HOME/.rbenv/bin") && eval "$(rbenv init - zsh)"
 
 # ZSH syntax highlighting plugin
 ZSH_SYNTAX_HIGHLIGHT_PATH="${HOMEBREW_PREFIX}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
