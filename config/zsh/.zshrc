@@ -220,7 +220,7 @@ git_prompt() {
   if [ ! -z $BRANCH ]; then
     printf "%s" "%F{reset}%F{yellow}$BRANCH"
     printf "%s" "%F{reset}["
-    if echo "${STATUS}" | grep -c "nothing to commit" &> /dev/null; then printf "(%s)" "%F{blue}="; fi
+    if echo "${STATUS}" | grep -c "nothing to commit" &> /dev/null; then printf "%s" "%F{blue}="; fi
     if echo "${STATUS}" | grep -c "renamed:"  &> /dev/null; then printf "%s" "%F{red}%"; fi
     if echo "${STATUS}" | grep -c "deleted:"  &> /dev/null; then printf "%s" "%F{red}-"; fi
     if echo "${STATUS}" | grep -c "new file:" &> /dev/null; then printf "%s" "%F{green}+"; fi
