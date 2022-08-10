@@ -240,11 +240,11 @@ PROMPT='%F{blue}%~$(git_prompt) %F{cyan}%# %F{reset}'
 # rbenv (ruby)
 src_rbenv(){
   if command -v ruby > /dev/null && command -v gem > /dev/null; then
-	path+=("$(ruby -r rubygems -e 'puts Gem.user_dir')/bin")
+    path+=("$(ruby -r rubygems -e 'puts Gem.user_dir')/bin")
     # rbenv shim
     if [ -d "$HOME/.rbenv/bin" ]; then
-	  path+=("$HOME/.rbenv/bin")
-      [[ ":$PATH:" != *":$HOME/.rbenv/shims:"* ]] && eval "$(rbenv init -)"
+      path+=("$HOME/.rbenv/bin")
+      [[ ":$PATH:" != *":$HOME/.rbenv/shims:"* ]] && eval "$(rbenv init - zsh)"
     fi
   fi
 }
@@ -262,33 +262,41 @@ src_nvm(){
 src_pyenv() {
   if [ -d "$HOME/.pyenv" ]; then
     export PYENV_ROOT="$HOME/.pyenv"
-	path+=("$PYENV_ROOT/bin")
+    path+=("$PYENV_ROOT/bin")
     command -v pyenv > /dev/null && eval "$(pyenv init -)"
   fi
 }
 
-# * * * * * * * * * * * * *
-# Language Specific Paths *
-# * * * * * * * * * * * * *
-#python
-# path+=("/Users/james/Library/Python/3.8/bin")
-
-# ruby
-if command -v rbenv > /dev/null; then eval "$(rbenv init -)"; fi
-
 # go
-if command -v go > /dev/null; then
+src_go() {
+  # move go path from ~/go to ~/.go (hidden)
   [ -d "$HOME/go" ] && mv "$HOME/go" "$HOME/.go"
   export GOPATH="$HOME/.go"
   export GOWD="$GOPATH/src/github.com/lemonase"
   export GOMOD="$GOPATH/pkg/mod/github.com/lemonase/"
   path+=("$(go env GOPATH)/bin")
+}
+
+# rust/cargo
+src_rust() {
+  path+=("$HOME/.cargo/bin")
+}
+
+# ruby
+if command -v rbenv > /dev/null; then
+  src_rbenv
+fi
+
+# go
+if command -v go > /dev/null; then
+  src_go
 fi
 
 # rust
 if command -v cargo > /dev/null; then
-  path+=("$HOME/.cargo/bin")
+  src_rust
 fi
+
 
 # * * * * * * * * * * * *
 # MISC $PATH Additions  *
@@ -296,6 +304,10 @@ fi
 # homebrew stuff
 [ -d "/opt/homebrew/bin" ] && path+=("/opt/homebrew/bin" $path)
 [ -d "/opt/homebrew/opt/sqlite/bin" ] && path+=("/opt/homebrew/opt/sqlite/bin" $path)
+
+# misc
+# [ -d "$HOME/.rbenv" ] && path+=("$HOME/.rbenv/bin") && eval "$(rbenv init - zsh)"
+# [ -d "/Users/james/Library/Python/3.8/bin" ] && path+=("/Users/james/Library/Python/3.8/bin")
 
 # local bins
 [ -d "$HOME/.local/bin" ] && path+=("$HOME/.local/bin")
@@ -305,7 +317,6 @@ fi
 [ -r "$HOME/.config/zshrc" ] && source "$HOME/.config/zshrc"
 [ -r "$HOME/.local/zshrc" ] && source "$HOME/.local/zshrc"
 
-[ -d "$HOME/.rbenv" ] && path+=("$HOME/.rbenv/bin") && eval "$(rbenv init - zsh)"
 
 # ZSH syntax highlighting plugin
 ZSH_SYNTAX_HIGHLIGHT_PATH="${HOMEBREW_PREFIX}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
