@@ -309,4 +309,7 @@ fi
 
 # ZSH syntax highlighting plugin
 ZSH_SYNTAX_HIGHLIGHT_PATH="${HOMEBREW_PREFIX}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+if [ ! -f "$ZSH_SYNTAX_HIGHLIGHT_PATH" ]; then
+ ZSH_SYNTAX_HIGHLIGHT_PATH="/usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+fi
 [ -f "$ZSH_SYNTAX_HIGHLIGHT_PATH" ] && source $ZSH_SYNTAX_HIGHLIGHT_PATH
