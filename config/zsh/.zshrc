@@ -25,6 +25,11 @@ setopt extended_history
 setopt inc_append_history
 setopt share_history
 setopt histsavenodups
+setopt hist_ignore_all_dups
+
+export HISTFILE=~/.zsh_history
+export HISTSIZE=999999999
+export SAVEHIST=$HISTSIZE
 # Less Annoying
 setopt interactive_comments
 unsetopt correct_all
