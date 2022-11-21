@@ -283,13 +283,13 @@ PS1="\W \\$ "
 # PS1="[\u@\h:\W]\\$ "
 # PS1="\u@\h:\W\\$ "
 # *color prompts*
-# PS1="${bold}${blue}\W ${yellow}\\$ ${reset}"
-# PS1="${bold}${purple}\u${yellow}@${cyan}\h${white}:${blue}\W ${yellow}\\$ ${reset}"
+# PS1="${bold}${bright_blue}\W ${bright_yellow}\\$ ${reset}"
+# PS1="${bold}${bright_magenta}\u${bright_yellow}@${bright_cyan}\h${white}:${bright_blue}\W ${bright_yellow}\\$ ${reset}"
 # *git color prompts*
-# PS1="${bold}${blue}\W\$(parse_git)${green} \\$ ${reset}"
-# PS1="${bold}${white}\t ${blue}\W\$(parse_git) ${cyan}\\$ ${reset}"
-# PS1="${bold}${purple}\u${yellow}@${cyan}\h${white}:${blue}\W\$(parse_git)${green} \\$ ${reset}"
-# PS1="${bold}\n${cyan}\u ${white}at ${yellow}\h ${white}in ${blue}\w ${white}on \$(parse_git)\n${yellow}\\$ ${reset}"
+# PS1="${bold}${bright_blue}\W\$(parse_git)${bright_green} \\$ ${reset}"
+# PS1="${bold}${white}\t ${bright_blue}\W\$(parse_git) ${bright_cyan}\\$ ${reset}"
+# PS1="${bold}${bright_yellow}\u${bright_magenta}@${bright_cyan}\h${white}:${bright_blue}\W\$(parse_git)${bright_green}\\$ ${reset}"
+# PS1="${bold}\n${bright_cyan}\u ${white}at ${bright_yellow}\h ${white}in ${bright_blue}\w ${white}on \$(parse_git)\n${bright_yellow}\\$ ${reset}"
 
 # bash autocompletion
 if ! shopt -oq posix; then
