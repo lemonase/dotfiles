@@ -336,7 +336,7 @@ src_pyenv() {
 }
 
 # go
-if command -v go > /dev/null; then
+if command -v go && [ -d "$(go env GOPATH)/bin" ]; then
   [ -d "$HOME/go" ] && mv "$HOME/go" "$HOME/.go"
   export GOPATH="$HOME/.go"
   export GOWD="$GOPATH/src/github.com/lemonase"
@@ -345,9 +345,7 @@ if command -v go > /dev/null; then
 fi
 
 # rust
-if command -v cargo > /dev/null; then
-  appendpath "$HOME/.cargo/bin"
-fi
+[ -d "$HOME/.cargo" ] && appendpath "$HOME/.cargo/bin"
 
 ## macOS package managers ##
 # homebrew
