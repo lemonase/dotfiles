@@ -1,3 +1,0 @@
-#!/bin/bash
-
-export XMODIFIERS="@im=null" && minecraft-launcher &> /dev/null &
