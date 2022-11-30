@@ -279,17 +279,19 @@ parse_git() {
 }
 
 # *plain prompts*
-PS1="\W \\$ "
+# PS1="\W \\$ "
 # PS1="[\u@\h:\W]\\$ "
 # PS1="\u@\h:\W\\$ "
+
 # *color prompts*
-# PS1="${bold}${bright_blue}\W ${bright_yellow}\\$ ${reset}"
-# PS1="${bold}${bright_magenta}\u${bright_yellow}@${bright_cyan}\h${white}:${bright_blue}\W ${bright_yellow}\\$ ${reset}"
+# PS1="${bold}${bright_blue}\w ${white}\\$ ${reset}"
+# PS1="${bold}${bright_cyan}\u${bright_magenta}@${bright_yellow}\h${white}:${bright_blue}\w${white}\\$ ${reset}"
+
 # *git color prompts*
-# PS1="${bold}${bright_blue}\W\$(parse_git)${bright_green} \\$ ${reset}"
-# PS1="${bold}${white}\t ${bright_blue}\W\$(parse_git) ${bright_cyan}\\$ ${reset}"
-# PS1="${bold}${bright_yellow}\u${bright_magenta}@${bright_cyan}\h${white}:${bright_blue}\W\$(parse_git)${bright_green}\\$ ${reset}"
-# PS1="${bold}\n${bright_cyan}\u ${white}at ${bright_yellow}\h ${white}in ${bright_blue}\w ${white}on \$(parse_git)\n${bright_yellow}\\$ ${reset}"
+# PS1="${bold}${bright_blue}\w\$(parse_git)${white} \\$ ${reset}"
+# PS1="${bold}${white}\t ${bright_blue}\w\$(parse_git) ${white}\\$ ${reset}"
+# PS1="${bold}${bright_cyan}\u${bright_magenta}@${bright_yellow}\h${white}:${bright_blue}\w\$(parse_git)${white}\\$ ${reset}"
+# PS1="${bold}${bright_cyan}\u${bright_magenta}@${bright_yellow}\h${white}:${bright_blue}\w\$(parse_git)${white}\\$ ${reset}"
 
 # bash autocompletion
 if ! shopt -oq posix; then
@@ -347,18 +349,19 @@ fi
 # rust
 [ -d "$HOME/.cargo" ] && appendpath "$HOME/.cargo/bin"
 
+# local bins
+# [ -d "$HOME/.local/bin" ] && appendpath "$HOME/.local/bin"
+[ -d "$HOME/.local/scripts" ] && appendpath "$HOME/.local/scripts"
+# local rc
+[ -r "$HOME/.config/bashrc" ] && source "$HOME/.config/bashrc"
+[ -r "$HOME/.local/bashrc" ] && source "$HOME/.local/bashrc"
+
 ## macOS package managers ##
 # homebrew
 [ -d "/opt/homebrew/bin" ] && appendpath "/opt/homebrew/bin"
 # python3 (macOS)
 [ -d "$HOME/Library/Python/3.8/bin" ] && appendpath "$HOME/Library/Python/3.8/bin"
 
-# local bins
-[ -d "$HOME/.local/bin" ] && appendpath "$HOME/.local/bin"
-[ -d "$HOME/.local/scripts" ] && appendpath "$HOME/.local/scripts"
-# local rc
-[ -r "$HOME/.config/bashrc" ] && source "$HOME/.config/bashrc"
-[ -r "$HOME/.local/bashrc" ] && source "$HOME/.local/bashrc"
 
 # start in tmux session if possible
 # if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]] && [ -z "$TMUX" ]; then
