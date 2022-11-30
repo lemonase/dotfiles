@@ -1,3 +1,7 @@
+# This .bashrc is kept under git version control
+# To make any edits or configurations, please edit `~/.config/bashrc`
+# as this is sourced at the end of this file
+
 # If not running interactively, don't do anything
 case $- in
   *i*) ;;
@@ -58,6 +62,10 @@ alias tmls="tmux ls"
 alias tmlsc="tmux lsc"
 alias tmks="tmux kill-session -t" # kill one session
 alias tmka="tmux kill-server" # aka killall
+
+# docker
+alias d="docker"
+alias dc="docker-compose"
 
 # python
 # python3 is python unless python is python
@@ -352,9 +360,9 @@ fi
 # local bins
 # [ -d "$HOME/.local/bin" ] && appendpath "$HOME/.local/bin"
 [ -d "$HOME/.local/scripts" ] && appendpath "$HOME/.local/scripts"
+
 # local rc
 [ -r "$HOME/.config/bashrc" ] && source "$HOME/.config/bashrc"
-[ -r "$HOME/.local/bashrc" ] && source "$HOME/.local/bashrc"
 
 ## macOS package managers ##
 # homebrew
