@@ -22,21 +22,24 @@
 [pull]
 	ff = only
 [alias]
+	s = status
+	st = status
 	a = add
 	aa = add --all
 	ai = add -i
-	s = status
-	st = status
 	c = commit
 	ca = commit -a
 	cm = commit -m
 	cam = commit -am
-	br = branch
 	co = checkout
+	br = branch
 	d = diff
 	df = diff
 	dt = difftool
 	lg = log
-	pl = log --all --decorate --oneline --graph
-	gr = log --all --decorate --oneline --graph
+	plog = log --all --decorate --oneline --graph
 	graph = log --all --decorate --oneline --graph
+	pl = pull
+	pul = pull
+	ps = push
+	puhs = push
