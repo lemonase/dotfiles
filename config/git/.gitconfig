@@ -43,3 +43,4 @@
 	pul = pull
 	ps = push
 	puhs = push
+    sm = submodule
