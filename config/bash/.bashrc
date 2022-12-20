@@ -14,7 +14,16 @@ esac
 export EDITOR="/usr/bin/vim"
 export VISUAL="/usr/bin/vim"
 export PAGER="less"
-export FZF_DEFAULT_OPTS="--bind=ctrl-f:page-down,ctrl-b:page-up"
+
+# bash history options
+HISTSIZE= ;
+HISTFILESIZE=
+HISTCONTROL="ignoreboth:erasedups"
+HISTTIMEFORMAT="%F %T  "
+
+
+##* aliases *##
+# {{{
 
 # ls options
 ls --version &> /dev/null
@@ -24,14 +33,6 @@ else
   LS_OPTS="-GF"
   export CLICOLOR=1
 fi
-
-# bash history options
-HISTSIZE= ;
-HISTFILESIZE=
-HISTCONTROL="ignoreboth:erasedups"
-HISTTIMEFORMAT="%F %T  "
-
-##* aliases *##
 
 # core utils (ls, grep, tree)
 alias l="ls ${LS_OPTS}"
@@ -55,9 +56,6 @@ alias pathls='printf "%b\n" "${PATH//:/\\n}"'
 alias g="git"
 alias groot="cd $(git rev-parse --show-toplevel 2> /dev/null || echo -n ".")"
 
-alias v="$EDITOR"
-alias vi="$EDITOR"
-
 alias tmls="tmux ls"
 alias tmlsc="tmux lsc"
 alias tmks="tmux kill-session -t" # kill one session
@@ -79,14 +77,18 @@ alias venvac="source venv/bin/activate"
 # linux gui things
 alias xo="xdg-open"
 alias firefox-temp='firefox --profile $(mktemp -d) &> /dev/null &'
+# mac gui things
+alias o="open"
 
 # compression/archives
 alias untar="tar -xvf"
 alias mktar="tar -caf"
 alias tarls="tar -tvf"
 alias ungzip="gunzip"
+# }}}
 
 ##* color variables *##
+#{{{
 # color vars using tput or ANSI/VT100 Control sequences
 # check if tput is available
 if [ -x "$(command -v tput)" ]; then
@@ -135,8 +137,10 @@ else # or fallback to ANSI esacpe codes
   reset="\[\033[0m\]"; unesc_reset="\033[0m"
   bold="\[\033[1m\]"; unesc_bold="\033[1m"
 fi
+#}}}
 
-##* functions *##
+##* bash functions *##
+# {{{
 # concat common commands
 mkcd() { mkdir -p -- "$1" && cd "$1"; }
 cdd() { [ -n "$1" ] && for i in $(seq 1 "$1"); do cd ..; done; }
@@ -261,10 +265,14 @@ watip() {
   curl ifconfig.co
   # dig +short myip.opendns.com @resolver1.opendns.com
 }
+#}}}
 
-##* prompt stuff *##
+
+## prompt settings (PS1) ##
+# {{{
 
 # git prompt function
+# {{{
 parse_git() {
   BRANCH="$(git rev-parse --abbrev-ref HEAD 2> /dev/null)"
   STATUS="$(git status 2> /dev/null)"
@@ -285,6 +293,7 @@ parse_git() {
     printf "\001${unesc_reset}${unesc_bold}${unesc_white}\002%s" "]"
   fi
 }
+# }}}
 
 # *plain prompts*
 # PS1="\W \\$ "
@@ -300,7 +309,10 @@ parse_git() {
 # PS1="${bold}${white}\t ${bright_blue}\w\$(parse_git) ${white}\\$ ${reset}"
 # PS1="${bold}${bright_cyan}\u${bright_magenta}@${bright_yellow}\h${white}:${bright_blue}\w\$(parse_git)${white}\\$ ${reset}"
 # PS1="${bold}${bright_cyan}\u${bright_magenta}@${bright_yellow}\h${white}:${bright_blue}\w\$(parse_git)${white}\\$ ${reset}"
+# }}}
 
+## bash completions and integrations ##
+# {{{
 # bash autocompletion
 if ! shopt -oq posix; then
   if [ -f /usr/share/bash-completion/bash_completion ]; then
@@ -313,9 +325,15 @@ fi
 # Add tab completion for SSH hostnames based on ~/.ssh/config, ignoring wildcards
 [ -e "$HOME/.ssh/config" ] && complete -o "default" -o "nospace" -W "$(grep "^Host" ~/.ssh/config | grep -v "[?*]" | cut -d " " -f2- | tr ' ' '\n')" scp sftp ssh;
 
+# fzf shell integration
+export FZF_DEFAULT_OPTS="--bind=ctrl-f:page-down,ctrl-b:page-up"
+[ -f ~/.config/.fzf.bash ] && source ~/.config/.fzf.bash
+# }}}
+
 ## paths ##
-# language version managers #
-# rbenv (ruby)
+# language version managers
+# {{{
+# ruby (rbenv)
 src_rbenv(){
   if command -v ruby > /dev/null && command -v gem > /dev/null; then
     appendpath "$(ruby -r rubygems -e 'puts Gem.user_dir')/bin"
@@ -327,7 +345,7 @@ src_rbenv(){
   fi
 }
 
-# nvm (node)
+# node (nvm)
 src_nvm(){
   if [ -d "$HOME/.nvm" ]; then
     export NVM_DIR="$HOME/.nvm"
@@ -336,7 +354,7 @@ src_nvm(){
   fi
 }
 
-# pyenv (python3)
+# python3 (pyenv)
 src_pyenv() {
   if [ -d "$HOME/.pyenv" ]; then
     export PYENV_ROOT="$HOME/.pyenv"
@@ -356,6 +374,14 @@ fi
 
 # rust
 [ -d "$HOME/.cargo" ] && appendpath "$HOME/.cargo/bin"
+#}}}
+
+## macOS package managers and specific config ##
+# {{{
+# homebrew
+[ -d "/opt/homebrew/bin" ] && appendpath "/opt/homebrew/bin"
+# python3 (macOS)
+[ -d "$HOME/Library/Python/3.8/bin" ] && appendpath "$HOME/Library/Python/3.8/bin"
 
 # local bins
 # [ -d "$HOME/.local/bin" ] && appendpath "$HOME/.local/bin"
@@ -363,14 +389,21 @@ fi
 
 # local rc
 [ -r "$HOME/.config/bashrc" ] && source "$HOME/.config/bashrc"
+#}}}
 
-## macOS package managers ##
-# homebrew
-[ -d "/opt/homebrew/bin" ] && appendpath "/opt/homebrew/bin"
-# python3 (macOS)
-[ -d "$HOME/Library/Python/3.8/bin" ] && appendpath "$HOME/Library/Python/3.8/bin"
+## alias to *new* and *improved* unix cli tools (exa, bat, nvim)
+# Check for nvim and set as editor after paths are added
+NVIM=$(command -v nvim)
+if [ -x "$NVIM" ]; then
+  EDITOR="$NVIM"
+  VISUAL="$NVIM"
+fi
+alias v="$EDITOR"
+alias vi="$EDITOR"
+alias vim="$EDITOR"
 
-
+# dead code
+# {{{
 # start in tmux session if possible
 # if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]] && [ -z "$TMUX" ]; then
 #   exec tmux
@@ -383,5 +416,6 @@ fi
 # if ! shopt -q histappend 2> /dev/null; then shopt -s histappend; fi
 # if ! shopt -q extglob 2> /dev/null; then shopt -s extglob; fi
 # if ! shopt -q globstar 2> /dev/null; then shopt -s globstar; fi
+# }}}
 
 # vim:ft=sh
