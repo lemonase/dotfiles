@@ -330,4 +330,4 @@ if [ ! -f "$ZSH_SYNTAX_HIGHLIGHT_PATH" ]; then
 fi
 [ -f "$ZSH_SYNTAX_HIGHLIGHT_PATH" ] && source $ZSH_SYNTAX_HIGHLIGHT_PATH
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+[ -f ~/.config/.fzf.zsh ] && source ~/.config/.fzf.zsh
