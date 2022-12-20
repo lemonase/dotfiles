@@ -305,7 +305,7 @@ parse_git() {
 # PS1="${bold}${bright_cyan}\u${bright_magenta}@${bright_yellow}\h${white}:${bright_blue}\w${white}\\$ ${reset}"
 
 # *git color prompts*
-# PS1="${bold}${bright_blue}\w\$(parse_git)${white} \\$ ${reset}"
+PS1="${bold}${bright_blue}\w\$(parse_git)${white} \\$ ${reset}"
 # PS1="${bold}${white}\t ${bright_blue}\w\$(parse_git) ${white}\\$ ${reset}"
 # PS1="${bold}${bright_cyan}\u${bright_magenta}@${bright_yellow}\h${white}:${bright_blue}\w\$(parse_git)${white}\\$ ${reset}"
 # PS1="${bold}${bright_cyan}\u${bright_magenta}@${bright_yellow}\h${white}:${bright_blue}\w\$(parse_git)${white}\\$ ${reset}"
@@ -388,7 +388,7 @@ fi
 [ -d "$HOME/.local/scripts" ] && appendpath "$HOME/.local/scripts"
 
 # local rc
-[ -r "$HOME/.config/bashrc" ] && source "$HOME/.config/bashrc"
+[ -r "$HOME/.config/.bashrc.local" ] && source "$HOME/.config/.bashrc.local"
 #}}}
 
 ## alias to *new* and *improved* unix cli tools (exa, bat, nvim)
