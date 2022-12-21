@@ -12,7 +12,7 @@ require('plugin-config.nvim-treesitter')
 -- nvim-tree
 require('plugin-config.nvim-tree')
 
--- gitsings
+-- gitsigns
 require('plugin-config.gitsigns')
 
 -- plugin keybinds
