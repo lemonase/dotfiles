@@ -335,7 +335,7 @@ export FZF_DEFAULT_OPTS="--bind=ctrl-f:page-down,ctrl-b:page-up"
 # {{{
 # ruby (rbenv)
 src_rbenv(){
-  if command -v ruby > /dev/null && command -v gem > /dev/null; then
+  if command -v ruby &> /dev/null && command -v gem > /dev/null; then
     appendpath "$(ruby -r rubygems -e 'puts Gem.user_dir')/bin"
     # rbenv shim
     if [ -d "$HOME/.rbenv/bin" ]; then
@@ -359,12 +359,12 @@ src_pyenv() {
   if [ -d "$HOME/.pyenv" ]; then
     export PYENV_ROOT="$HOME/.pyenv"
     appendpath "$PYENV_ROOT/bin"
-    command -v pyenv > /dev/null && eval "$(pyenv init -)"
+    command -v pyenv &> /dev/null && eval "$(pyenv init -)"
   fi
 }
 
 # go
-if command -v go && [ -d "$(go env GOPATH)/bin" ]; then
+if command -v go &> /dev/null && [ -d "$(go env GOPATH)/bin" ]; then
   [ -d "$HOME/go" ] && mv "$HOME/go" "$HOME/.go"
   export GOPATH="$HOME/.go"
   export GOWD="$GOPATH/src/github.com/lemonase"
