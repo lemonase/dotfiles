@@ -12,6 +12,9 @@ require('plugin-config.nvim-treesitter')
 -- nvim-tree
 require('plugin-config.nvim-tree')
 
+-- gitsings
+require('plugin-config.gitsigns')
+
 -- plugin keybinds
 require('plugin-config.keybinds.vim-fugitive')
 require('plugin-config.keybinds.fzf')

@@ -46,7 +46,7 @@ require('packer').startup(function(use)
     tag = 'nightly'
   }
 
-  -- * vanilla vim plugins * -- 
+  -- * vanilla vim plugins * --
 
   -- normal mode keybinds
   use 'tpope/vim-commentary'
@@ -61,7 +61,8 @@ require('packer').startup(function(use)
   -- git
   use 'tpope/vim-fugitive'
   use 'tpope/vim-rhubarb'
-  use 'airblade/vim-gitgutter'
+  -- use 'airblade/vim-gitgutter'
+  use { 'lewis6991/gitsigns.nvim' }
 
   -- fzf
   use { 'junegunn/fzf', run = ":call fzf#install()" }
@@ -72,7 +73,7 @@ require('packer').startup(function(use)
     'rose-pine/neovim',
     as = 'rose-pine',
     config = function()
-        vim.cmd('colorscheme rose-pine')
+      vim.cmd('colorscheme rose-pine')
     end
   })
 end)
