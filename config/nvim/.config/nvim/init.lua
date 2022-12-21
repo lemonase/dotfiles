@@ -9,6 +9,5 @@ require('keymaps')
 -- package manager (packer.nvim)
 require('plugins')
 
-
+-- plugin configurations
 require('plugin-config')
-
