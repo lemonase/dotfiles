@@ -1,8 +1,14 @@
 -- init.lua --
 
-require('core.options')
-require('core.plugins')
-require('core.keymaps')
+-- general vim settings
+require('settings')
+
+-- vim keymaps
+require('keymaps')
+
+-- package manager (packer.nvim)
+require('plugins')
+
 
 require('plugin-config')
 

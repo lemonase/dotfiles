@@ -45,7 +45,7 @@ end
 
 -- mason - package manager for lsp servers
 require('mason').setup()
-local servers = { 'clangd', 'rust_analyzer', 'pyright', 'tsserver', 'sumneko_lua', 'gopls', 'bashls'}
+local servers = { 'clangd', 'rust_analyzer', 'pyright', 'tsserver', 'sumneko_lua', 'gopls', 'bashls' }
 require('mason-lspconfig').setup {
   ensure_installed = servers,
 }
@@ -66,9 +66,7 @@ end
 require('fidget').setup()
 
 
-
 -- lua lsp config
-
 -- Make runtime files discoverable to the server
 local runtime_path = vim.split(package.path, ';')
 table.insert(runtime_path, 'lua/?.lua')
@@ -88,10 +86,9 @@ require('lspconfig').sumneko_lua.setup {
       diagnostics = {
         globals = { 'vim' },
       },
-      workspace = { library = vim.api.nvim_get_runtime_file('', true) },
+      workspace = { library = vim.api.nvim_get_runtime_file('', true), checkThirdParty = false, },
       -- Do not send telemetry data containing a randomized but unique identifier
       telemetry = { enable = false },
     },
   },
 }
-

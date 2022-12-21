@@ -2,6 +2,10 @@
 -- general settings
 --
 
+-- vim cmds
+vim.cmd('syntax enable')
+vim.cmd('filetype plugin indent on')
+
 -- encoding/format
 vim.opt.encoding = 'utf-8'
 vim.opt.fileformats = 'unix,dos,mac'
@@ -46,9 +50,3 @@ vim.opt.termguicolors = true
 vim.opt.number = true
 vim.opt.wrap = true
 vim.opt.listchars = {eol = '↲', tab = '▸ ', trail = '·'}
-
--- vim cmds
-vim.cmd [[
-  syntax enable
-  filetype plugin indent on
-]]

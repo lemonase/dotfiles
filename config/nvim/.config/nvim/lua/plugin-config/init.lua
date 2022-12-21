@@ -1,3 +1,5 @@
+-- plugin-config/init.lua
+
 -- lsp
 require('plugin-config.lsp')
 
