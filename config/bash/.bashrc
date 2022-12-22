@@ -364,12 +364,23 @@ src_pyenv() {
 }
 
 # go
-if command -v go &> /dev/null && [ -d "$(go env GOPATH)/bin" ]; then
-  [ -d "$HOME/go" ] && mv "$HOME/go" "$HOME/.go"
+export GOROOT="/usr/local/go"
+[ -d "$GOROOT/bin" ] && appendpath "$GOROOT/bin"
+
+export GO111MODULE=on
+export GOPATH="$HOME/go"
+if command -v go &> /dev/null; then
+  # change default go path
   export GOPATH="$HOME/.go"
+  [ -d "$HOME/go" ] && mv "$HOME/go" "$HOME/.go"
+
+  # change default go working dir and mod dir
   export GOWD="$GOPATH/src/github.com/lemonase"
+  [ ! -d "$GOWD" ] && mkdir -p "$GOWD"
   export GOMOD="$GOPATH/pkg/mod/github.com/lemonase/"
-  appendpath "$(go env GOPATH)/bin"
+
+  # add go path bin directory to path
+  [ -d "$(go env GOPATH)/bin" ] && appendpath "$(go env GOPATH)/bin"
 fi
 
 # rust
