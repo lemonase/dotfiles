@@ -1,21 +1,25 @@
 -- plugin-config/init.lua
 
+-- * LSP, Completion and TreeSitter * --
 -- lsp
 require('plugin-config.lsp')
-
 -- completion
 require('plugin-config.cmp')
-
--- treesitter (syntax highlighting)
+-- treesitter (tree based syntax highlighting)
 require('plugin-config.nvim-treesitter')
 
+-- * File explorer and Fuzzy Finder * --
 -- nvim-tree
 require('plugin-config.nvim-tree')
+-- fzf (fuzzy finder)
+require('plugin-config.fzf')
 
+-- * Git Integration * --
 -- gitsigns
 require('plugin-config.gitsigns')
+-- vim-fugitive (git plugin)
+require('plugin-config.vim-fugitive')
 
--- plugin keybinds
-require('plugin-config.keybinds.vim-fugitive')
-require('plugin-config.keybinds.fzf')
-require('plugin-config.keybinds.nvim-tree')
+
+-- colorscheme
+require('plugin-config.colorscheme')

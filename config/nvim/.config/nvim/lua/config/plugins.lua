@@ -69,11 +69,7 @@ require('packer').startup(function(use)
   use { 'junegunn/fzf.vim' }
 
   -- colorschemes
-  use({
-    'rose-pine/neovim',
-    as = 'rose-pine',
-    config = function()
-      vim.cmd('colorscheme rose-pine')
-    end
-  })
+  -- use 'rose-pine/neovim'
+  use 'w0ng/vim-hybrid'
+
 end)
