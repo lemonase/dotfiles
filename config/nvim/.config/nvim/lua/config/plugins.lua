@@ -71,5 +71,5 @@ require('packer').startup(function(use)
   -- colorschemes
   -- use 'rose-pine/neovim'
   use 'w0ng/vim-hybrid'
-
+  use 'folke/tokyonight.nvim'
 end)
