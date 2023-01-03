@@ -73,4 +73,5 @@ require('packer').startup(function(use)
   use 'w0ng/vim-hybrid'
   use 'folke/tokyonight.nvim'
   use 'bluz71/vim-nightfly-colors'
+  use 'Shatur/neovim-ayu'
 end)
