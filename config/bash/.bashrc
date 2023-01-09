@@ -27,7 +27,7 @@ HISTTIMEFORMAT="%F %T  "
 
 # ls options
 ls --version &> /dev/null
-if [ $? -eq 0 ]; then
+if [ "$? " -eq 0 ]; then
   LS_OPTS="--color=auto --group-directories-first -F"
 else
   LS_OPTS="-GF"
@@ -395,7 +395,7 @@ fi
 [ -d "$HOME/Library/Python/3.8/bin" ] && appendpath "$HOME/Library/Python/3.8/bin"
 
 # local bins
-# [ -d "$HOME/.local/bin" ] && appendpath "$HOME/.local/bin"
+[ -d "$HOME/.local/bin" ] && appendpath "$HOME/.local/bin"
 [ -d "$HOME/.local/scripts" ] && appendpath "$HOME/.local/scripts"
 
 # local rc
