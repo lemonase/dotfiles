@@ -34,7 +34,8 @@ set tabstop=2     " tabstop is the num to use for a tab character
 set softtabstop=2 " softtabstop makes up the difference between tab and space
 set shiftwidth=2  " shiftwidth applies to indenting with < and >
 set expandtab     " use space characters to indent instead of tab characters
-set autoindent    " try to autoindent based on context
+set autoindent    " copies indent from current line
+set smarttab      " should not matter if ts, sts and sw are all the same
 set backspace=indent,eol,start  " lets you backspace over anything
 
 " key timeout values
