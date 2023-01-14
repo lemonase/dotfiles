@@ -399,7 +399,7 @@ fi
 [ -d "$HOME/.local/scripts" ] && appendpath "$HOME/.local/scripts"
 
 # local rc
-[ -r "$HOME/.config/.bashrc.local" ] && source "$HOME/.config/.bashrc.local"
+[ -r "$HOME/.local/.bashrc" ] && source "$HOME/.local/.bashrc"
 #}}}
 
 ## alias to *new* and *improved* unix cli tools (exa, bat, nvim)
