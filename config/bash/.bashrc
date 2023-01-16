@@ -1,6 +1,7 @@
 # This .bashrc is kept under git version control
-# To make any edits or configurations, please edit `~/.config/bashrc`
-# as this is sourced at the end of this file
+
+# To make any local (non-tracked) edits or configurations, 
+# please edit `~/.local/.bashrc`, which is sourced from this file.
 
 # If not running interactively, don't do anything
 case $- in
@@ -9,21 +10,18 @@ case $- in
 esac
 
 ##* environment variables *##
+# {{{
 
 # environment variables for commands
+export PAGER="less"
 export EDITOR="/usr/bin/vim"
 export VISUAL="/usr/bin/vim"
-export PAGER="less"
 
 # bash history options
 HISTSIZE= ;
-HISTFILESIZE=
+HISTFILESIZE= ;
 HISTCONTROL="ignoreboth:erasedups"
 HISTTIMEFORMAT="%F %T  "
-
-
-##* aliases *##
-# {{{
 
 # ls options
 ls --version &> /dev/null
@@ -33,6 +31,10 @@ else
   LS_OPTS="-GF"
   export CLICOLOR=1
 fi
+# }}}
+
+##* aliases *##
+# {{{
 
 # core utils (ls, grep, tree)
 alias l="ls ${LS_OPTS}"
@@ -65,20 +67,20 @@ alias tmka="tmux kill-server" # aka killall
 alias d="docker"
 alias dc="docker-compose"
 
+# kubernetes
+alias k="kubectl"
+alias mink="minikube"
+
 # python
-# python3 is python unless python is python
+# python3 is python unless python is already python3
 if ! command -v python &> /dev/null && command -v python3 &> /dev/null;  then
   alias python="python3"
   alias py="python3"
   alias ipy="ipython3"
 fi
 alias venvac="source venv/bin/activate"
+alias mkvenv="python -m venv venv"
 
-# linux gui things
-alias xo="xdg-open"
-alias firefox-temp='firefox --profile $(mktemp -d) &> /dev/null &'
-# mac gui things
-alias o="open"
 
 # compression/archives
 alias untar="tar -xvf"
@@ -267,8 +269,7 @@ watip() {
 }
 #}}}
 
-
-## prompt settings (PS1) ##
+##* prompt settings (PS1) *##
 # {{{
 
 # git prompt function
@@ -311,7 +312,7 @@ PS1="${bold}${bright_blue}\w\$(parse_git)${white} \\$ ${reset}"
 # PS1="${bold}${bright_cyan}\u${bright_magenta}@${bright_yellow}\h${white}:${bright_blue}\w\$(parse_git)${white}\\$ ${reset}"
 # }}}
 
-## bash completions and integrations ##
+##* bash completions and integrations *##
 # {{{
 # bash autocompletion
 if ! shopt -oq posix; then
@@ -327,10 +328,10 @@ fi
 
 # fzf shell integration
 export FZF_DEFAULT_OPTS="--bind=ctrl-f:page-down,ctrl-b:page-up"
-[ -f ~/.config/.fzf.bash ] && source ~/.config/.fzf.bash
+[ -f "~/.config/.fzf.bash" ] && source "~/.config/.fzf.bash"
 # }}}
 
-## paths ##
+##* paths *##
 # language version managers
 # {{{
 # ruby (rbenv)
@@ -387,23 +388,37 @@ fi
 [ -d "$HOME/.cargo" ] && appendpath "$HOME/.cargo/bin"
 #}}}
 
-## macOS package managers and specific config ##
+##* OS specific config *##
 # {{{
-# homebrew
-[ -d "/opt/homebrew/bin" ] && appendpath "/opt/homebrew/bin"
-# python3 (macOS)
-[ -d "$HOME/Library/Python/3.8/bin" ] && appendpath "$HOME/Library/Python/3.8/bin"
+case "$OSTYPE" in
+  darwin*)  
+    # homebrew
+    [ -d "/opt/homebrew/bin" ] && appendpath "/opt/homebrew/bin"
+    # python3 (macOS)
+    [ -d "$HOME/Library/Python/3.8/bin" ] && appendpath "$HOME/Library/Python/3.8/bin"
+    # gui things
+    alias o="open"
+  ;;
+  linux*)
+    # linux gui things
+    alias xo="xdg-open"
+    alias firefox-temp='firefox --profile $(mktemp -d) &> /dev/null &'
+  ;;
+esac
+
 
 # local bins
 [ -d "$HOME/.local/bin" ] && appendpath "$HOME/.local/bin"
 [ -d "$HOME/.local/scripts" ] && appendpath "$HOME/.local/scripts"
 
 # local rc
-[ -r "$HOME/.config/.bashrc.local" ] && source "$HOME/.config/.bashrc.local"
+[ -r "$HOME/.local/.bashrc" ] && source "$HOME/.local/.bashrc"
 #}}}
 
-## alias to *new* and *improved* unix cli tools (exa, bat, nvim)
-# Check for nvim and set as editor after paths are added
+## section for *new* and *improved* cli tools (exa, bat, nvim)
+# {{{
+# nvim
+# {{{
 NVIM=$(command -v nvim)
 if [ -x "$NVIM" ]; then
   EDITOR="$NVIM"
@@ -412,21 +427,7 @@ fi
 alias v="$EDITOR"
 alias vi="$EDITOR"
 alias vim="$EDITOR"
-
-# dead code
-# {{{
-# start in tmux session if possible
-# if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]] && [ -z "$TMUX" ]; then
-#   exec tmux
-# fi
-
-# shell options
-# if ! shopt -q checkhash 2> /dev/null; then shopt -s checkhash fi
-# if ! shopt -q checkwinsize 2> /dev/null; then shopt -s checkwinsize; fi
-# if ! shopt -q cmdhist 2> /dev/null; then shopt -s cmdhist; fi
-# if ! shopt -q histappend 2> /dev/null; then shopt -s histappend; fi
-# if ! shopt -q extglob 2> /dev/null; then shopt -s extglob; fi
-# if ! shopt -q globstar 2> /dev/null; then shopt -s globstar; fi
+# }}}
 # }}}
 
 # vim:ft=sh
