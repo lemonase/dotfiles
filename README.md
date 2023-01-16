@@ -3,61 +3,41 @@
 I am using [GNU Stow](https://www.gnu.org/software/stow/) to symlink
 my dotfiles to their correct locations in my `$HOME` directory.
 
-## Installing `stow`
-
-### Ubuntu/Debian
-
-```bash
-apt install stow
-```
-
-### Fedora/RHEL
-
-```bash
-dnf install stow
-```
-
-### Arch
-
-```bash
-pacman -S stow
-```
-
-### MacOS
-
-```bash
-brew install stow
-```
-
 ## Cloning this repo
 
 ```bash
 git clone https://github.com/lemonase/dotfiles.git && cd dotfiles/config
 ```
 
+## Installing `stow` on Linux and macOS
+
+```bash
+# Ubuntu/Debian
+apt install stow
+
+# Fedora/RHEL
+dnf install stow
+
+# Arch
+pacman -S stow
+
+# macOS
+brew install stow
+```
+
 ## Using `stow`
 
-### Installing all symlinks
-
 ```bash
+# Installing all symlinks
 stow -t "$HOME" -S *
-```
 
-### Uninstalling all symlinks
-
-```bash
+# Uninstalling all symlinks
 stow -t "$HOME" -D *
-```
 
-### Repairing all symlinks
-
-```bash
+# Repairing all symlinks
 stow -t "$HOME" -R *
-```
 
-### Installing specific dotfiles
-
-```bash
+# Installing specific dotfiles
 stow -t "$HOME" -S git
 ```
 
