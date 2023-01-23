@@ -4,6 +4,9 @@
 
 vim.g.mapleader = ' '
 
+-- common vim commands in normal mode
+vim.keymap.set('n', '<leader>w', ':w<CR>')
+
 -- paste and search
 vim.keymap.set('n', '<silent><leader><space>', ':noh <BAR> :let @/ = ""<CR>')
 vim.keymap.set('n', '<leader>i', ':set invpaste<CR>')
