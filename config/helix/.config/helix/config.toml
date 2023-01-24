@@ -1,5 +1,8 @@
-# https://docs.helix-editor.com/
-# https://github.com/helix-editor/helix/wiki
+# Docs
+# ----
+# General Docs:    https://docs.helix-editor.com/
+# Wiki:            https://github.com/helix-editor/helix/wiki
+# LSP Docs:        https://github.com/helix-editor/helix/wiki/How-to-install-the-default-language-servers
 
 theme = "github_dark"
 
