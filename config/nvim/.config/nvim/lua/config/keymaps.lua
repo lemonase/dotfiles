@@ -1,6 +1,4 @@
---
--- keymaps
---
+-- keymaps.lua
 
 vim.g.mapleader = ' '
 

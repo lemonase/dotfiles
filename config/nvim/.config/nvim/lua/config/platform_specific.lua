@@ -1,3 +1,4 @@
+-- platform_specific.lua
 -- platform/os specific stuff
 if vim.fn.has('win32') then
   vim.cmd([[
