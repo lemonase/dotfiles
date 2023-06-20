@@ -11,6 +11,8 @@
 [credential]
 	username = lemonase
 	helper = store
+	helper = 
+	helper = /usr/local/share/gcm-core/git-credential-manager
 [color]
 	ui = true
 	status = auto
@@ -44,3 +46,5 @@
 	ps = push
 	puhs = push
     sm = submodule
+[credential "https://dev.azure.com"]
+	useHttpPath = true

@@ -396,6 +396,7 @@ case "$OSTYPE" in
     [ -d "/opt/homebrew/bin" ] && appendpath "/opt/homebrew/bin"
     # python3 (macOS)
     [ -d "$HOME/Library/Python/3.8/bin" ] && appendpath "$HOME/Library/Python/3.8/bin"
+    [ -d "$HOME/Library/Python/3.9/bin" ] && appendpath "$HOME/Library/Python/3.9/bin"
     # gui things
     alias o="open"
   ;;
@@ -414,20 +415,5 @@ esac
 # local rc
 [ -r "$HOME/.local/.bashrc" ] && source "$HOME/.local/.bashrc"
 #}}}
-
-## section for *new* and *improved* cli tools (exa, bat, nvim)
-# {{{
-# nvim
-# {{{
-NVIM=$(command -v nvim)
-if [ -x "$NVIM" ]; then
-  EDITOR="$NVIM"
-  VISUAL="$NVIM"
-fi
-alias v="$EDITOR"
-alias vi="$EDITOR"
-alias vim="$EDITOR"
-# }}}
-# }}}
 
 # vim:ft=sh
