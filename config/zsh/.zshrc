@@ -1,6 +1,10 @@
-# * * * * * * * * *
-## Env Variables  *
-# * * * * * * * * *
+# .zshrc
+
+# This file is kept under git version control
+
+# To make any local (non-tracked) edits or configurations, 
+# please edit `~/.local/.zshrc`, which is sourced from this file.
+
 # ls and grep options
 ls --version &>/dev/null
 if [ $? -eq 0 ]; then
@@ -9,38 +13,37 @@ else
   LS_OPTS="-GF"
   export CLICOLOR=1
 fi
-GREP_OPTS="--color=auto"
-EDITOR=vim
-VISUAL=vim
-PAGER=less
-# (Default prompt - git prompt set later)
-# PROMPT='%n@%m %~ %# '
+
+export GREP_OPTS="--color=auto"
+export EDITOR=vim
+export VISUAL=vim
+export PAGER=less
+export BLOCK_SIZE="'1"
+
+export HISTFILE=~/.zsh_history
+export HISTSIZE=999999999
+export SAVEHIST=$HISTSIZE
 
 # * * * * * * * * *
 ## Shell Options  *
 # * * * * * * * * *
-# History
+
+# Setting options
 setopt append_history
 setopt extended_history
 setopt inc_append_history
 setopt share_history
 setopt histsavenodups
 setopt hist_ignore_all_dups
-
-export HISTFILE=~/.zsh_history
-export HISTSIZE=999999999
-export SAVEHIST=$HISTSIZE
-# Less Annoying
 setopt interactive_comments
+setopt auto_menu # tab completion
+setopt prompt_subst # command substitution in prompt
 unsetopt correct_all
-export BLOCK_SIZE="'1"
-# Tab Completion
-setopt auto_menu
 autoload -Uz compinit && compinit
-# Prompt
-setopt prompt_subst
+
 # Deduplicate path
 typeset -U path
+
 # Set 'emacs' keybinds
 bindkey -e
 bindkey '\e[3~' delete-char
@@ -51,6 +54,7 @@ bindkey ' '  magic-space
 # * * * * * *
 ## Aliases  *
 # * * * * * *
+
 # core utils
 alias l="ls ${LS_OPTS}"
 alias ls="ls ${LS_OPTS}"
@@ -81,19 +85,16 @@ alias py="python3"
 alias ipy="ipython3"
 alias venvac="source venv/bin/activate"
 
-
 # compression/archives
 alias untar="tar -xvf"
 alias mktar="tar -caf"
 alias tarls="tar -tvf"
 alias ungzip="gunzip"
 
-# misc
-alias firefox-temp='firefox --profile $(mktemp -d) &> /dev/null &'
-
 # * * * * * *
 # Functions *
 # * * * * * *
+
 # concat common commands
 mkcd() { mkdir -p -- "$1" && cd "$1"; }
 cdd() { [ -n "$1" ] && for i in $(seq 1 "$1"); do cd ..; done; }
@@ -214,6 +215,10 @@ watip() {
 # * * * * * * * * * * * *
 # PROMPT/PS1 Functions  *
 # * * * * * * * * * * * *
+
+# (Default prompt - git prompt set later)
+# PROMPT='%n@%m %~ %# '
+
 git_prompt() {
   BRANCH=$(git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/*\(.*\)/\1/')
   STATUS="$(git status 2> /dev/null)"
@@ -237,11 +242,12 @@ git_prompt() {
     printf "%s" "%F{reset}]"
   fi
 }
-PROMPT='%F{blue}%~$(git_prompt) %F{cyan}%# %F{reset}'
+PROMPT='%F{blue}%~$(git_prompt) %F{yellow}%# %F{reset}'
 
 # * * * * * * * * * * * * * * * * * * *
 # Language Specific Version Managers  *
 # * * * * * * * * * * * * * * * * * * *
+
 # rbenv (ruby)
 src_rbenv(){
   if command -v ruby > /dev/null && command -v gem > /dev/null; then
@@ -306,6 +312,7 @@ fi
 # * * * * * * * * * * * *
 # MISC $PATH Additions  *
 # * * * * * * * * * * * *
+
 # homebrew stuff
 [ -d "/opt/homebrew/bin" ] && path+=("/opt/homebrew/bin" $path)
 [ -d "/opt/homebrew/opt/sqlite/bin" ] && path+=("/opt/homebrew/opt/sqlite/bin" $path)
@@ -318,11 +325,6 @@ fi
 [ -d "$HOME/.local/bin" ] && path+=("$HOME/.local/bin")
 [ -d "$HOME/.local/scripts" ] && path+=("$HOME/.local/scripts")
 
-# local rc
-[ -r "$HOME/.config/zshrc" ] && source "$HOME/.config/zshrc"
-[ -r "$HOME/.local/zshrc" ] && source "$HOME/.local/zshrc"
-
-
 # ZSH syntax highlighting plugin
 ZSH_SYNTAX_HIGHLIGHT_PATH="${HOMEBREW_PREFIX}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 if [ ! -f "$ZSH_SYNTAX_HIGHLIGHT_PATH" ]; then
@@ -330,3 +332,5 @@ if [ ! -f "$ZSH_SYNTAX_HIGHLIGHT_PATH" ]; then
 fi
 [ -f "$ZSH_SYNTAX_HIGHLIGHT_PATH" ] && source $ZSH_SYNTAX_HIGHLIGHT_PATH
 
+# local rc
+[ -r "$HOME/.local/zshrc" ] && source "$HOME/.local/zshrc"

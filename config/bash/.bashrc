@@ -1,4 +1,6 @@
-# This .bashrc is kept under git version control
+# .bashrc
+
+# This file is kept under git version control
 
 # To make any local (non-tracked) edits or configurations, 
 # please edit `~/.local/.bashrc`, which is sourced from this file.
