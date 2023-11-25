@@ -11,8 +11,6 @@
 [credential]
 	username = lemonase
 	helper = store
-	helper = 
-	helper = /usr/local/share/gcm-core/git-credential-manager
 [color]
 	ui = true
 	status = auto
