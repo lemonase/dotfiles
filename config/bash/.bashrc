@@ -11,19 +11,21 @@ case $- in
   *) return;;
 esac
 
-##* environment variables *##
-# {{{
-
 # environment variables for commands
 export PAGER="less"
 export EDITOR="/usr/bin/vim"
 export VISUAL="/usr/bin/vim"
 
 # bash history options
-HISTSIZE= ;
-HISTFILESIZE= ;
-HISTCONTROL="ignoreboth:erasedups"
-HISTTIMEFORMAT="%F %T  "
+export HISTSIZE= ;
+export HISTFILESIZE= ;
+export HISTCONTROL="ignoreboth:erasedups"
+export HISTTIMEFORMAT="%F %T  "
+
+# shell options
+shopt -s checkhash
+shopt -s cdspell
+shopt -s dirspell
 
 # ls options
 ls --version &> /dev/null
@@ -33,11 +35,8 @@ else
   LS_OPTS="-GF"
   export CLICOLOR=1
 fi
-# }}}
 
-##* aliases *##
-# {{{
-
+#+* aliases *+#
 # core utils (ls, grep, tree)
 alias l="ls ${LS_OPTS}"
 alias ls="ls ${LS_OPTS}"
@@ -46,32 +45,20 @@ alias la="ls -Alsh ${LS_OPTS}"
 alias al="ls -A ${LS_OPTS}"
 alias sl="ls -lsSh ${LS_OPTS}"
 alias sal="ls -AlsSh ${LS_OPTS}"
-
 alias grep="grep ${GREP_OPTS}"
 alias fgrep="fgrep ${GREP_OPTS}"
 alias egrep="egrep ${GREP_OPTS}"
-
 alias treel="tree -C | less -R"
 alias lsmnt="mount | column -t"
-
 alias pathls='printf "%b\n" "${PATH//:/\\n}"'
 
 # (git - vim - tmux)
 alias g="git"
 alias groot="cd $(git rev-parse --show-toplevel 2> /dev/null || echo -n ".")"
-
 alias tmls="tmux ls"
 alias tmlsc="tmux lsc"
 alias tmks="tmux kill-session -t" # kill one session
 alias tmka="tmux kill-server" # aka killall
-
-# docker
-alias d="docker"
-alias dc="docker-compose"
-
-# kubernetes
-alias k="kubectl"
-alias mink="minikube"
 
 # python
 # python3 is python unless python is already python3
@@ -83,16 +70,12 @@ fi
 alias venvac="source venv/bin/activate"
 alias mkvenv="python -m venv venv"
 
-
 # compression/archives
 alias untar="tar -xvf"
 alias mktar="tar -caf"
 alias tarls="tar -tvf"
 alias ungzip="gunzip"
-# }}}
 
-##* color variables *##
-#{{{
 # color vars using tput or ANSI/VT100 Control sequences
 # check if tput is available
 if [ -x "$(command -v tput)" ]; then
@@ -141,10 +124,9 @@ else # or fallback to ANSI esacpe codes
   reset="\[\033[0m\]"; unesc_reset="\033[0m"
   bold="\[\033[1m\]"; unesc_bold="\033[1m"
 fi
-#}}}
 
-##* bash functions *##
-# {{{
+#+* bash functions *+#
+
 # concat common commands
 mkcd() { mkdir -p -- "$1" && cd "$1"; }
 cdd() { [ -n "$1" ] && for i in $(seq 1 "$1"); do cd ..; done; }
@@ -156,13 +138,6 @@ lazygit() {
 }
 lg() {
   lazygit "$*";
-}
-
-# vim
-swp_vimrc(){
-  mv ~/.vim/vimrc ~/.vim/vimrc.swp
-  mv ~/.vim/vimrc.min ~/.vim/vimrc
-  mv ~/.vim/vimrc.swp ~/.vim/vimrc.min
 }
 
 # tmux
@@ -269,13 +244,10 @@ watip() {
   curl ifconfig.co
   # dig +short myip.opendns.com @resolver1.opendns.com
 }
-#}}}
 
-##* prompt settings (PS1) *##
-# {{{
+#+* prompt settings (PS1) *+#
 
 # git prompt function
-# {{{
 parse_git() {
   BRANCH="$(git rev-parse --abbrev-ref HEAD 2> /dev/null)"
   STATUS="$(git status 2> /dev/null)"
@@ -296,7 +268,6 @@ parse_git() {
     printf "\001${unesc_reset}${unesc_bold}${unesc_white}\002%s" "]"
   fi
 }
-# }}}
 
 # *plain prompts*
 # PS1="\W \\$ "
@@ -312,10 +283,9 @@ PS1="${bold}${bright_blue}\w\$(parse_git)${white} \\$ ${reset}"
 # PS1="${bold}${white}\t ${bright_blue}\w\$(parse_git) ${white}\\$ ${reset}"
 # PS1="${bold}${bright_cyan}\u${bright_magenta}@${bright_yellow}\h${white}:${bright_blue}\w\$(parse_git)${white}\\$ ${reset}"
 # PS1="${bold}${bright_cyan}\u${bright_magenta}@${bright_yellow}\h${white}:${bright_blue}\w\$(parse_git)${white}\\$ ${reset}"
-# }}}
 
 ##* bash completions and integrations *##
-# {{{
+
 # bash autocompletion
 if ! shopt -oq posix; then
   if [ -f /usr/share/bash-completion/bash_completion ]; then
@@ -331,11 +301,9 @@ fi
 # fzf shell integration
 export FZF_DEFAULT_OPTS="--bind=ctrl-f:page-down,ctrl-b:page-up"
 [ -f "~/.config/.fzf.bash" ] && source "~/.config/.fzf.bash"
-# }}}
 
-##* paths *##
+#+* paths *+#
 # language version managers
-# {{{
 # ruby (rbenv)
 src_rbenv(){
   if command -v ruby &> /dev/null && command -v gem > /dev/null; then
@@ -388,10 +356,8 @@ fi
 
 # rust
 [ -d "$HOME/.cargo" ] && appendpath "$HOME/.cargo/bin"
-#}}}
 
-##* OS specific config *##
-# {{{
+#+* OS specific config *+#
 case "$OSTYPE" in
   darwin*)  
     # homebrew
@@ -409,13 +375,11 @@ case "$OSTYPE" in
   ;;
 esac
 
-
 # local bins
 [ -d "$HOME/.local/bin" ] && appendpath "$HOME/.local/bin"
 [ -d "$HOME/.local/scripts" ] && appendpath "$HOME/.local/scripts"
 
 # local rc
 [ -r "$HOME/.local/.bashrc" ] && source "$HOME/.local/.bashrc"
-#}}}
 
 # vim:ft=sh
