@@ -6,17 +6,20 @@ CONFIG_DIR="$(dirname "$0")/config"
 cd $CONFIG_DIR
 
 if [[ "$1" == "help" || "$1" == "--help" || "$1" == "-h" ]]; then
-  echo "dofiles install script with stow:"
+  echo "dotfile symlink install script:"
   echo "options:"
   echo ""
   echo "install, i:"
-  echo "  install dotfiles"
+  echo "  install dotfile symlinks to $HOME directory"
   echo ""
   echo "uninstall, u, delete, d, remove, r:"
-  echo "  uninstall dotfiles"
+  echo "  uninstall dotfile symlinks to $HOME directory"
   echo ""
   echo "repair, r:"
-  echo "  repair dotfile symlinks"
+  echo "  repair old dotfile symlinks"
+  echo ""
+  echo "list, l:"
+  echo "  list symlinks files in home directory"
   exit
 fi
 

@@ -1,12 +1,14 @@
 # My dotfiles
 
+A collection of my config files (also known as dotfiles).
+
 I am using [GNU Stow](https://www.gnu.org/software/stow/) to symlink
 my dotfiles to their correct locations in my `$HOME` directory.
 
 ## Cloning this repo
 
 ```bash
-git clone https://github.com/lemonase/dotfiles.git && cd dotfiles/config
+git clone https://github.com/lemonase/dotfiles.git
 ```
 
 ## Installing `stow` on Linux and macOS
@@ -23,6 +25,26 @@ pacman -S stow
 
 # macOS
 brew install stow
+```
+
+## Using `install.sh` script
+
+```bash
+$ ./install.sh --help
+dotfile symlink install script:
+options:
+
+install, i:
+  install dotfile symlinks to $HOME directory
+
+uninstall, u, delete, d, remove, r:
+  uninstall dotfile symlinks to $HOME directory
+
+repair, r:
+  repair old dotfile symlinks
+
+list, l:
+  list symlinks files in home directory
 ```
 
 ## Using `stow`
@@ -57,4 +79,3 @@ WARNING! stowing git would cause conflicts:
 
 Delete or move file in question
 
----
