@@ -350,7 +350,7 @@ if command -v go &> /dev/null; then
   export GOMOD="$GOPATH/pkg/mod/github.com/lemonase/"
 
   # add go path bin directory to path
-  [ -d "$(go env GOPATH)/bin" ] && appendpath "$(go env GOPATH)/bin"
+  [ -d "$GOPATH/bin" ] && appendpath "$GOPATH/bin"
 fi
 
 # rust
