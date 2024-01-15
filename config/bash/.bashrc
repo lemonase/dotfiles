@@ -333,26 +333,6 @@ src_pyenv() {
   fi
 }
 
-# go
-export GOROOT="/usr/local/go"
-[ -d "$GOROOT/bin" ] && appendpath "$GOROOT/bin"
-
-export GO111MODULE=on
-export GOPATH="$HOME/go"
-if command -v go &> /dev/null; then
-  # change default go path
-  export GOPATH="$HOME/.go"
-  [ -d "$HOME/go" ] && mv "$HOME/go" "$HOME/.go"
-
-  # change default go working dir and mod dir
-  export GOWD="$GOPATH/src/github.com/lemonase"
-  [ ! -d "$GOWD" ] && mkdir -p "$GOWD"
-  export GOMOD="$GOPATH/pkg/mod/github.com/lemonase/"
-
-  # add go path bin directory to path
-  [ -d "$GOPATH/bin" ] && appendpath "$GOPATH/bin"
-fi
-
 # rust
 [ -d "$HOME/.cargo" ] && appendpath "$HOME/.cargo/bin"
 
@@ -362,8 +342,8 @@ case "$OSTYPE" in
     # homebrew
     [ -d "/opt/homebrew/bin" ] && appendpath "/opt/homebrew/bin"
     # python3 (macOS)
-    [ -d "$HOME/Library/Python/3.8/bin" ] && appendpath "$HOME/Library/Python/3.8/bin"
-    [ -d "$HOME/Library/Python/3.9/bin" ] && appendpath "$HOME/Library/Python/3.9/bin"
+    LATEST_PY=$(find "$HOME/Library/Python" -type d -maxdepth 1 | sort -V | tail -n 1)
+    [ -d "$LATEST_PY/bin" ] && appendpath "$LATEST_PY/bin"
     # gui things
     alias o="open"
   ;;
