@@ -76,3 +76,7 @@ augroup languages
     autocmd FileType html,javascript,css,json,yaml,sh
                 \ setlocal ts=2 sts=2 sw=2 expandtab
 augroup END
+
+if filereadable(expand("~/.local/.vimrc"))
+    source ~/.local/.vimrc
+endif
