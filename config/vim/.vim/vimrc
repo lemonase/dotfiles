@@ -1,1 +1,123 @@
-vimrc.min
+"load system defaults
+"--------------------
+if filereadable(expand('$VIMRUNTIME/defaults.vim'))
+  unlet! g:skip_defaults_vim
+  source $VIMRUNTIME/defaults.vim
+endif
+
+"regular settings
+"----------------
+" ui
+set number    " line numbers
+set ruler     " line # in the statusline
+set wildmenu  " vim command completion menu
+set showcmd   " show the current normal mode command
+set showmatch " show matching symbols like (), {}
+set hidden    " allow unsaved buffers in background
+
+" encoding/format
+set encoding=utf-8            " utf-8 (basically) standard
+set fileformats=unix,dos,mac  " controls newline styles
+
+" searching
+set hlsearch    " highlight all matches for a search
+set incsearch   " incremental search by character
+set ignorecase  " ignore alphabetical case of search
+set smartcase   " ignore unless there is a capital letter
+
+" tab/space indent and whitespace
+set tabstop=2     " tabstop is the num to use for a tab character
+set softtabstop=2 " softtabstop makes up the difference between tab and space
+set shiftwidth=2  " shiftwidth applies to indenting with < and >
+set expandtab     " use space characters to indent instead of tab characters
+set autoindent    " copies indent from current line
+set smarttab      " should not matter if ts, sts and sw are all the same
+set backspace=indent,eol,start  " lets you backspace over anything
+
+" key timeout values
+set esckeys         " allow <ESC> to be registered instantly
+set timeoutlen=1000 " keymap timeout value (1 second in ms)
+set ttimeoutlen=20  " time out for keycodes (20ms)
+
+" allow syntax and filetype plugins
+syntax enable
+filetype plugin indent on
+runtime macros/matchit.vim
+
+"keybinds
+"----------
+let mapleader = " "
+
+"file cleanup
+"------------
+"swap
+let mySwapDir = expand("$HOME/.vim/.swap")
+if !isdirectory(mySwapDir)
+    silent! call mkdir(mySwapDir, "p")
+endif
+let &directory=mySwapDir
+
+"undo
+if has('persistent_undo')
+    let myUndoDir = expand("$HOME/.vim/.undo")
+    if !isdirectory(myUndoDir)
+        silent! call mkdir(myUndoDir, "p")
+    endif
+    let &undodir=myUndoDir
+    set undofile
+endif
+
+"backup
+if has('writebackup')
+    let myBackupDir = expand("$HOME/.vim/.backup")
+    if !isdirectory(myBackupDir)
+        silent! call mkdir(myBackupDir, "p")
+    endif
+    let &backupdir=myBackupDir
+    set backup
+endif
+
+"autocmds
+"---------
+augroup general
+    autocmd!
+    "keep equal proportions when windows resized
+    autocmd VimResized * wincmd =
+    "save cursor position in a file
+    autocmd BufReadPost * if line("'\"") > 1 && line("'\"")
+                \ <= line("$") | exe "normal! g'\"" | endif
+augroup END
+
+"plugins
+"--------
+let plugDir = expand("$HOME/.vim/autoload/plug.vim")
+let pluginDir = expand("$HOME/.vim/plugged")
+let plugRemote = "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
+"ensure vim-plug is installed on VimEnter
+if empty(glob(plugDir))
+    silent execute "!curl -fLo " . shellescape(expand(plugDir)) . " --create-dirs " . shellescape(plugRemote)
+    autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+call plug#begin(pluginDir)
+    Plug 'junegunn/vim-plug'
+    Plug 'tpope/vim-commentary'
+    Plug 'tpope/vim-surround'
+    Plug 'tpope/vim-unimpaired'
+    Plug 'tpope/vim-rsi'
+    Plug 'tpope/vim-eunuch'
+    Plug 'tpope/vim-repeat'
+    Plug 'tpope/vim-fugitive'
+    Plug 'tpope/vim-rhubarb'
+    Plug 'tpope/vim-dispatch'
+    Plug 'airblade/vim-gitgutter'
+    Plug 'editorconfig/editorconfig-vim'
+    Plug 'prabirshrestha/vim-lsp'
+    Plug 'mattn/vim-lsp-settings'
+    Plug 'freitass/todo.txt-vim'
+call plug#end()
+
+"local rc
+"--------
+if filereadable(expand("~/.local/.vimrc"))
+    source ~/.local/.vimrc
+endif
