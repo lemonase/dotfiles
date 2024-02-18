@@ -335,6 +335,7 @@ src_pyenv() {
 
 # go
 [ -d "/usr/local/go/bin" ] && appendpath "/usr/local/go/bin"
+[ -d "$HOME/go/bin" ] && appendpath "$HOME/go/bin"
 
 # rust
 [ -d "$HOME/.cargo" ] && appendpath "$HOME/.cargo/bin"
