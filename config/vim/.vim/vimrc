@@ -113,7 +113,7 @@ call plug#begin(pluginDir)
     Plug 'editorconfig/editorconfig-vim'
     Plug 'prabirshrestha/vim-lsp'
     Plug 'mattn/vim-lsp-settings'
-    " Plug 'fatih/vim-go'
+    Plug 'fatih/vim-go'
     Plug 'prabirshrestha/asyncomplete.vim'
     Plug 'prabirshrestha/asyncomplete-lsp.vim'
     Plug 'freitass/todo.txt-vim'
