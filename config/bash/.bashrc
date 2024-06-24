@@ -365,4 +365,7 @@ esac
 # local rc
 [ -r "$HOME/.local/.bashrc" ] && source "$HOME/.local/.bashrc"
 
+# fzf
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
 # vim:ft=sh
