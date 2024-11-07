@@ -1,5 +1,7 @@
 # Have git remember credentials
 #  git config --global credential.helper (store|cache|libsecret|git-credential-manager-core)
+#  setting up git on a new machine:
+#  https://madjam.dev/how-to-add-git-credentials-on-linux-and-macos-hosts-ssh-and-pat/
 
 # Setting up a new repo *make first commit*
 #  git remote add origin <url/path to git project>
