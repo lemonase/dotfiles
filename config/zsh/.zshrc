@@ -40,6 +40,7 @@ setopt auto_menu    # tab completion
 setopt prompt_subst # command substitution in prompt
 unsetopt correct_all
 autoload -Uz compinit && compinit
+autoload -z edit-command-line
 
 # Deduplicate path
 typeset -U path
@@ -50,6 +51,8 @@ bindkey '\e[3~' delete-char
 bindkey '^p' history-search-backward
 bindkey '^n' history-search-forward
 bindkey ' ' magic-space
+zle -N edit-command-line
+bindkey "^X^E" edit-command-line
 
 # * * * * * *
 #  Aliases  *
