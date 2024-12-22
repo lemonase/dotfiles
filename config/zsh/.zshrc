@@ -50,6 +50,8 @@ bindkey -e
 bindkey '\e[3~' delete-char
 bindkey '^p' history-search-backward
 bindkey '^n' history-search-forward
+bindkey '^U' backward-kill-line
+
 bindkey ' ' magic-space
 zle -N edit-command-line
 bindkey "^X^E" edit-command-line
