@@ -80,6 +80,7 @@ alias g="git"
 alias groot="cd $(git rev-parse --show-toplevel 2>/dev/null || echo -n ".")"
 alias v="$EDITOR"
 alias vi="$EDITOR"
+alias nv="nvim"
 alias tmls="tmux ls"
 alias tmlsc="tmux lsc"
 alias tmks="tmux kill-session -t" # kill one session

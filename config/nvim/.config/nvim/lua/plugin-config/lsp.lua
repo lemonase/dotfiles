@@ -35,15 +35,12 @@ local on_attach = function(_, bufnr)
       vim.lsp.buf.formatting()
     end
   end, { desc = 'Format current buffer with LSP' })
-
 end
 
 -- mason - package manager for lsp servers
 require('mason').setup()
-local servers = { 'clangd', 'rust_analyzer', 'pyright', 'tsserver', 'lua_ls', 'gopls', 'bashls' }
-require('mason-lspconfig').setup {
-  ensure_installed = servers,
-}
+local servers = { 'clangd', 'rust_analyzer', 'pylsp', 'ts_ls', 'lua_ls', 'gopls', 'bashls' }
+require('mason-lspconfig').setup({ ensure_installed = servers })
 
 -- nvim-cmp - extend capabilities
 local capabilities = vim.lsp.protocol.make_client_capabilities()
@@ -59,7 +56,6 @@ end
 
 -- fidget - for lsp status above statusline
 require('fidget').setup()
-
 
 -- lua lsp config
 -- Make runtime files discoverable to the server
