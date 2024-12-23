@@ -10,7 +10,7 @@ require('plugin-config.nvim-treesitter')
 
 -- * File explorer and Fuzzy Finder * --
 -- nvim-tree
-require('plugin-config.nvim-tree')
+require('plugin-config.oil')
 -- fzf (fuzzy finder)
 require('plugin-config.fzf')
 
@@ -19,7 +19,6 @@ require('plugin-config.fzf')
 require('plugin-config.gitsigns')
 -- vim-fugitive (git plugin)
 require('plugin-config.vim-fugitive')
-
 
 -- colorscheme
 require('plugin-config.colorscheme')

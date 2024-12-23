@@ -41,6 +41,9 @@ require("lazy").setup({
       'junegunn/fzf', run = ":call fzf#install()",
       'junegunn/fzf.vim',
 
+      -- filetree
+      'stevearc/oil.nvim',
+
       -- lsp
       "williamboman/mason.nvim",
       "williamboman/mason-lspconfig.nvim",
@@ -62,9 +65,5 @@ require("lazy").setup({
       'Shatur/neovim-ayu'
     },
   },
-  -- Configure any other settings here. See the documentation for more details.
-  -- colorscheme that will be used when installing plugins.
-  install = { colorscheme = { "habamax" } },
-  -- automatically check for plugin updates
   checker = { enabled = true },
 })
