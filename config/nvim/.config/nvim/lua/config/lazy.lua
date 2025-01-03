@@ -6,7 +6,7 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
   if vim.v.shell_error ~= 0 then
     vim.api.nvim_echo({
       { "Failed to clone lazy.nvim:\n", "ErrorMsg" },
-      { out, "WarningMsg" },
+      { out,                            "WarningMsg" },
       { "\nPress any key to exit..." },
     }, true, {})
     vim.fn.getchar()
@@ -38,24 +38,39 @@ require("lazy").setup({
       'lewis6991/gitsigns.nvim',
 
       -- fzf
-      'junegunn/fzf', run = ":call fzf#install()",
+      {
+        'junegunn/fzf',
+        run = ':call fzf#install()',
+      },
       'junegunn/fzf.vim',
 
       -- filetree
       'stevearc/oil.nvim',
 
+      -- md preview
+      {
+        "iamcco/markdown-preview.nvim",
+        cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
+        build = "cd app && npm install",
+        init = function()
+          vim.g.mkdp_filetypes = { "markdown" }
+        end,
+        ft = { "markdown" },
+      },
+
       -- lsp
-      "williamboman/mason.nvim",
-      "williamboman/mason-lspconfig.nvim",
-      "neovim/nvim-lspconfig",
+      'williamboman/mason.nvim',
+      'williamboman/mason-lspconfig.nvim',
+      'neovim/nvim-lspconfig',
       'hrsh7th/cmp-nvim-lsp',
       'hrsh7th/cmp-buffer',
       'hrsh7th/cmp-path',
       'hrsh7th/cmp-cmdline',
-      "L3MON4D3/LuaSnip",
+      'L3MON4D3/LuaSnip',
       'hrsh7th/nvim-cmp',
+      'mattn/emmet-vim',
       'nvim-treesitter/nvim-treesitter',
-      "j-hui/fidget.nvim",
+      'j-hui/fidget.nvim',
 
       -- colorschemes
       'rose-pine/neovim',

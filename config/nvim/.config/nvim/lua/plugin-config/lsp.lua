@@ -39,7 +39,17 @@ end
 
 -- mason - package manager for lsp servers
 require('mason').setup()
-local servers = { 'clangd', 'rust_analyzer', 'pylsp', 'ts_ls', 'lua_ls', 'gopls', 'bashls' }
+local servers = {
+  'clangd',
+  'rust_analyzer',
+  'gopls',
+  'pylsp',
+  'ts_ls',
+  'eslint',
+  'html',
+  'lua_ls',
+  'bashls'
+}
 require('mason-lspconfig').setup({ ensure_installed = servers })
 
 -- nvim-cmp - extend capabilities

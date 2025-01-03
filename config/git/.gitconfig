@@ -42,8 +42,14 @@
 	pul = pull
 	ps = push
 	puhs = push
-    sm = submodule
+	sm = submodule
 [credential "https://dev.azure.com"]
 	useHttpPath = true
 [credential]
 	helper = store
+# https://cli.github.com/manual/gh_auth_setup-git
+# gh auth setup-git
+[credential "https://github.com"]
+	helper = !/usr/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = !/usr/bin/gh auth git-credential
