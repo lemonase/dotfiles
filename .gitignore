@@ -1,3 +1,5 @@
+# nvim
 *packer_compiled.lua*
 *lazy-lock.json*
+# helix
 config/helix/.config/helix/runtime
