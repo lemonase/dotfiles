@@ -1,0 +1,36 @@
+# todo: turn into archinstall json
+# https://archinstall.archlinux.page/installing/guided.html
+
+linux-headers
+yay
+stow
+tmux
+zsh
+vim
+gvim
+neovim
+tree
+dig
+bat
+fzf
+ripgrep
+jq
+cowsay
+fastfetch
+
+github-cli
+docker
+nodejs
+npm
+
+gamemoderun
+mangohud
+obs-studio
+gimp
+okular
+
+code
+discord
+
+otf-hermit
+fira-code
