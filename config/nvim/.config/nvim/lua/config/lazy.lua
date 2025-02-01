@@ -47,17 +47,6 @@ require("lazy").setup({
       -- filetree
       'stevearc/oil.nvim',
 
-      -- md preview
-      {
-        "iamcco/markdown-preview.nvim",
-        cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
-        build = "cd app && npm install",
-        init = function()
-          vim.g.mkdp_filetypes = { "markdown" }
-        end,
-        ft = { "markdown" },
-      },
-
       -- lsp
       'williamboman/mason.nvim',
       'williamboman/mason-lspconfig.nvim',
@@ -80,5 +69,5 @@ require("lazy").setup({
       'Shatur/neovim-ayu'
     },
   },
-  checker = { enabled = true },
+  checker = { enabled = false },
 })
