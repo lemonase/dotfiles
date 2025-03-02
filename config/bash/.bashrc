@@ -27,6 +27,9 @@ shopt -s checkhash
 shopt -s cdspell
 shopt -s dirspell
 
+# set local env variables
+[ -r "~/.local/.env" ] && source "~/.local/.env"
+
 # ls options
 ls --version &> /dev/null
 if [ "$? " -eq 0 ]; then
@@ -61,6 +64,19 @@ alias tmls="tmux ls"
 alias tmlsc="tmux lsc"
 alias tmks="tmux kill-session -t" # kill one session
 alias tmka="tmux kill-server" # aka killall
+
+# edit rc
+alias brc="$EDITOR ~/.bashrc"
+alias lbrc="$EDITOR ~/.local/.bashrc"
+alias lenv="$EDITOR ~/.local/.env"
+alias vrc="$EDITOR ~/.vim/vimrc"
+alias lvrc="$EDITOR ~/.local/.vimrc"
+alias nvrc="$EDITOR ~/.config/nvim/init.lua"
+alias nvrcd="$EDITOR ~/.config/nvim/"
+alias lnvrc="$EDITOR ~/.local/.nvimrc"
+alias tmrc="$EDITOR ~/.tmux.conf"
+alias ltmrc="$EDITOR ~/.local/.tmux.conf"
+alias gitrc="$EDITOR ~/.gitconfig"
 
 # python
 # python3 is python unless python is already python3
@@ -364,7 +380,7 @@ esac
 [ -d "$HOME/.local/bin" ] && appendpath "$HOME/.local/bin"
 [ -d "$HOME/.local/scripts" ] && appendpath "$HOME/.local/scripts"
 
-# local rc
+# local rc (overwrite)
 [ -r "$HOME/.local/.bashrc" ] && source "$HOME/.local/.bashrc"
 
 # fzf

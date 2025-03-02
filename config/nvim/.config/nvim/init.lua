@@ -8,3 +8,6 @@ require('config.platform_specific') -- platform specific settings (Win32, Mac, L
 -- plugin configurations
 require('config.lazy')              -- nvim plugins
 require('plugin-config')            -- plugin specific configurations
+
+-- local config
+require('config.local')

@@ -18,7 +18,6 @@ vim.opt.rtp:prepend(lazypath)
 -- Setup lazy.nvim
 require("lazy").setup({
   spec = {
-    -- import your plugins
     {
       -- * vanilla vim plugins * --
       -- normal mode keybinds
@@ -55,9 +54,13 @@ require("lazy").setup({
       'hrsh7th/cmp-buffer',
       'hrsh7th/cmp-path',
       'hrsh7th/cmp-cmdline',
-      'L3MON4D3/LuaSnip',
       'hrsh7th/nvim-cmp',
-      'mattn/emmet-vim',
+      'L3MON4D3/LuaSnip',
+
+      -- formatting
+      'stevearc/conform.nvim',
+
+      -- treesitter
       'nvim-treesitter/nvim-treesitter',
       'j-hui/fidget.nvim',
 
