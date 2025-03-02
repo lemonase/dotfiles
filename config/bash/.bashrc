@@ -3,7 +3,8 @@
 # This file is kept under git version control
 
 # To make any local (non-tracked) edits or configurations, 
-# please edit `~/.local/.bashrc`, which is sourced from this file.
+# please edit `~/.local/.bashrc` or `~/.local/.env`, which
+# are both sourced from this file.
 
 # If not running interactively, don't do anything
 case $- in
@@ -15,20 +16,18 @@ esac
 export PAGER="less"
 export EDITOR="/usr/bin/vim"
 export VISUAL="/usr/bin/vim"
-
 # bash history options
 export HISTSIZE= ;
 export HISTFILESIZE= ;
 export HISTCONTROL="ignoreboth:erasedups"
 export HISTTIMEFORMAT="%F %T  "
-
 # shell options
 shopt -s checkhash
 shopt -s cdspell
 shopt -s dirspell
 
-# set local env variables
-[ -r "~/.local/.env" ] && source "~/.local/.env"
+# source (overwrite) local env variables
+[ -r "$HOME/.local/.env" ] && source "$HOME/.local/.env"
 
 # ls options
 ls --version &> /dev/null
@@ -381,7 +380,7 @@ esac
 [ -d "$HOME/.local/bin" ] && appendpath "$HOME/.local/bin"
 [ -d "$HOME/.local/scripts" ] && appendpath "$HOME/.local/scripts"
 
-# local rc (overwrite)
+# source local rc (overwrite)
 [ -r "$HOME/.local/.bashrc" ] && source "$HOME/.local/.bashrc"
 
 # fzf
