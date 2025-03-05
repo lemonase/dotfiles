@@ -24,6 +24,9 @@ export HISTFILE=~/.zsh_history
 export HISTSIZE=999999999
 export SAVEHIST=$HISTSIZE
 
+# source (overwrite) local env variables
+[ -r "$HOME/.local/.env" ] && source "$HOME/.local/.env"
+
 # * * * * * * * * *
 #  Shell Options  *
 # * * * * * * * * *
