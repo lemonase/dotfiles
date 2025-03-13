@@ -78,6 +78,18 @@ alias tmrc="$EDITOR ~/.tmux.conf"
 alias ltmrc="$EDITOR ~/.local/.tmux.conf"
 alias gitrc="$EDITOR ~/.gitconfig"
 
+# hugo
+# BLOG_DIR="$HOME/Code/lemonase.github.io/"
+hugo-cd() { cd $BLOD_DIR; }
+hugo-lp() { cd $BLOG_DIR && hugo list all; }
+hugo-ls() { hugo-lp | sed 1d | awk -F',' '{print $1, $(NF-4)}' | column -t; }
+hugo-fzf() { hugo-ls | fzf | awk '{print $1}'; }
+
+hugo-np() { cd $BLOG_DIR && hugo new posts/$1.md;  }
+hugo-npe() { hugo-np $1 && $EDITOR $BLOG_DIR/content/posts/$1.md; }
+hugo-rm() { rm "$BLOG_DIR/content/posts/$1.md"; }
+hugo-ed() { $EDITOR $(hugo-fzf); }
+
 # python
 # python3 is python unless python is already python3
 if ! command -v python &> /dev/null && command -v python3 &> /dev/null;  then
