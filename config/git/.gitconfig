@@ -1,7 +1,7 @@
 # Have git remember credentials
 #  git config --global credential.helper (store|cache|libsecret|git-credential-manager-core)
 #  setting up git on a new machine:
-#  https://madjam.dev/how-to-add-git-credentials-on-linux-and-macos-hosts-ssh-and-pat/
+#  https://jamiam.dev/posts/how-to-add-git-credentials-on-linux-mac-hosts/
 
 # Setting up a new repo *make first commit*
 #  git remote add origin <url/path to git project>
@@ -31,6 +31,7 @@
 	cm = commit -m
 	cam = commit -am
 	co = checkout
+	cob = checkout -b
 	br = branch
 	d = diff
 	df = diff
@@ -42,7 +43,10 @@
 	pul = pull
 	ps = push
 	puhs = push
+	sw = switch
+	swc = switch -c
 	sm = submodule
+	rv = remote -v
 [credential "https://dev.azure.com"]
 	useHttpPath = true
 [credential]
@@ -53,3 +57,5 @@
 	helper = !/usr/bin/gh auth git-credential
 [credential "https://gist.github.com"]
 	helper = !/usr/bin/gh auth git-credential
+
+# vim: set list et!:
