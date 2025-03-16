@@ -5,8 +5,7 @@
 # Relies on BLOG_DIR to be set from environment
 
 hu() {
-  cd "$BLOG_DIR"
-
+  echo "$BLOG_DIR"
   if [ "$1" == "np" ]; then
     POST_NAME="$2"
     if [ -z "$POST_NAME" ]; then
@@ -20,14 +19,12 @@ hu() {
   fi
 
   if [ "$1" == "ls" ]; then
-    cd "$BLOG_DIR" && hugo list all | sed 1d | awk -F',' '{print $1, $(NF-4)}' | column -t
+    hugo list all -s "$BLOG_DIR" | sed 1d | awk -F',' '{print $1, $(NF-4)}' | column -t
   fi
 
   if [ "$1" == "fzf" ]; then
-    cd "$BLOG_DIR" && hugo list all | sed 1d | awk -F',' '{print $1, $(NF-4)}' | column -t | fzf | awk '{print $1}'
+    hugo list all -s "$BLOG_DIR" | sed 1d | awk -F',' '{print $1, $(NF-4)}' | column -t | fzf | awk '{print $1}'
   fi
-
-  $SHELL
 }
 
 hu "$@"

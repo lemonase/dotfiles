@@ -32,6 +32,7 @@
 	cam = commit -am
 	co = checkout
 	cob = checkout -b
+	cl = clean -i
 	br = branch
 	d = diff
 	df = diff
