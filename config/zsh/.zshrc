@@ -103,6 +103,7 @@ alias ungzip="gunzip"
 # Functions *
 # * * * * * *
 
+
 # concat common commands
 mkcd() { mkdir -p -- "$1" && cd "$1"; }
 cdd() { [ -n "$1" ] && for i in $(seq 1 "$1"); do cd ..; done; }
@@ -310,6 +311,18 @@ fi
 if command -v cargo >/dev/null; then
 	src_rust
 fi
+
+# hugo
+# BLOG_DIR should be set in local env
+hugo-cd() { cd $BLOD_DIR; }
+hugo-lp() { cd $BLOG_DIR && hugo list all; }
+hugo-ls() { hugo-lp | sed 1d | awk -F',' '{print $1, $(NF-4)}' | column -t; }
+hugo-fzf() { hugo-ls | fzf | awk '{print $1}'; }
+
+hugo-np() { cd $BLOG_DIR && hugo new posts/$1.md;  }
+hugo-npe() { hugo-np $1 && $EDITOR $BLOG_DIR/content/posts/$1.md; }
+hugo-rm() { rm "$BLOG_DIR/content/posts/$1.md"; }
+hugo-ed() { $EDITOR $(hugo-fzf); }
 
 # * * * * * * * * * * * *
 # MISC $PATH Additions  *

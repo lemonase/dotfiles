@@ -79,6 +79,7 @@ alias ltmrc="$EDITOR ~/.local/.tmux.conf"
 alias gitrc="$EDITOR ~/.gitconfig"
 
 # hugo
+# BLOG_DIR should be set in local env
 # BLOG_DIR="$HOME/Code/lemonase.github.io/"
 hugo-cd() { cd $BLOD_DIR; }
 hugo-lp() { cd $BLOG_DIR && hugo list all; }
