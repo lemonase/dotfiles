@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# hu.sh:
+# Hugo wrapper script around hugo static site generator
+# Relies on BLOG_DIR to be set from environment
+
+hu() {
+  cd "$BLOG_DIR"
+
+  if [ "$1" == "np" ]; then
+    POST_NAME="$2"
+    if [ -z "$POST_NAME" ]; then
+      read -p "Enter a post title (omitting .md): " POST_NAME 
+    fi
+    hugo new posts/$POST_NAME.md;
+  fi
+
+  if [ "$1" == "rm" ]; then
+    rm "$BLOG_DIR/content/posts/$2.md"
+  fi
+
+  if [ "$1" == "ls" ]; then
+    cd "$BLOG_DIR" && hugo list all | sed 1d | awk -F',' '{print $1, $(NF-4)}' | column -t
+  fi
+
+  if [ "$1" == "fzf" ]; then
+    cd "$BLOG_DIR" && hugo list all | sed 1d | awk -F',' '{print $1, $(NF-4)}' | column -t | fzf | awk '{print $1}'
+  fi
+
+  $SHELL
+}
+
+hu "$@"
