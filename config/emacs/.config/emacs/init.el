@@ -34,15 +34,22 @@
 (setq auto-save-file-name-transforms `((".*" "~/.config/emacs/saves/" t)))
 (set-register ?e (find-file (or user-init-file "")))
 
-;; package init w/ melpa
-(require 'package)
-(add-to-list 'package-archives
-	     '("melpa" . "https://melpa.org/packages/"))
-(package-initialize)
-
-;; use-package install and init
-(unless (package-installed-p 'use-package)
-  (package-install 'use-package))
+;; bootstrap straight.el package manager
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name
+        "straight/repos/straight.el/bootstrap.el"
+        (or (bound-and-true-p straight-base-dir)
+            user-emacs-directory)))
+      (bootstrap-version 7))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
 
 ;; start evil
 (unless (package-installed-p 'evil)
@@ -53,13 +60,13 @@
 (evil-mode 1)
 
 (use-package evil-collection
-  :ensure t
+  :straight t
   :after evil
   :init
   (evil-collection-init))
 
 (use-package evil-surround
-  :ensure t
+  :straight t
   :config
   (global-evil-surround-mode 1))
 ;; end evil
@@ -69,7 +76,7 @@
 (global-set-key (kbd "C-c c") #'org-capture)
 
 (use-package markdown-mode
-  :ensure t
+  :straight t
   :mode ("README\\.md\\'" . gfm-mode)
   :init (setq markdown-command "multimarkdown")
   :bind (:map markdown-mode-map
@@ -77,62 +84,62 @@
 ;; end writing
 
 (use-package dired
-  :ensure nil
+  :straight nil
   :commands (dired dired-jump)
   :bind (("C-x C-j" . dired-jump)))
 
 (use-package magit
-  :ensure t)
+  :straight t)
 
 ;; show more vertcal suggestions on M-x
 (use-package vertico
-  :ensure t
+  :straight t
   :init
   (vertico-mode))
 
 (use-package marginalia
   :after vertico
-  :ensure t
+  :straight t
   :init
   (marginalia-mode))
 
 (use-package emmet-mode
-  :ensure t
+  :straight t
   :init)
 
 (use-package multiple-cursors
-  :ensure t)
+  :straight t)
 (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
 
 (use-package which-key
-  :ensure t
+  :straight t
   :defer t
   :init (which-key-mode))
 
 (use-package flycheck
-  :ensure t
+  :straight t
   :init (global-flycheck-mode))
 
 (use-package company
-  :ensure t
+  :straight t
   :init
   (global-company-mode))
 
 (use-package lsp-mode
-  :ensure t
+  :straight t
   :hook ((prog-mode) . lsp-deferred))
 
 ;; fun
 (use-package rainbow-delimiters
-  :ensure t
+  :straight t
   :defer t
   :hook ((prog-mode) . rainbow-delimiters-mode))
 
 (setq mode-line-format(list '(:eval (list (nyan-create)))))
 (use-package nyan-mode
-  :ensure t)
+  :straight t)
 
 (use-package fireplace
-  :ensure t)
+  :straight t)
 
 ;;; init.el ends here
