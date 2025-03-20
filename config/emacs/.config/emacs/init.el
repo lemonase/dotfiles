@@ -91,7 +91,6 @@
 (use-package magit
   :straight t)
 
-;; show more vertcal suggestions on M-x
 (use-package vertico
   :straight t
   :init
@@ -119,27 +118,5 @@
 (use-package flycheck
   :straight t
   :init (global-flycheck-mode))
-
-(use-package company
-  :straight t
-  :init
-  (global-company-mode))
-
-(use-package lsp-mode
-  :straight t
-  :hook ((prog-mode) . lsp-deferred))
-
-;; fun
-(use-package rainbow-delimiters
-  :straight t
-  :defer t
-  :hook ((prog-mode) . rainbow-delimiters-mode))
-
-(setq mode-line-format(list '(:eval (list (nyan-create)))))
-(use-package nyan-mode
-  :straight t)
-
-(use-package fireplace
-  :straight t)
 
 ;;; init.el ends here
