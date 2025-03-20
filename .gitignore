@@ -3,3 +3,7 @@
 *lazy-lock.json*
 # helix
 config/helix/.config/helix/runtime
+history
+places
+recentf
+tree-sitter
