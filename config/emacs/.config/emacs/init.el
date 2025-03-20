@@ -127,11 +127,16 @@
 ;; Activate Eglot in cross-referenced non-project files
 (setq eglot-extend-to-xref t)
 
+;; Custom Vanilla Stuff
 ;; https://stackoverflow.com/questions/6286579/emacs-shell-mode-how-to-send-region-to-shell/7053298#7053298
 (defun shell-region (start end)
   "Execute region START to END in an inferior shell."
   (interactive "r")
   (shell-command  (buffer-substring-no-properties start end)))
+
+;; Quick switching windows
+(define-key global-map (kbd "M-p") 'previous-multiframe-window)
+(define-key global-map (kbd "M-n") 'other-window)
 
 ;; Package Manager
 ;; bootstrap straight.el package manager
