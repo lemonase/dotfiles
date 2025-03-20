@@ -62,7 +62,7 @@
 
 ;; Easy edit init file
 (set-register ?e (find-file (or user-init-file "")))
-(define-key global-map (kbd "C-c i") (lambda()(interactive)(find-file user-init-file)))
+(define-key global-map (kbd "C-c e") (lambda()(interactive)(find-file user-init-file)))
 
 ;; `recentf' is an that maintains a list of recently accessed files.
 (setq recentf-max-saved-items 300) ; default is 20
