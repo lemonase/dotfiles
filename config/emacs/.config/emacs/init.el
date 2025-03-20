@@ -49,15 +49,20 @@
 (setq gc-cons-threshold-original gc-cons-threshold)
 (setq gc-cons-threshold (* 1024 1024 100))
 
+;; *** History and Saving ***
+
 ;; Auto-refresh buffers when files on disk change.
 (global-auto-revert-mode t)
 ;; Place backups in a separate folder.
 (setq backup-directory-alist `(("." . "~/.config/emacs/saves")))
 (setq auto-save-file-name-transforms `((".*" "~/.config/emacs/saves/" t)))
-(set-register ?e (find-file (or user-init-file "")))
 
 ;; No duplicates in kill ring
 (setq kill-do-not-save-duplicates t)
+
+;; Easy edit init file
+(set-register ?e (find-file (or user-init-file "")))
+(define-key global-map (kbd "C-c i") (lambda()(interactive)(find-file user-init-file)))
 
 ;; `recentf' is an that maintains a list of recently accessed files.
 (setq recentf-max-saved-items 300) ; default is 20
@@ -137,6 +142,7 @@
 ;; Quick switching windows
 (define-key global-map (kbd "M-p") 'previous-multiframe-window)
 (define-key global-map (kbd "M-n") 'other-window)
+
 
 ;; Package Manager
 ;; bootstrap straight.el package manager
@@ -255,6 +261,7 @@
   :straight t
   :init (global-flycheck-mode))
 
+;; Corfu Completion Framework
 (use-package corfu
   :straight t
   :defer t
