@@ -61,13 +61,14 @@
 (setq kill-do-not-save-duplicates t)
 
 ;; Easy edit init file
-(set-register ?e (find-file (or user-init-file "")))
-(define-key global-map (kbd "C-c e") (lambda()(interactive)(find-file user-init-file)))
+(set-register ?i (cons 'file user-init-file))
+;; (define-key global-map (kbd "C-c e") (lambda()(interactive)(find-file user-init-file)))
 
 ;; `recentf' is an that maintains a list of recently accessed files.
 (setq recentf-max-saved-items 300) ; default is 20
 (setq recentf-max-menu-items 15)
 (setq recentf-auto-cleanup (if (daemonp) 300 'never))
+(global-set-key (kbd "C-c f") 'recentf)
 
 ;; `savehist-mode' is an Emacs feature that preserves the minibuffer history
 ;; between sessions.
@@ -194,6 +195,7 @@
 ;; writing
 (global-set-key (kbd "C-c a") #'org-agenda)
 (global-set-key (kbd "C-c c") #'org-capture)
+'(org-export-backends '(ascii html icalendar latex man md odt org))
 
 (use-package markdown-mode
   :straight t
@@ -363,12 +365,15 @@
   :straight t
   :defer t
   :commands (corfu-mode global-corfu-mode)
-
   :hook ((prog-mode . corfu-mode)
          (shell-mode . corfu-mode)
          (eshell-mode . corfu-mode))
 
   :custom
+  (corfu-cycle t)
+  (corfu-auto t)
+  (corfu-auto-prefix 1)
+  (corfu-auto-delay 0.0)
   ;; Hide commands in M-x which do not apply to the current mode.
   (read-extended-command-predicate #'command-completion-default-include-p)
   ;; Disable Ispell completion function. As an alternative try `cape-dict'.
