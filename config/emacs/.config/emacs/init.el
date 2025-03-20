@@ -13,13 +13,17 @@
 (setq inhibit-splash-screen t)          ; Do not show splash screen
 (setq visible-bell t)                   ; Flash when the bell rings
 (setq frame-resize-pixelwise t)         ; Yes, I would like to be able to **resize** emacs, thanks!
+
 (global-display-line-numbers-mode 1)	; Display line numbers
 (column-number-mode -1)			; Toggle column number display in the mode line.
+(global-goto-address-mode 1)		; Make links and addresses go-to able
+
 (tool-bar-mode -1)			; Disable tool bar
 (scroll-bar-mode -1)			; Disable scroll bar
 (transient-mark-mode 1)			; Easier starting of marks/regions
 (delete-selection-mode 1)		; Easier deleting of marks/regions
 
+;; Theme
 (set-frame-font "Maple Mono 12" nil t)
 (load-theme 'modus-vivendi t)
 
