@@ -16,7 +16,7 @@
 (setq window-resize-pixelwise nil); Not for windows inside emacs though
 
 (global-display-line-numbers-mode 1)	; Display line numbers
-(column-number-mode -1)                 ; Toggle column number display in the mode line.
+(column-number-mode 1)                  ; Toggle column number display in the mode line.
 (global-goto-address-mode 1)            ; Make links and addresses go-to able
 
 (tool-bar-mode -1)                      ; Disable tool bar
@@ -201,15 +201,20 @@
   :straight t
   :mode ("README\\.md\\'" . gfm-mode)
   :init (setq markdown-command "multimarkdown")
-  :bind (:map markdown-mode-map
-	      ("C-c C-e" . markdown-do)))
+  (setq markdown-fontify-code-blocks-natively t)
+  :bind(:map markdown-mode-map
+             ("C-c C-e" . markdown-do)))
 
-;; emmet - html abberviations
 (use-package emmet-mode
   :straight t
   :init)
 
-;; end writing
+(use-package rainbow-mode
+  :straight t)
+
+(use-package rainbow-delimiters
+  :straight t
+  :init (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
 
 (use-package dired
   :straight nil
@@ -405,10 +410,36 @@
 (setq treesit-auto-install 'prompt)
 (setq treesit-auto-langs '(python rust go))
 
+(use-package load-env-vars
+  :straight t)
+
+(use-package gptel
+  :straight t)
+
+(load-env-vars "~/.local/.env")
+
+;; (setq gemini-api-key (funcall (lambda (prompt) (read-passwd prompt)) "Enter Gemini API key: "))
+;; (gptel-make-gemini "Gemini" :key (getenv "GEMINI_API_KEY") :stream t)
+;; (gptel-make-openai "OpenAI" :key (getenv "OPENAI_KEY") :stream t)
+(gptel-make-gemini "Gemini" :stream t :key gptel-api-key)
+(gptel-make-openai "OpenAI" :stream t :key gptel-api-key)
+
 ;; vterm terminal emulator
 (use-package vterm
   :commands vterm
   :straight t)
+
+;;; JavaScript
+(use-package js
+  :defer t
+  :custom
+  (js-indent-level 2))
+
+;;; CSS
+(use-package css
+  :defer t
+  :custom
+  (css-indent-level 2))
 
 ;;; Go Support
 (unless (package-installed-p 'go-mode)
