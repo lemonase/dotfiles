@@ -201,9 +201,15 @@
   :after evil
   :config
   (global-evil-surround-mode 1))
+
+;; More ergonomic M-x and C-x
+(define-key evil-normal-state-map (kbd "SPC SPC") 'execute-extended-command)
+(define-key evil-normal-state-map (kbd "SPC x") ctl-x-map)
+(define-key evil-normal-state-map (kbd "SPC g") 'magit-status)
 ;; end evil
 
 ;; writing
+;; TODO: setup org
 (global-set-key (kbd "C-c a") #'org-agenda)
 (global-set-key (kbd "C-c c") #'org-capture)
 '(org-export-backends '(ascii html icalendar latex man md odt org))
