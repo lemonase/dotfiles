@@ -11,9 +11,9 @@
 ;;; Code:
 (setq inhibit-startup-message t)        ; Don't show the splash screen
 (setq inhibit-splash-screen t)          ; Do not show splash screen
-(setq visible-bell nil)                 ; Flash when the bell rings
+(setq visible-bell 1)                   ; Flash when the bell rings
 (setq frame-resize-pixelwise t)         ; Yes, I would like to be able to **resize** emacs frame, thanks!
-(setq window-resize-pixelwise nil); Not for windows inside emacs though
+(setq window-resize-pixelwise nil)      ; Not for windows inside emacs though
 
 (global-display-line-numbers-mode 1)	; Display line numbers
 (column-number-mode 1)                  ; Toggle column number display in the mode line.
@@ -29,6 +29,7 @@
 (if (boundp 'use-short-answers)
     (setq use-short-answers t)
   (advice-add 'yes-or-no-p :override #'y-or-n-p))
+(setq confirm-kill-emacs #'yes-or-no-p)
 
 ;; Show paren differently
 (setq show-paren-delay 0.1
@@ -36,20 +37,22 @@
       show-paren-when-point-inside-paren t
       show-paren-when-point-in-periphery t)
 
-;;; Undo/redo
-(setq undo-limit (* 13 160000)
-      undo-strong-limit (* 13 240000)
-      undo-outer-limit (* 13 24000000))
-
 ;; Theme
 (set-frame-font "Maple Mono 12" nil t)
 (load-theme 'modus-vivendi t)
 
-;; More memory for Garbage Collection
+;; ** Memory Limits **
+
+;; Undo/Redo
+(setq undo-limit (* 13 160000)
+      undo-strong-limit (* 13 240000)
+      undo-outer-limit (* 13 24000000))
+
+;; Garbage Collection
 (setq gc-cons-threshold-original gc-cons-threshold)
 (setq gc-cons-threshold (* 1024 1024 100))
 
-;; *** History and Saving ***
+;; ** History and Saving **
 
 ;; Auto-refresh buffers when files on disk change.
 (global-auto-revert-mode t)
@@ -62,7 +65,6 @@
 
 ;; Easy edit init file
 (set-register ?i (cons 'file user-init-file))
-;; (define-key global-map (kbd "C-c e") (lambda()(interactive)(find-file user-init-file)))
 
 ;; `recentf' is an that maintains a list of recently accessed files.
 (setq recentf-max-saved-items 300) ; default is 20
@@ -80,13 +82,11 @@
         mark-ring global-mark-ring       ; marks
         search-ring regexp-search-ring)) ; searches
 
-
 ;; Enable `auto-save-mode' to prevent data loss. Use `recover-file' or
 ;; `recover-session' to restore unsaved changes.
 (setq auto-save-default t)
 (setq auto-save-interval 300)
 (setq auto-save-timeout 30)
-
 (setq auto-save-visited-interval 10)
 (auto-save-visited-mode 1)
 
@@ -162,6 +162,7 @@
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
 
+;; ** Set Emacs path to shell path **
 ;; add paths from shell by default
 (unless (package-installed-p 'exec-path-from-shell)
   (package-install 'exec-path-from-shell))
@@ -170,12 +171,23 @@
   (exec-path-from-shell-initialize))
 
 ;; start evil
-(unless (package-installed-p 'evil)
-  (package-install 'evil))
-(setq evil-want-C-u-scroll t)
-(setq evil-want-keybinding nil)
-(require 'evil)
-(evil-mode -1)
+(use-package evil
+  :straight t
+  :init
+  (setq evil-undo-system 'undo-fu)
+  (setq evil-want-C-u-scroll t)
+  (setq evil-want-keybinding nil)
+  :config
+  (evil-mode 1))
+
+(use-package undo-fu
+  :straight t)
+
+(use-package evil-commentary
+  :straight t
+  :after evil
+  :init
+  (evil-commentary-mode))
 
 (use-package evil-collection
   :straight t
@@ -187,7 +199,6 @@
 (use-package evil-surround
   :straight t
   :after evil
-  :defer t
   :config
   (global-evil-surround-mode 1))
 ;; end evil
@@ -201,7 +212,7 @@
   :straight t
   :mode ("README\\.md\\'" . gfm-mode)
   :init (setq markdown-command "multimarkdown")
-  (setq markdown-fontify-code-blocks-natively t)
+  (setq markdown-fontify-code-blocks-natively t) ; Make code block syntax highlighted
   :bind(:map markdown-mode-map
              ("C-c C-e" . markdown-do)))
 
@@ -267,12 +278,12 @@
                  (window-parameters (mode-line-format . none)))))
 
 (use-package embark-consult
-  :ensure t
+  :straight t
   :hook
   (embark-collect-mode . consult-preview-at-point-mode))
 
 (use-package consult
-  :ensure t
+  :straight t
   :bind (;; C-c bindings in `mode-specific-map'
          ("C-c M-x" . consult-mode-command)
          ("C-c h" . consult-history)
@@ -470,9 +481,5 @@
                 (unless buffer-file-name
                   (let ((buffer-file-name (buffer-name)))
                     (set-auto-mode)))))
-
-
-(setq confirm-kill-emacs #'yes-or-no-p)
-(defalias 'yes-or-no #'y-or-n-p)
 
 ;;; init.el ends here
