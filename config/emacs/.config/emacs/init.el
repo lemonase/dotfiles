@@ -95,14 +95,43 @@
 (setq comment-empty-lines t)
 (setq-default fill-column 80)
 
-;; 4 space tabs
-(setq-default indent-tabs-mode nil
-              tab-width 4)
+; START TABS CONFIG from https://dougie.io/emacs/indentation/
+;; Create a variable for our preferred tab width
+(setq custom-tab-width 2)
+(setq default-tab-width 2)
+(setq standard-indent 2)
 
-;; Enable indentation and completion using the TAB key
-(setq-default tab-always-indent nil)
-(setq python-indent-guess-indent-offset-verbose nil)
-(setq sh-indent-after-continuation 'always)
+;; Two callable functions for enabling/disabling tabs in Emacs
+(defun disable-tabs () (setq indent-tabs-mode nil))
+(defun enable-tabs  ()
+  (local-set-key (kbd "TAB") 'tab-to-tab-stop)
+  (setq indent-tabs-mode t)
+  (setq tab-width custom-tab-width))
+
+;; Hooks to Enable Tabs
+(add-hook 'prog-mode-hook 'enable-tabs)
+;; Hooks to Disable Tabs
+(add-hook 'lisp-mode-hook 'disable-tabs)
+(add-hook 'emacs-lisp-mode-hook 'disable-tabs)
+(add-hook 'sh-mode-hook 'disable-tabs)
+
+;; Language-Specific Tweaks
+(setq-default python-indent-offset custom-tab-width) ;; Python
+(setq-default js-indent-level custom-tab-width)      ;; Javascript
+(setq-default sh-indent-level custom-tab-width)      ;; Shell
+(setq-default sh-basic-offset custom-tab-width)
+
+;; Making electric-indent behave sanely
+(setq-default electric-indent-inhibit t)
+
+;; Make the backspace properly erase the tab instead of
+;; removing 1 space at a time.
+(setq backward-delete-char-untabify-method 'hungry)
+
+;; For the vim-like motions of ">>" and "<<".
+(setq-default evil-shift-width custom-tab-width)
+(global-whitespace-mode) ; Enable whitespace mode everywhere
+; END TABS CONFIG
 
 ;; Perf: Reduce command completion overhead.
 (setq read-extended-command-predicate #'command-completion-default-include-p)
@@ -202,12 +231,15 @@
   :config
   (global-evil-surround-mode 1))
 
+;; Evil Keybinds
+
 ;; More ergonomic M-x and C-x
 (define-key evil-normal-state-map (kbd "SPC SPC") 'execute-extended-command)
 (define-key evil-normal-state-map (kbd "SPC x") ctl-x-map)
-(define-key evil-normal-state-map (kbd "SPC g") 'magit-status)
 (define-key evil-normal-state-map (kbd "SPC w") 'save-buffer)
 (define-key evil-normal-state-map (kbd "SPC k") 'kill-buffer)
+(define-key evil-normal-state-map (kbd "SPC g") 'magit-status)
+(define-key evil-normal-state-map (kbd "SPC r") 'recentf)
 ;; end evil
 
 ;; writing
