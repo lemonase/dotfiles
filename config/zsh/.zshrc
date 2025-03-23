@@ -220,9 +220,6 @@ watip() {
 # PROMPT/PS1 Functions  *
 # * * * * * * * * * * * *
 
-# (Default prompt - git prompt set later)
-# PROMPT='%n@%m %~ %# '
-
 git_prompt() {
 	BRANCH=$(git branch 2>/dev/null | sed -e '/^[^*]/d' -e 's/*\(.*\)/\1/')
 	STATUS="$(git status 2>/dev/null)"
@@ -246,7 +243,11 @@ git_prompt() {
 		printf "%s" "%F{reset}]"
 	fi
 }
+
+# (Default prompt - git prompt set later)
+# PROMPT='%n@%m %~ %# '
 # PROMPT='%F{blue}%~$(git_prompt) %F{green}%# %F{reset}'
+# PROMPT='%c %F{141}%# %F{reset}'
 
 # * * * * * * * * * * * * * * * * * * *
 # Language Specific Version Managers  *
