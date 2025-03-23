@@ -206,6 +206,8 @@
 (define-key evil-normal-state-map (kbd "SPC SPC") 'execute-extended-command)
 (define-key evil-normal-state-map (kbd "SPC x") ctl-x-map)
 (define-key evil-normal-state-map (kbd "SPC g") 'magit-status)
+(define-key evil-normal-state-map (kbd "SPC w") 'save-buffer)
+(define-key evil-normal-state-map (kbd "SPC k") 'kill-buffer)
 ;; end evil
 
 ;; writing
