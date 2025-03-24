@@ -293,13 +293,13 @@ parse_git() {
 # PS1="\u@\h:\W\\$ "
 
 # *color prompts*
-# PS1="${bold}${bright_blue}\w ${white}\\$ ${reset}"
+PS1="\w ${bright_yellow}\\$ ${reset}"
 # PS1="${bold}${bright_cyan}\u${bright_magenta}@${bright_yellow}\h${white}:${bright_blue}\w${white}\\$ ${reset}"
 
 # *git color prompts*
 # PS1="${bold}${bright_blue}\w\$(parse_git)${white} \\$ ${reset}"
 # PS1="${bold}${white}\t ${bright_blue}\w\$(parse_git) ${white}\\$ ${reset}"
-PS1="${bold}${bright_cyan}\u${bright_magenta}@${bright_yellow}\h${white}:${bright_blue}\w\$(parse_git)${white}\\$ ${reset}"
+# PS1="${bold}${bright_cyan}\u${bright_magenta}@${bright_yellow}\h${white}:${bright_blue}\w\$(parse_git)${white}\\$ ${reset}"
 
 ##* bash completions and integrations *##
 
