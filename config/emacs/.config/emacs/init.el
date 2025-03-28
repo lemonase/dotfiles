@@ -535,10 +535,10 @@
          (lsp-mode . lsp-enable-which-key-integration))
   :commands lsp)
 
-(use-package go-ts-mode
-  :after lsp-mode
-  :mode ("\.go$")
-  :hook (go-ts-mode . lsp-deferred))
+(use-package lsp-mode
+  :hook ((go-ts-mode . lsp-deferred)
+         (python-ts-mode . lsp-deferred))
+  :commands (lsp lsp-deferred))
 
 ;;; ** Package Manager (straight.el) ends here **
 ;;; Additional Language Modes
