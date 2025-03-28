@@ -248,6 +248,8 @@
 (define-key evil-normal-state-map (kbd "SPC k") 'kill-buffer)
 (define-key evil-normal-state-map (kbd "SPC f") 'find-file)
 (define-key evil-normal-state-map (kbd "SPC d") 'dired)
+(define-key evil-normal-state-map (kbd "SPC b") 'bookmark-jump)
+(define-key evil-normal-state-map (kbd "SPC o") 'occur)
 (define-key evil-normal-state-map (kbd "SPC g") 'magit-status)
 (define-key evil-normal-state-map (kbd "SPC r") 'recentf)
 ;; end evil
