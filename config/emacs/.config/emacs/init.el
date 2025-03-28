@@ -1,4 +1,4 @@
-;;; init.el --- James' Emacs config -*- lexical-binding: t -*-
+;;; init.el --- Jam Emacs config -*- lexical-binding: t -*-
 ;;;
 ;;; Author: James Dixon <notjamesdixon@gmail.com>
 ;;; Maintainer: James Dixon <notjamesdixon@gmail.com>
@@ -7,22 +7,31 @@
 ;;; Emacs from scratch (somewhat), this is my ~~story~~ config
 ;;; ((((((((((((((((((((!!!GNU EMACS!!!))))))))))))))))))))
 ;;;
-
 ;;; Code:
+
+;;; * Start "Sensible Defaults" *
+
+;; Do not do these things
 (setq inhibit-startup-message t)        ; Don't show the splash screen
 (setq inhibit-splash-screen t)          ; Do not show splash screen
-(setq visible-bell 1)                   ; Flash when the bell rings
+
+;; Lines and columns
+(global-display-line-numbers-mode 1)	; Display line numbers
+(column-number-mode 1)                  ; Toggle column number display in the mode line.
+
+;; Bells and whistles
+(setq visible-bell 1)                   ; Flash when the bell rings (no sound)
 (setq frame-resize-pixelwise t)         ; Yes, I would like to be able to **resize** emacs frame, thanks!
 (setq window-resize-pixelwise nil)      ; Not for windows inside emacs though
 
-(global-display-line-numbers-mode 1)	; Display line numbers
-(column-number-mode 1)                  ; Toggle column number display in the mode line.
-(global-goto-address-mode 1)            ; Make links and addresses go-to able
-
+;; UI cleanup
 (tool-bar-mode -1)                      ; Disable tool bar
 (scroll-bar-mode -1)                    ; Disable scroll bar
+
+;; Mark and go-to modes
 (transient-mark-mode 1)                 ; Easier starting of marks/regions
 (delete-selection-mode 1)               ; Easier deleting of marks/regions
+(global-goto-address-mode 1)            ; Make links and addresses go-to able
 
 ;; Allow for shorter responses: "y" for yes and "n" for no.
 (setq read-answer-short t)
@@ -37,11 +46,7 @@
       show-paren-when-point-inside-paren t
       show-paren-when-point-in-periphery t)
 
-;; Theme
-(set-frame-font "Maple Mono 12" nil t)
-(load-theme 'modus-vivendi t)
-
-;; ** Memory Limits **
+;;; Memory Limits and Performance
 
 ;; Undo/Redo
 (setq undo-limit (* 13 160000)
@@ -52,7 +57,14 @@
 (setq gc-cons-threshold-original gc-cons-threshold)
 (setq gc-cons-threshold (* 1024 1024 100))
 
-;; ** History and Saving **
+;; Perf: Reduce command completion overhead.
+(setq read-extended-command-predicate #'command-completion-default-include-p)
+
+;;; Theme (Default)
+(set-frame-font "Maple Mono 12" nil t)
+(load-theme 'modus-vivendi t)
+
+;;; File History, Saving and Reverting
 
 ;; Auto-refresh buffers when files on disk change.
 (global-auto-revert-mode t)
@@ -90,57 +102,6 @@
 (setq auto-save-visited-interval 10)
 (auto-save-visited-mode 1)
 
-;; Comments
-(setq comment-multi-line t)
-(setq comment-empty-lines t)
-(setq-default fill-column 80)
-
-; START TABS CONFIG from https://dougie.io/emacs/indentation/
-;; Create a variable for our preferred tab width
-(setq custom-tab-width 2)
-(setq default-tab-width 2)
-(setq standard-indent 2)
-
-;; Two callable functions for enabling/disabling tabs in Emacs
-(defun disable-tabs () (setq indent-tabs-mode nil))
-(defun enable-tabs  ()
-  (local-set-key (kbd "TAB") 'tab-to-tab-stop)
-  (setq indent-tabs-mode t)
-  (setq tab-width custom-tab-width))
-
-;; Hooks to Enable Tabs
-(add-hook 'prog-mode-hook 'enable-tabs)
-;; Hooks to Disable Tabs
-(add-hook 'lisp-mode-hook 'disable-tabs)
-(add-hook 'emacs-lisp-mode-hook 'disable-tabs)
-(add-hook 'sh-mode-hook 'disable-tabs)
-
-;; Language-Specific Tweaks
-(setq-default python-indent-offset custom-tab-width) ;; Python
-(setq-default js-indent-level custom-tab-width)      ;; Javascript
-(setq-default sh-indent-level custom-tab-width)      ;; Shell
-(setq-default sh-basic-offset custom-tab-width)
-
-;; Making electric-indent behave sanely
-(setq-default electric-indent-inhibit t)
-
-;; Make the backspace properly erase the tab instead of
-;; removing 1 space at a time.
-(setq backward-delete-char-untabify-method 'hungry)
-
-;; For the vim-like motions of ">>" and "<<".
-(setq-default evil-shift-width custom-tab-width)
-(global-whitespace-mode) ; Enable whitespace mode everywhere
-; END TABS CONFIG
-
-;; Perf: Reduce command completion overhead.
-(setq read-extended-command-predicate #'command-completion-default-include-p)
-
-;; Ediff
-;; Configure Ediff to use a single frame and split windows horizontally
-(setq ediff-window-setup-function 'ediff-setup-windows-plain
-      ediff-split-window-function 'split-window-horizontally)
-
 ;; Auto-revert in Emacs is a feature that automatically updates buffer to reflect
 ;; changes on disk
 (add-hook 'after-init-hook #'global-auto-revert-mode)
@@ -155,14 +116,55 @@
 
 ;; save-place-mode enables Emacs to remember the last location within a file
 (add-hook 'after-init-hook #'save-place-mode)
+;; End File History, Saving and Reverting
 
-;; Eglot
-(setq eglot-sync-connect 1
-      eglot-autoshutdown t)
-;; Activate Eglot in cross-referenced non-project files
-(setq eglot-extend-to-xref t)
+;;; Comment Settings
+(setq comment-multi-line t)
+(setq comment-empty-lines t)
+(setq-default fill-column 80)
+(add-hook 'emacs-lisp-mode-hook 'outline-minor-mode)
 
-;; Custom Vanilla Stuff
+;;; Custom Tab Settings
+; START TABS CONFIG from https://dougie.io/emacs/indentation/
+;; Create a variable for our preferred tab width
+(setq custom-tab-width 4)
+(setq default-tab-width 4)
+(setq standard-indent 4)
+
+;; Two callable functions for enabling/disabling tabs in Emacs
+(defun disable-tabs () (setq indent-tabs-mode nil))
+(defun enable-tabs  ()
+  (local-set-key (kbd "TAB") 'tab-to-tab-stop)
+  (setq indent-tabs-mode t)
+  (setq tab-width custom-tab-width))
+
+;; Hooks to Enable Tabs
+;; (add-hook 'prog-mode-hook 'enable-tabs)
+;; Hooks to Disable Tabs
+(add-hook 'lisp-mode-hook 'disable-tabs)
+(add-hook 'emacs-lisp-mode-hook 'disable-tabs)
+(add-hook 'sh-mode-hook 'disable-tabs)
+
+;; Language-Specific Tweaks
+(setq-default python-indent-offset custom-tab-width) ;; Python
+(setq-default js-indent-level custom-tab-width)      ;; Javascript
+
+(setq-default sh-indent-level custom-tab-width)      ;; Shell
+(setq-default sh-basic-offset custom-tab-width)      ;; Shell
+
+;; Making electric-indent behave sanely
+(setq-default electric-indent-inhibit t)
+
+;; Make the backspace properly erase the tab instead of
+;; removing 1 space at a time.
+(setq backward-delete-char-untabify-method 'hungry)
+
+;; For the vim-like motions of ">>" and "<<".
+(setq-default evil-shift-width custom-tab-width)
+(global-whitespace-mode -1) ; Enable whitespace mode everywhere
+; END TABS CONFIG
+
+;;; Custom Vanilla Config
 ;; https://stackoverflow.com/questions/6286579/emacs-shell-mode-how-to-send-region-to-shell/7053298#7053298
 (defun shell-region (start end)
   "Execute region START to END in an inferior shell."
@@ -173,7 +175,13 @@
 (define-key global-map (kbd "M-p") 'previous-multiframe-window)
 (define-key global-map (kbd "M-n") 'other-window)
 
-;; Package Manager
+;; Ediff
+;; Configure Ediff to use a single frame and split windows horizontally
+(setq ediff-window-setup-function 'ediff-setup-windows-plain
+      ediff-split-window-function 'split-window-horizontally)
+
+;;; * "Sensible Defaults" ends here *
+;;; ** Start Package Manager (straight.el) **
 ;; bootstrap straight.el package manager
 (defvar bootstrap-version)
 (let ((bootstrap-file
@@ -191,7 +199,7 @@
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
 
-;; ** Set Emacs path to shell path **
+;;; Set Emacs path == shell path (exec-path-from-shell)
 ;; add paths from shell by default
 (unless (package-installed-p 'exec-path-from-shell)
   (package-install 'exec-path-from-shell))
@@ -199,7 +207,7 @@
 (when (memq window-system '(mac ns x))
   (exec-path-from-shell-initialize))
 
-;; start evil
+;;; EVIL Config (evil-mode)
 (use-package evil
   :straight t
   :init
@@ -231,23 +239,29 @@
   :config
   (global-evil-surround-mode 1))
 
-;; Evil Keybinds
+;; Custom Evil Keybinds
 
 ;; More ergonomic M-x and C-x
 (define-key evil-normal-state-map (kbd "SPC SPC") 'execute-extended-command)
 (define-key evil-normal-state-map (kbd "SPC x") ctl-x-map)
 (define-key evil-normal-state-map (kbd "SPC w") 'save-buffer)
 (define-key evil-normal-state-map (kbd "SPC k") 'kill-buffer)
+(define-key evil-normal-state-map (kbd "SPC f") 'find-file)
+(define-key evil-normal-state-map (kbd "SPC d") 'dired)
 (define-key evil-normal-state-map (kbd "SPC g") 'magit-status)
 (define-key evil-normal-state-map (kbd "SPC r") 'recentf)
 ;; end evil
 
-;; writing
-;; TODO: setup org
+;;; Writing Org / Markdown / HTML (org-mode, markdown-mode, emmet)
+(use-package org
+  :straight nil)
+
+;; TODO: setup org more
 (global-set-key (kbd "C-c a") #'org-agenda)
 (global-set-key (kbd "C-c c") #'org-capture)
 '(org-export-backends '(ascii html icalendar latex man md odt org))
 
+;; better markdown
 (use-package markdown-mode
   :straight t
   :mode ("README\\.md\\'" . gfm-mode)
@@ -256,9 +270,16 @@
   :bind(:map markdown-mode-map
              ("C-c C-e" . markdown-do)))
 
+;; make writing HTML tags way easier
 (use-package emmet-mode
   :straight t
   :init)
+
+;;; Themes and Colors (doom-themes, rainbow-mode, rainbow-delimiters)
+(use-package doom-themes
+  :straight t
+  :config
+  (load-theme 'doom-dark+ t))
 
 (use-package rainbow-mode
   :straight t)
@@ -266,7 +287,7 @@
 (use-package rainbow-delimiters
   :straight t
   :init (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
-
+;;; Vanilla+ Plugins (dired, magit)
 (use-package dired
   :straight nil
   :commands (dired dired-jump)
@@ -275,6 +296,7 @@
 (use-package magit
   :straight t)
 
+;;; Mini-buffer improvements (vertico, orderless, marginalia, embark, consult)
 (use-package vertico
   :straight t
   :init
@@ -403,19 +425,25 @@
    :preview-key '(:debounce 0.4 any))
   (setq consult-narrow-key "<"))
 
-(use-package multiple-cursors
-  :straight t)
-(global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
-
+;;; Better discoverability for key mappings (which-key)
 (use-package which-key
   :straight t
   :defer t
   :init (which-key-mode))
 
+;;; Matching brackets with (electric-pair-mode) and (smartparens)
+(use-package smartparens
+  :straight smartparens
+  :hook (prog-mode text-mode markdown-mode)
+  :config
+  (require 'smartparens-config))
+(electric-pair-mode 1)
+
 (use-package flycheck
   :straight t
   :init (global-flycheck-mode))
 
+;;; Completions in buffer (corfu and cape)
 ;; Corfu Completion Framework
 (use-package corfu
   :straight t
@@ -426,8 +454,6 @@
          (eshell-mode . corfu-mode))
 
   :custom
-  (corfu-cycle t)
-  (corfu-auto t)
   (corfu-auto-prefix 1)
   (corfu-auto-delay 0.0)
   ;; Hide commands in M-x which do not apply to the current mode.
@@ -453,13 +479,123 @@
   (add-hook 'completion-at-point-functions #'cape-file)
   (add-hook 'completion-at-point-functions #'cape-elisp-block))
 
+;;; Treesitter (treesit)
+(use-package treesit
+  :commands (treesit-install-language-grammar nf/treesit-install-all-languages)
+  :init
+  (setq treesit-language-source-alist
+   '((bash . ("https://github.com/tree-sitter/tree-sitter-bash"))
+     (c . ("https://github.com/tree-sitter/tree-sitter-c"))
+     (cpp . ("https://github.com/tree-sitter/tree-sitter-cpp"))
+     (css . ("https://github.com/tree-sitter/tree-sitter-css"))
+     (cmake . ("https://github.com/uyha/tree-sitter-cmake"))
+     (go . ("https://github.com/tree-sitter/tree-sitter-go"))
+     (html . ("https://github.com/tree-sitter/tree-sitter-html"))
+     (javascript . ("https://github.com/tree-sitter/tree-sitter-javascript"))
+     (json . ("https://github.com/tree-sitter/tree-sitter-json"))
+     (julia . ("https://github.com/tree-sitter/tree-sitter-julia"))
+     (lua . ("https://github.com/Azganoth/tree-sitter-lua"))
+     (make . ("https://github.com/alemuller/tree-sitter-make"))
+     (ocaml . ("https://github.com/tree-sitter/tree-sitter-ocaml" "master" "ocaml/src"))
+     (python . ("https://github.com/tree-sitter/tree-sitter-python"))
+     (php . ("https://github.com/tree-sitter/tree-sitter-php"))
+     (typescript . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src"))
+     (tsx . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src"))
+     (ruby . ("https://github.com/tree-sitter/tree-sitter-ruby"))
+     (rust . ("https://github.com/tree-sitter/tree-sitter-rust"))
+     (sql . ("https://github.com/m-novikov/tree-sitter-sql"))
+     (toml . ("https://github.com/tree-sitter/tree-sitter-toml"))
+     (zig . ("https://github.com/GrayJack/tree-sitter-zig"))))
+  :config
+  (defun treesit-install-all-languages ()
+    "Install all languages specified by `treesit-language-source-alist'."
+    (interactive)
+    (let ((languages (mapcar 'car treesit-language-source-alist)))
+      (dolist (lang languages)
+	      (treesit-install-language-grammar lang)
+	      (message "`%s' parser was installed." lang)
+	      (sit-for 0.75)))))
+
+
 ;; Tree Sitter auto config
 (use-package treesit-auto
   :straight t
   :config
   (global-treesit-auto-mode))
 (setq treesit-auto-install 'prompt)
-(setq treesit-auto-langs '(python rust go))
+(setq treesit-auto-langs '(python rust go gomod))
+
+;;; LSP Configurations (lsp-mode)
+(use-package lsp-mode
+  :straight t
+  :init
+  (setq lsp-keymap-prefix "C-c l")
+  :hook ((go-mode . lsp)
+         (python-mode . lsp)
+         (lsp-mode . lsp-enable-which-key-integration))
+  :commands lsp)
+
+(use-package go-ts-mode
+  :after lsp-mode
+  :mode ("\.go$")
+  :hook (go-ts-mode . lsp-deferred))
+
+;;; ** Package Manager (straight.el) ends here **
+;;; Additional Language Modes
+;; JavaScript
+(use-package js
+  :defer t
+  :custom
+  (js-indent-level 2))
+
+;; CSS
+(use-package css
+  :defer t
+  :custom
+  (css-indent-level 2))
+
+;; Go Support
+(unless (package-installed-p 'go-mode)
+  (package-install 'go-mode))
+
+;; Lua Support
+(unless (package-installed-p 'lua-mode)
+  (package-install 'lua-mode))
+
+;; Typescript Support
+(unless (package-installed-p 'typescript-mode)
+  (package-install 'typescript-mode))
+
+;; Rust Support
+(unless (package-installed-p 'rust-mode)
+  (package-install 'rust-mode))
+
+;; YAML Support
+(unless (package-installed-p 'yaml-mode)
+  (package-install 'yaml-mode))
+
+;; JSON Support
+(unless (package-installed-p 'json-mode)
+  (package-install 'json-mode))
+
+(setq-default major-mode
+              (lambda () ; guess major mode from file name
+                (unless buffer-file-name
+                  (let ((buffer-file-name (buffer-name)))
+                    (set-auto-mode)))))
+
+;;; Other misc modes (docker, gptel, load-env-vars, csv-mode)
+(use-package docker
+  :straight t
+  :defer t)
+
+(use-package dockerfile-mode
+  :straight t
+  :defer t)
+
+(use-package csv-mode
+  :straight t
+  :defer t)
 
 (use-package load-env-vars
   :straight t)
@@ -475,51 +611,18 @@
 (gptel-make-gemini "Gemini" :stream t :key gptel-api-key)
 (gptel-make-openai "OpenAI" :stream t :key gptel-api-key)
 
-;; vterm terminal emulator
-(use-package vterm
-  :commands vterm
-  :straight t)
-
-;;; JavaScript
-(use-package js
-  :defer t
-  :custom
-  (js-indent-level 2))
-
-;;; CSS
-(use-package css
-  :defer t
-  :custom
-  (css-indent-level 2))
-
-;;; Go Support
-(unless (package-installed-p 'go-mode)
-  (package-install 'go-mode))
-
-;;; Lua Support
-(unless (package-installed-p 'lua-mode)
-  (package-install 'lua-mode))
-
-;;; Typescript Support
-(unless (package-installed-p 'typescript-mode)
-  (package-install 'typescript-mode))
-
-;;; Rust Support
-(unless (package-installed-p 'rust-mode)
-  (package-install 'rust-mode))
-
-;;; YAML Support
-(unless (package-installed-p 'yaml-mode)
-  (package-install 'yaml-mode))
-
-;;; JSON Support
-(unless (package-installed-p 'json-mode)
-  (package-install 'json-mode))
-
-(setq-default major-mode
-              (lambda () ; guess major mode from file name
-                (unless buffer-file-name
-                  (let ((buffer-file-name (buffer-name)))
-                    (set-auto-mode)))))
-
 ;;; init.el ends here
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(custom-safe-themes
+   '("4b6cc3b60871e2f4f9a026a5c86df27905fb1b0e96277ff18a76a39ca53b82e1"
+     "2721b06afaf1769ef63f942bf3e977f208f517b187f2526f0e57c1bd4a000350" default)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
