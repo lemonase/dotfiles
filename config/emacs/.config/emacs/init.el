@@ -7,7 +7,12 @@
 ;;; Emacs from scratch (somewhat), this is my ~~story~~ config
 ;;; ((((((((((((((((((((!!!GNU EMACS!!!))))))))))))))))))))
 ;;;
+
 ;;; Code:
+
+;;; User Info
+(setq user-full-name "James Dixon")
+(setq user-mail-address "notjamesdixon@gmail.com")
 
 ;;; * Start "Sensible Defaults" *
 
