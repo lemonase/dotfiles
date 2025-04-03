@@ -17,8 +17,7 @@
 ;;; * Start "Sensible Defaults" *
 
 ;; Do not do these things
-(setq inhibit-startup-message t)        ; Don't show the splash screen
-(setq inhibit-splash-screen t)          ; Do not show splash screen
+(setq inhibit-startup-screen t)        ; Don't show the splash screen
 
 ;; Lines and columns
 (global-display-line-numbers-mode 1)	; Display line numbers
@@ -39,11 +38,7 @@
 (global-goto-address-mode 1)            ; Make links and addresses go-to able
 
 ;; Allow for shorter responses: "y" for yes and "n" for no.
-(setq read-answer-short t)
-(if (boundp 'use-short-answers)
-    (setq use-short-answers t)
-  (advice-add 'yes-or-no-p :override #'y-or-n-p))
-(setq confirm-kill-emacs #'yes-or-no-p)
+(fset 'yes-or-no-p 'y-or-n-p)
 
 ;; Show paren differently
 (setq show-paren-delay 0.1
@@ -87,7 +82,7 @@
 (setq recentf-max-saved-items 300) ; default is 20
 (setq recentf-max-menu-items 15)
 (setq recentf-auto-cleanup (if (daemonp) 300 'never))
-(global-set-key (kbd "C-c f") 'recentf)
+(global-set-key (kbd "C-x C-r") 'recentf)
 
 ;; `savehist-mode' is an Emacs feature that preserves the minibuffer history
 ;; between sessions.
@@ -176,14 +171,18 @@
   (interactive "r")
   (shell-command  (buffer-substring-no-properties start end)))
 
-;; Quick switching windows
-(define-key global-map (kbd "M-p") 'previous-multiframe-window)
-(define-key global-map (kbd "M-n") 'other-window)
-
 ;; Ediff
 ;; Configure Ediff to use a single frame and split windows horizontally
 (setq ediff-window-setup-function 'ediff-setup-windows-plain
       ediff-split-window-function 'split-window-horizontally)
+
+;;; Backwards kill with C-w
+(defadvice kill-region (before unix-werase activate compile)
+  "When called interactively with no active region, delete a single word backwards instead."
+  (interactive
+   (if mark-active (list (region-beginning) (region-end))
+     (list (save-excursion (backward-word 1) (point)) (point)))))
+
 
 ;;; * "Sensible Defaults" ends here *
 ;;; ** Start Package Manager (straight.el) **
@@ -286,7 +285,7 @@
 (use-package doom-themes
   :straight t
   :config
-  (load-theme 'doom-dark+ t))
+  (load-theme 'doom-ir-black t))
 
 (use-package rainbow-mode
   :straight t)
@@ -488,7 +487,7 @@
 
 ;;; Treesitter (treesit)
 (use-package treesit
-  :commands (treesit-install-language-grammar nf/treesit-install-all-languages)
+  :commands (treesit-install-language-grammar)
   :init
   (setq treesit-language-source-alist
    '((bash . ("https://github.com/tree-sitter/tree-sitter-bash"))
@@ -625,8 +624,27 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
-   '("4b6cc3b60871e2f4f9a026a5c86df27905fb1b0e96277ff18a76a39ca53b82e1"
+   '("77fff78cc13a2ff41ad0a8ba2f09e8efd3c7e16be20725606c095f9a19c24d3d"
+     "8b148cf8154d34917dfc794b5d0fe65f21e9155977a36a5985f89c09a9669aa0"
+     "4b6cc3b60871e2f4f9a026a5c86df27905fb1b0e96277ff18a76a39ca53b82e1"
      "2721b06afaf1769ef63f942bf3e977f208f517b187f2526f0e57c1bd4a000350" default)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   '(company corfu csv-mode embark-consult emmet-mode evil-collection
+	     evil-surround exec-path-from-shell fireplace flycheck
+	     go-mode json-mode lsp-mode magit marginalia
+	     multiple-cursors nyan-mode rainbow-delimiters rust-mode
+	     smartparens typescript-mode vertico yaml-mode)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
