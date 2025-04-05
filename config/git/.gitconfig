@@ -35,6 +35,8 @@
 	cl = clean -i
 	br = branch
 	d = diff
+	dw = diff --word-diff
+	dwd = diff --word-diff
 	df = diff
 	dt = difftool
 	lg = log
