@@ -47,6 +47,16 @@
 
 ;;; Modes
 
+;; minibuffer completions
+(setq completions-format 'one-column)
+(setq completions-header-format nil)
+(setq completions-max-height 20)
+(setq completion-auto-select nil)
+(define-key minibuffer-mode-map (kbd "C-n") 'minibuffer-next-completion)
+(define-key minibuffer-mode-map (kbd "C-p") 'minibuffer-previous-completion)
+(define-key completion-in-region-mode-map (kbd "C-n") 'minibuffer-next-completion)
+(define-key completion-in-region-mode-map (kbd "C-p") 'minibuffer-previous-completion)
+
 ;; icomplete
 (icomplete-vertical-mode 1)
 
@@ -63,6 +73,7 @@
 (global-set-key (kbd "M-o") 'other-window)
 (global-set-key (kbd "C-;") 'toggle-comment-on-line)
 (global-set-key (kbd "C-c i") (lambda () (interactive) (find-file user-init-file)))
+(global-set-key (kbd "C-x C-b") 'ibuffer)
 (fset 'yes-or-no-p 'y-or-n-p)
 
 ;;; General Hooks
