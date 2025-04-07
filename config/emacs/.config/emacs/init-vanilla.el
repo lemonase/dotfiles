@@ -1,7 +1,7 @@
 ;; init-vanilla.el emacs with no external packages
 
 ;; init inspo:
-;; https://github.com/suvratapte/dot-emacs-dot-d/blob/e7f44d981004b44bb9ae23b6b67c421404ea6b4e/init.el
+;; hjkjttps://github.com/suvratapte/dot-emacs-dot-d/blob/e7f44d981004b44bb9ae23b6b67c421404ea6b4e/init.el
 ;; https://emacsredux.com/
 ;; https://github.com/bbatsov/crux
 
@@ -9,14 +9,15 @@
 (setq user-full-name "James Dixon")
 (setq user-mail-address "notjamesdixon@gmail.com")
 
-;;; Lines and columns
-(global-display-line-numbers-mode 1)	; Display line numbers
-(column-number-mode 1)                  ; Toggle column number display in the mode line.
-
 ;;; Inhibit - Do not do these things
-(setq-default inhibit-startup-screen t) ; No startup message plz
-(setq-default visible-bell 1)           ; Flash when the bell rings (no sound)
-(global-goto-address-mode 1)            ; Make links and addresses go-to able
+(setq-default inhibit-startup-screen t)  ; No startup message plz
+(setq-default visible-bell 1)            ; Flash when the bell rings (no sound)
+(setq-default create-lockfiles nil)      ; Do not create lockfiles
+(setq-default auto-save-default nil)     ; Do not autosave
+(setq-default global-auto-revert-mode t) ; Update to on disk
+(menu-bar-mode -1)                       ; No menu bar
+(tool-bar-mode -1)                       ; No tool bar
+(global-goto-address-mode 1)             ; Make links and addresses go-to able
 
 ;; Show paren differently
 (setq-default show-paren-delay 0.1
@@ -45,16 +46,14 @@
      (list (save-excursion (backward-word 1) (point)) (point)))))
 
 ;;; Modes
-;; IDO and Icomplete mode
-(setq ido-enable-flex-matching t)
-(setq-default ido-everywhere 1)
-(ido-mode 1)
+
+;; icomplete
 (icomplete-vertical-mode 1)
 
 ;; which-key mode
 (which-key-mode t)
 
-;; *fly* modes
+;; fly* modes
 (flymake-mode t)
 (flyspell-mode t)
 
@@ -63,7 +62,29 @@
 (global-set-key (kbd "C-x C-r") 'recentf)
 (global-set-key (kbd "M-o") 'other-window)
 (global-set-key (kbd "C-;") 'toggle-comment-on-line)
+(global-set-key (kbd "C-c i") (lambda () (interactive) (find-file user-init-file)))
 (fset 'yes-or-no-p 'y-or-n-p)
 
-(set-frame-font "Maple Mono 12" nil t)
-(load-theme 'leuven-dark)
+;;; General Hooks
+
+;; Lines and columns
+(add-hook 'prog-mode-hook 'column-number-mode) ; Toggle column number display in the mode line.
+(add-hook 'prog-mode-hook 'display-line-numbers-mode) ; Only show line nums for program modes
+
+;; Whitespace
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
+
+;;; Platform Specifics
+
+;; for Win32
+(if (eq system-type 'windows-nt)
+    (set-frame-font "Cascadia Code 12" nil t))
+
+;; https://emacs.stackexchange.com/a/12886
+;; (setenv "HOME" "C:/Users/itzja")
+;; (setq default-directory "C:/Users/user")
+;; (setq user-init-file "C:/Users/user/.emacs.d/init.el")
+;; (setq user-emacs-directory "C:/Users/user/.emacs")
+;; (load user-init-file)
+
+(load-theme 'modus-vivendi)
