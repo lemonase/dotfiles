@@ -624,6 +624,18 @@
 (if (eq system-type 'windows-nt)
     (set-frame-font "Cascadia Code 12" nil t))
 
+;; on windows, make pwsh the default shell
+(when (eq system-type 'windows-nt)
+  (let ((xlist
+         '(
+           "C:/Program Files/PowerShell/7/pwsh.exe"
+           "~/AppData/Local/Microsoft/WindowsApps/pwsh.exe"
+           "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe"
+           ))
+        xfound)
+    (setq xfound (seq-some (lambda (x) (if (file-exists-p x) x nil)) xlist))
+    (when xfound (setq explicit-shell-file-name xfound))))
+
 ;; Have to change emacs init dir for Windows
 ;; https://emacs.stackexchange.com/a/12886
 ;; (setenv "HOME" "C:/Users/itzja")
