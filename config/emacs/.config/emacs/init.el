@@ -83,6 +83,7 @@
 (setq recentf-max-menu-items 15)
 (setq recentf-auto-cleanup (if (daemonp) 300 'never))
 (global-set-key (kbd "C-x C-r") 'recentf)
+(global-set-key (kbd "C-c i") (lambda () (interactive) (find-file user-init-file)))
 
 ;; `savehist-mode' is an Emacs feature that preserves the minibuffer history
 ;; between sessions.
@@ -616,6 +617,20 @@
 ;; (gptel-make-openai "OpenAI" :key (getenv "OPENAI_KEY") :stream t)
 (gptel-make-gemini "Gemini" :stream t :key gptel-api-key)
 (gptel-make-openai "OpenAI" :stream t :key gptel-api-key)
+
+;;; Platform Specifics
+
+;; for Win32
+(if (eq system-type 'windows-nt)
+    (set-frame-font "Cascadia Code 12" nil t))
+
+;; Have to change emacs init dir for Windows
+;; https://emacs.stackexchange.com/a/12886
+;; (setenv "HOME" "C:/Users/itzja")
+;; (setq default-directory "C:/Users/user")
+;; (setq user-init-file "C:/Users/user/.emacs.d/init.el")
+;; (setq user-emacs-directory "C:/Users/user/.emacs")
+;; (load user-init-file)
 
 ;;; init.el ends here
 (custom-set-variables

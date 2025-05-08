@@ -91,6 +91,7 @@
 (if (eq system-type 'windows-nt)
     (set-frame-font "Cascadia Code 12" nil t))
 
+;; Have to change emacs init dir for Windows
 ;; https://emacs.stackexchange.com/a/12886
 ;; (setenv "HOME" "C:/Users/itzja")
 ;; (setq default-directory "C:/Users/user")
