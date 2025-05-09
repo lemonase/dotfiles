@@ -167,6 +167,20 @@
   (interactive "r")
   (shell-command  (buffer-substring-no-properties start end)))
 
+;; TODO: make it work with defaults of Linux/macOS
+(defun open-terminal-in-workdir ()
+  "Open an external terminal emulator in working directory."
+  (interactive)
+  (call-process-shell-command (concat "wt -d " default-directory) nil 0))
+
+;; TODO: make it work with defaults of Linux/macOS
+(defun browse-file-directory ()
+  "Open the current file's directory however the OS would."
+  (interactive)
+  (if default-directory
+      (shell-command (concat "start " (expand-file-name default-directory)))
+    (error "No `default-directory' to open")))
+
 ;; Ediff
 ;; Configure Ediff to use a single frame and split windows horizontally
 (setq ediff-window-setup-function 'ediff-setup-windows-plain
@@ -240,6 +254,14 @@
   :after evil
   :config
   (global-evil-surround-mode 1))
+
+(use-package evil-numbers
+  :straight t
+  :after evil)
+(evil-define-key '(normal visual) 'global (kbd "C-a +") 'evil-numbers/inc-at-pt)
+(evil-define-key '(normal visual) 'global (kbd "C-a -") 'evil-numbers/dec-at-pt)
+(evil-define-key '(normal visual) 'global (kbd "C-a C-+") 'evil-numbers/inc-at-pt-incremental)
+(evil-define-key '(normal visual) 'global (kbd "C-a C--") 'evil-numbers/dec-at-pt-incremental)
 ;; Custom Evil Keybinds
 
 ;; More ergonomic M-x and C-x
@@ -253,6 +275,8 @@
 (define-key evil-normal-state-map (kbd "SPC o") 'occur)
 (define-key evil-normal-state-map (kbd "SPC g") 'magit-status)
 (define-key evil-normal-state-map (kbd "SPC r") 'recentf)
+(define-key evil-normal-state-map (kbd "SPC t") 'open-terminal-in-workdir)
+(define-key evil-normal-state-map (kbd "SPC e") 'browse-file-directory)
 (define-key evil-normal-state-map (kbd "C-c i") (lambda () (interactive) (find-file user-init-file)))
 ;; end evil
 
@@ -277,11 +301,26 @@
   :bind(:map markdown-mode-map
              ("C-c C-e" . markdown-do)))
 
-;;; Themes and Colors (doom-themes, rainbow-mode, rainbow-delimiters)
+;;; Themes and Colors (doom-themes, hl-todo, rainbow-mode, rainbow-delimiters)
 (use-package doom-themes
   :straight t
   :config
   (load-theme 'doom-ir-black t))
+
+; TODO: look into todo integrations
+; https://github.com/tarsius/hl-todo?tab=readme-ov-file#integrations
+(use-package hl-todo
+  :straight t
+  :hook (prog-mode . hl-todo-mode)
+  :config
+  (setq hl-todo-highlight-punctuation ":"
+        hl-todo-keyword-faces
+        `(("TODO"       warning bold)
+          ("FIXME"      error bold)
+          ("HACK"       font-lock-constant-face bold)
+          ("REVIEW"     font-lock-keyword-face bold)
+          ("NOTE"       success bold)
+          ("DEPRECATED" font-lock-doc-face bold))))
 
 (use-package rainbow-mode
   :straight t)
@@ -289,6 +328,19 @@
 (use-package rainbow-delimiters
   :straight t
   :init (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
+
+(use-package git-gutter
+  :hook (prog-mode . git-gutter-mode)
+  :straight t
+  :config
+  (setq git-gutter:update-interval 0.2))
+
+(use-package git-gutter-fringe
+  :straight t
+  :config
+  (define-fringe-bitmap 'git-gutter-fr:added [224] nil nil '(center repeated))
+  (define-fringe-bitmap 'git-gutter-fr:modified [224] nil nil '(center repeated))
+  (define-fringe-bitmap 'git-gutter-fr:deleted [128 192 224 240] nil nil 'bottom))
 
 ;;; Vanilla+ Plugins (dired, magit)
 (use-package dired
