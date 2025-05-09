@@ -266,17 +266,17 @@
 
 ;; More ergonomic M-x and C-x
 (define-key evil-normal-state-map (kbd "SPC SPC") 'execute-extended-command)
+(define-key evil-normal-state-map (kbd "SPC :") 'eval-expression)
 (define-key evil-normal-state-map (kbd "SPC x") ctl-x-map)
 (define-key evil-normal-state-map (kbd "SPC w") 'save-buffer)
 (define-key evil-normal-state-map (kbd "SPC k") 'kill-buffer)
 (define-key evil-normal-state-map (kbd "SPC f") 'find-file)
 (define-key evil-normal-state-map (kbd "SPC d") 'dired)
-(define-key evil-normal-state-map (kbd "SPC b") 'bookmark-jump)
+(define-key evil-normal-state-map (kbd "SPC j") 'dired-jump)
 (define-key evil-normal-state-map (kbd "SPC o") 'occur)
+(define-key evil-normal-state-map (kbd "SPC b") 'bookmark-jump)
 (define-key evil-normal-state-map (kbd "SPC g") 'magit-status)
 (define-key evil-normal-state-map (kbd "SPC r") 'recentf)
-(define-key evil-normal-state-map (kbd "SPC t") 'open-terminal-in-workdir)
-(define-key evil-normal-state-map (kbd "SPC e") 'browse-file-directory)
 (define-key evil-normal-state-map (kbd "C-c i") (lambda () (interactive) (find-file user-init-file)))
 ;; end evil
 
