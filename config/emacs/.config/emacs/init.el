@@ -268,6 +268,7 @@
 (evil-define-key '(normal visual) 'global (kbd "SPC e") 'eval-region)
 (define-key evil-normal-state-map (kbd "SPC :") 'execute-extended-command)
 (define-key evil-normal-state-map (kbd "SPC e") 'eval-last-sexp)
+(define-key evil-normal-state-map (kbd "SPC p") 'eval-print-last-sexp)
 (define-key evil-normal-state-map (kbd "SPC E") 'eval-expression)
 (define-key evil-normal-state-map (kbd "SPC b") 'eval-buffer)
 (define-key evil-normal-state-map (kbd "SPC w") 'save-buffer)
