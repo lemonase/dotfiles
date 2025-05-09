@@ -213,6 +213,8 @@
   :init
   (setq evil-undo-system 'undo-fu)
   (setq evil-want-C-u-scroll t)
+  (setq evil-want-C-i-jump nil)
+  (setq evil-disable-insert-state-bindings t)
   (setq evil-want-keybinding nil)
   :config
   (evil-mode 1))
@@ -257,7 +259,7 @@
 ;; Easy find init file
 (set-register ?i (cons 'file user-init-file))
 
-;;; Writing Org / Markdown / HTML (org-mode, markdown-mode, emmet)
+;;; Writing Org / Markdown / HTML (org-mode, markdown-mode)
 (use-package org
   :straight nil)
 
@@ -275,11 +277,6 @@
   :bind(:map markdown-mode-map
              ("C-c C-e" . markdown-do)))
 
-;; make writing HTML tags way easier
-(use-package emmet-mode
-  :straight t
-  :init)
-
 ;;; Themes and Colors (doom-themes, rainbow-mode, rainbow-delimiters)
 (use-package doom-themes
   :straight t
@@ -292,11 +289,13 @@
 (use-package rainbow-delimiters
   :straight t
   :init (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
+
 ;;; Vanilla+ Plugins (dired, magit)
 (use-package dired
   :straight nil
   :commands (dired dired-jump)
   :bind (("C-x C-j" . dired-jump)))
+(setq dired-dwim-target t)
 
 (use-package magit
   :straight t)
@@ -436,6 +435,16 @@
   :defer t
   :init (which-key-mode))
 
+;;; Better help menus (helpful)
+(use-package helpful
+  :straight t
+  :bind
+  (("C-c C-d" . helpful-at-point)    ; Lookup the symbol at point
+   ("C-h f" . helpful-callable)      ; Describe a function
+   ("C-h v" . helpful-variable)      ; Describe a variable
+   ("C-h k" . helpful-key)           ; Describe a key binding
+   ("C-h x" . helpful-command)))     ; Describe a command
+
 ;;; Matching brackets with (electric-pair-mode) and (smartparens)
 (use-package smartparens
   :straight smartparens
@@ -521,7 +530,6 @@
 	      (message "`%s' parser was installed." lang)
 	      (sit-for 0.75)))))
 
-
 ;; Tree Sitter auto config
 (use-package treesit-auto
   :straight t
@@ -541,54 +549,20 @@
          (lsp-mode . lsp-enable-which-key-integration))
   :commands lsp)
 
+;; Language mode configurations
 (use-package lsp-mode
   :hook ((go-ts-mode . lsp-deferred)
          (python-ts-mode . lsp-deferred))
   :commands (lsp lsp-deferred))
 
-;;; ** Package Manager (straight.el) ends here **
-;;; Additional Language Modes
-;; JavaScript
-(use-package js
-  :defer t
-  :custom
-  (js-indent-level 2))
+:;; emmet: make writing HTML tags much easier
+(use-package emmet-mode
+  :straight t
+  :init)
 
-;; CSS
-(use-package css
-  :defer t
-  :custom
-  (css-indent-level 2))
-
-;; Go Support
-(unless (package-installed-p 'go-mode)
-  (package-install 'go-mode))
-
-;; Lua Support
-(unless (package-installed-p 'lua-mode)
-  (package-install 'lua-mode))
-
-;; Typescript Support
-(unless (package-installed-p 'typescript-mode)
-  (package-install 'typescript-mode))
-
-;; Rust Support
-(unless (package-installed-p 'rust-mode)
-  (package-install 'rust-mode))
-
-;; YAML Support
-(unless (package-installed-p 'yaml-mode)
-  (package-install 'yaml-mode))
-
-;; JSON Support
-(unless (package-installed-p 'json-mode)
-  (package-install 'json-mode))
-
-(setq-default major-mode
-              (lambda () ; guess major mode from file name
-                (unless buffer-file-name
-                  (let ((buffer-file-name (buffer-name)))
-                    (set-auto-mode)))))
+;;; Lua
+(use-package lua-mode
+  :straight t)
 
 ;;; Other misc modes (docker, gptel, load-env-vars, csv-mode)
 (use-package docker
@@ -610,6 +584,45 @@
   (if (file-exists-p my-env-file)
     (load-env-vars my-env-file)))
 
+;;; ** Package Manager (straight.el) ends here **
+;;; Additional Language Modes
+;; JavaScript
+(use-package js
+  :defer t
+  :custom
+  (js-indent-level 2))
+;; CSS
+(use-package css
+  :defer t
+  :custom
+  (css-indent-level 2))
+
+;; Go Support
+(unless (package-installed-p 'go-mode)
+  (package-install 'go-mode))
+;; Lua Support
+(unless (package-installed-p 'lua-mode)
+  (package-install 'lua-mode))
+;; Typescript Support
+(unless (package-installed-p 'typescript-mode)
+  (package-install 'typescript-mode))
+;; Rust Support
+(unless (package-installed-p 'rust-mode)
+  (package-install 'rust-mode))
+;; YAML Support
+(unless (package-installed-p 'yaml-mode)
+  (package-install 'yaml-mode))
+;; JSON Support
+(unless (package-installed-p 'json-mode)
+  (package-install 'json-mode))
+
+(setq-default major-mode
+              (lambda () ; guess major mode from file name
+                (unless buffer-file-name
+                  (let ((buffer-file-name (buffer-name)))
+                    (set-auto-mode)))))
+
+;; LLM support (must configure with api keys)
 (use-package gptel
   :straight t)
 
