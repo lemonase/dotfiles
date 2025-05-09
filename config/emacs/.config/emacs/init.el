@@ -265,18 +265,22 @@
 ;; Custom Evil Keybinds
 
 ;; More ergonomic M-x and C-x
-(define-key evil-normal-state-map (kbd "SPC SPC") 'execute-extended-command)
-(define-key evil-normal-state-map (kbd "SPC :") 'eval-expression)
-(define-key evil-normal-state-map (kbd "SPC x") ctl-x-map)
+(evil-define-key '(normal visual) 'global (kbd "SPC e") 'eval-region)
+(define-key evil-normal-state-map (kbd "SPC :") 'execute-extended-command)
+(define-key evil-normal-state-map (kbd "SPC e") 'eval-last-sexp)
+(define-key evil-normal-state-map (kbd "SPC E") 'eval-expression)
+(define-key evil-normal-state-map (kbd "SPC b") 'eval-buffer)
 (define-key evil-normal-state-map (kbd "SPC w") 'save-buffer)
 (define-key evil-normal-state-map (kbd "SPC k") 'kill-buffer)
 (define-key evil-normal-state-map (kbd "SPC f") 'find-file)
 (define-key evil-normal-state-map (kbd "SPC d") 'dired)
 (define-key evil-normal-state-map (kbd "SPC j") 'dired-jump)
 (define-key evil-normal-state-map (kbd "SPC o") 'occur)
-(define-key evil-normal-state-map (kbd "SPC b") 'bookmark-jump)
+(define-key evil-normal-state-map (kbd "SPC B") 'bookmark-jump)
 (define-key evil-normal-state-map (kbd "SPC g") 'magit-status)
-(define-key evil-normal-state-map (kbd "SPC r") 'recentf)
+(define-key evil-normal-state-map (kbd "SPC r") 'regexp-replace)
+(define-key evil-normal-state-map (kbd "SPC R") 'recentf)
+(define-key evil-normal-state-map (kbd "SPC x") ctl-x-map)
 (define-key evil-normal-state-map (kbd "C-c i") (lambda () (interactive) (find-file user-init-file)))
 ;; end evil
 
@@ -607,7 +611,7 @@
          (python-ts-mode . lsp-deferred))
   :commands (lsp lsp-deferred))
 
-:;; emmet: make writing HTML tags much easier
+;;; emmet: make writing HTML tags much easier
 (use-package emmet-mode
   :straight t
   :init)
@@ -635,6 +639,10 @@
 (let ((my-env-file "~/.local/.env"))
   (if (file-exists-p my-env-file)
     (load-env-vars my-env-file)))
+
+(use-package editorconfig
+  :config
+  (editorconfig-mode 1))
 
 ;;; ** Package Manager (straight.el) ends here **
 ;;; Additional Language Modes
