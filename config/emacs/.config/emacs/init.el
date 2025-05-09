@@ -37,6 +37,9 @@
 (delete-selection-mode 1)               ; Easier deleting of marks/regions
 (global-goto-address-mode 1)            ; Make links and addresses go-to able
 
+;; Encoding UTF-8
+(set-language-environment "UTF-8")
+
 ;; Allow for shorter responses: "y" for yes and "n" for no.
 (fset 'yes-or-no-p 'y-or-n-p)
 
@@ -47,21 +50,19 @@
       show-paren-when-point-in-periphery t)
 
 ;;; Memory Limits and Performance
-
 ;; Undo/Redo
 (setq undo-limit (* 13 160000)
       undo-strong-limit (* 13 240000)
       undo-outer-limit (* 13 24000000))
-
 ;; Garbage Collection
 (setq gc-cons-threshold-original gc-cons-threshold)
 (setq gc-cons-threshold (* 1024 1024 100))
-
 ;; Perf: Reduce command completion overhead.
 (setq read-extended-command-predicate #'command-completion-default-include-p)
 
 ;;; Theme (Default)
-(set-frame-font "Maple Mono 12" nil t)
+;; TODO: make this check if font exists
+; (set-frame-font "Maple Mono 12" nil t)
 (load-theme 'modus-vivendi t)
 
 ;;; File History, Saving and Reverting
@@ -75,15 +76,10 @@
 ;; No duplicates in kill ring
 (setq kill-do-not-save-duplicates t)
 
-;; Easy edit init file
-(set-register ?i (cons 'file user-init-file))
-
 ;; `recentf' is an that maintains a list of recently accessed files.
 (setq recentf-max-saved-items 300) ; default is 20
 (setq recentf-max-menu-items 15)
 (setq recentf-auto-cleanup (if (daemonp) 300 'never))
-(global-set-key (kbd "C-x C-r") 'recentf)
-(global-set-key (kbd "C-c i") (lambda () (interactive) (find-file user-init-file)))
 
 ;; `savehist-mode' is an Emacs feature that preserves the minibuffer history
 ;; between sessions.
@@ -128,13 +124,13 @@
 ;;; Custom Tab Settings
 ; START TABS CONFIG from https://dougie.io/emacs/indentation/
 ;; Create a variable for our preferred tab width
-(setq custom-tab-width 4)
+(setq custom-tab-width 2)
 (setq default-tab-width 4)
 (setq standard-indent 4)
 
 ;; Two callable functions for enabling/disabling tabs in Emacs
-(defun disable-tabs () (setq indent-tabs-mode nil))
-(defun enable-tabs  ()
+(defun disable-tabs () "Disable tabs for indenting." (setq indent-tabs-mode nil))
+(defun enable-tabs  () "Enable tabs for indenting."
   (local-set-key (kbd "TAB") 'tab-to-tab-stop)
   (setq indent-tabs-mode t)
   (setq tab-width custom-tab-width))
@@ -149,7 +145,6 @@
 ;; Language-Specific Tweaks
 (setq-default python-indent-offset custom-tab-width) ;; Python
 (setq-default js-indent-level custom-tab-width)      ;; Javascript
-
 (setq-default sh-indent-level custom-tab-width)      ;; Shell
 (setq-default sh-basic-offset custom-tab-width)      ;; Shell
 
@@ -225,12 +220,6 @@
 (use-package undo-fu
   :straight t)
 
-(use-package evil-commentary
-  :straight t
-  :after evil
-  :init
-  (evil-commentary-mode))
-
 (use-package evil-collection
   :straight t
   :after evil
@@ -238,12 +227,17 @@
   :init
   (evil-collection-init))
 
+(use-package evil-commentary
+  :straight t
+  :after evil
+  :init
+  (evil-commentary-mode))
+
 (use-package evil-surround
   :straight t
   :after evil
   :config
   (global-evil-surround-mode 1))
-
 ;; Custom Evil Keybinds
 
 ;; More ergonomic M-x and C-x
@@ -257,7 +251,11 @@
 (define-key evil-normal-state-map (kbd "SPC o") 'occur)
 (define-key evil-normal-state-map (kbd "SPC g") 'magit-status)
 (define-key evil-normal-state-map (kbd "SPC r") 'recentf)
+(define-key evil-normal-state-map (kbd "C-c i") (lambda () (interactive) (find-file user-init-file)))
 ;; end evil
+
+;; Easy find init file
+(set-register ?i (cons 'file user-init-file))
 
 ;;; Writing Org / Markdown / HTML (org-mode, markdown-mode, emmet)
 (use-package org
@@ -529,6 +527,7 @@
   :straight t
   :config
   (global-treesit-auto-mode))
+
 (setq treesit-auto-install 'prompt)
 (setq treesit-auto-langs '(python rust go gomod))
 
@@ -606,11 +605,13 @@
 
 (use-package load-env-vars
   :straight t)
+(defvar my-env-file "~/.local/.env" "Local environment file.")
+(let ((my-env-file "~/.local/.env"))
+  (if (file-exists-p my-env-file)
+    (load-env-vars my-env-file)))
 
 (use-package gptel
   :straight t)
-
-(load-env-vars "~/.local/.env")
 
 ;; (setq gemini-api-key (funcall (lambda (prompt) (read-passwd prompt)) "Enter Gemini API key: "))
 ;; (gptel-make-gemini "Gemini" :key (getenv "GEMINI_API_KEY") :stream t)
@@ -619,8 +620,8 @@
 (gptel-make-openai "OpenAI" :stream t :key gptel-api-key)
 
 ;;; Platform Specifics
-
 ;; for Win32
+;; TODO: check if fonts exists before setting
 (if (eq system-type 'windows-nt)
     (set-frame-font "Cascadia Code 12" nil t))
 
@@ -645,36 +646,3 @@
 ;; (load user-init-file)
 
 ;;; init.el ends here
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(custom-safe-themes
-   '("77fff78cc13a2ff41ad0a8ba2f09e8efd3c7e16be20725606c095f9a19c24d3d"
-     "8b148cf8154d34917dfc794b5d0fe65f21e9155977a36a5985f89c09a9669aa0"
-     "4b6cc3b60871e2f4f9a026a5c86df27905fb1b0e96277ff18a76a39ca53b82e1"
-     "2721b06afaf1769ef63f942bf3e977f208f517b187f2526f0e57c1bd4a000350" default)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   '(company corfu csv-mode embark-consult emmet-mode evil-collection
-	     evil-surround exec-path-from-shell fireplace flycheck
-	     go-mode json-mode lsp-mode magit marginalia
-	     multiple-cursors nyan-mode rainbow-delimiters rust-mode
-	     smartparens typescript-mode vertico yaml-mode)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
