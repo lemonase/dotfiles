@@ -22,6 +22,7 @@
 ;; Lines and columns
 (global-display-line-numbers-mode 1)	; Display line numbers
 (column-number-mode 1)                  ; Toggle column number display in the mode line.
+;; (add-hook 'prog-mode-hook #'display-fill-column-indicator-mode) ; Column width indicator
 
 ;; Bells and whistles
 (setq visible-bell 1)                   ; Flash when the bell rings (no sound)
@@ -168,18 +169,26 @@
   (shell-command  (buffer-substring-no-properties start end)))
 
 ;; TODO: make it work with defaults of Linux/macOS
-(defun open-terminal-in-workdir ()
+(defun ext-terminal-in-workdir ()
   "Open an external terminal emulator in working directory."
   (interactive)
   (call-process-shell-command (concat "wt -d " default-directory) nil 0))
 
 ;; TODO: make it work with defaults of Linux/macOS
-(defun browse-file-directory ()
+(defun ext-file-browser-in-workdir ()
   "Open the current file's directory however the OS would."
   (interactive)
   (if default-directory
       (shell-command (concat "start " (expand-file-name default-directory)))
     (error "No `default-directory' to open")))
+
+(defun insert-current-iso-date ()
+  "Insert the current ISO 8601 date."
+  (insert (format-time-string "%Y-%m-%d")))
+
+(defun insert-current-iso-date-seconds()
+  "Insert the current ISO 8601 date (with time res of seconds)."
+  (insert (format-time-string "%Y-%m-%d %H:%M:%S")))
 
 ;; Ediff
 ;; Configure Ediff to use a single frame and split windows horizontally
@@ -229,6 +238,9 @@
   (setq evil-want-C-u-scroll t)
   (setq evil-want-C-i-jump nil)
   (setq evil-disable-insert-state-bindings t)
+  (setq evil-insert-state-cursor '(box "violet")
+      evil-normal-state-cursor '(box "yellow")
+      evil-visual-state-cursor '(box "#1aa5db"))
   (setq evil-want-keybinding nil)
   :config
   (evil-mode 1))
@@ -258,24 +270,37 @@
 (use-package evil-numbers
   :straight t
   :after evil)
+;; Custom Evil Keybinds
+
+;;; Evil customizations
+
+;;; Basic way to do pulse for evil yank text (like goggles.el package)
+;;; https://blog.meain.io/2020/emacs-highlight-yanked/
+(defun hl-yank-advice (yank-fn beg end &rest args)
+  "Give advice to YANK-FN BEG END ARGS for temp highlighting of region."
+  (pulse-momentary-highlight-region beg end)
+  (apply yank-fn beg end args))
+(advice-add 'evil-yank :around 'hl-yank-advice)
+
+;;; evil-numbers keybinds
 (evil-define-key '(normal visual) 'global (kbd "C-a +") 'evil-numbers/inc-at-pt)
 (evil-define-key '(normal visual) 'global (kbd "C-a -") 'evil-numbers/dec-at-pt)
 (evil-define-key '(normal visual) 'global (kbd "C-a C-+") 'evil-numbers/inc-at-pt-incremental)
 (evil-define-key '(normal visual) 'global (kbd "C-a C--") 'evil-numbers/dec-at-pt-incremental)
-;; Custom Evil Keybinds
 
-;; More ergonomic M-x and C-x
-(evil-define-key '(normal visual) 'global (kbd "SPC e") 'eval-region)
+;;; general keybinds
 (define-key evil-normal-state-map (kbd "SPC :") 'execute-extended-command)
 (define-key evil-normal-state-map (kbd "SPC e") 'eval-last-sexp)
+(define-key evil-visual-state-map (kbd "SPC e") 'eval-region)
 (define-key evil-normal-state-map (kbd "SPC p") 'eval-print-last-sexp)
 (define-key evil-normal-state-map (kbd "SPC E") 'eval-expression)
 (define-key evil-normal-state-map (kbd "SPC b") 'eval-buffer)
 (define-key evil-normal-state-map (kbd "SPC w") 'save-buffer)
 (define-key evil-normal-state-map (kbd "SPC k") 'kill-buffer)
-(define-key evil-normal-state-map (kbd "SPC f") 'find-file)
+(define-key evil-normal-state-map (kbd "SPC f") 'ffap)
+(define-key evil-normal-state-map (kbd "SPC F") 'find-file)
 (define-key evil-normal-state-map (kbd "SPC d") 'dired)
-(define-key evil-normal-state-map (kbd "SPC j") 'dired-jump)
+(define-key evil-normal-state-map (kbd "SPC K") 'dired-jump)
 (define-key evil-normal-state-map (kbd "SPC o") 'occur)
 (define-key evil-normal-state-map (kbd "SPC B") 'bookmark-jump)
 (define-key evil-normal-state-map (kbd "SPC g") 'magit-status)
@@ -283,6 +308,9 @@
 (define-key evil-normal-state-map (kbd "SPC R") 'recentf)
 (define-key evil-normal-state-map (kbd "SPC x") ctl-x-map)
 (define-key evil-normal-state-map (kbd "C-c i") (lambda () (interactive) (find-file user-init-file)))
+(define-key evil-normal-state-map (kbd "SPC O") 'ext-file-browser-in-workdir)
+(define-key evil-normal-state-map (kbd "SPC T") 'ext-terminal-in-workdir)
+(define-key evil-normal-state-map (kbd "SPC A") 'abbrev-mode)
 ;; end evil
 
 ;; Easy find init file
@@ -326,6 +354,12 @@
           ("REVIEW"     font-lock-keyword-face bold)
           ("NOTE"       success bold)
           ("DEPRECATED" font-lock-doc-face bold))))
+
+(use-package goggles
+  :straight t
+  :hook ((prog-mode text-mode) . goggles-mode)
+  :config
+  (setq-default goggles-pulse t))
 
 (use-package rainbow-mode
   :straight t)
@@ -523,7 +557,6 @@
   :hook ((prog-mode . corfu-mode)
          (shell-mode . corfu-mode)
          (eshell-mode . corfu-mode))
-
   :custom
   (corfu-auto-prefix 1)
   (corfu-auto-delay 0.0)
@@ -549,6 +582,20 @@
   (add-hook 'completion-at-point-functions #'cape-dabbrev)
   (add-hook 'completion-at-point-functions #'cape-file)
   (add-hook 'completion-at-point-functions #'cape-elisp-block))
+
+;; Abbrevs and Snippets
+
+
+;;; Abbrevs
+(define-abbrev global-abbrev-table "bg" "background")
+(define-abbrev global-abbrev-table "ty" "thank you")
+(define-abbrev global-abbrev-table "yw" "you are welcome")
+(define-abbrev global-abbrev-table "u" "you")
+(define-abbrev global-abbrev-table "mygh" "https://github.com/lemonase")
+(define-abbrev global-abbrev-table "dt" "" 'insert-current-iso-date)
+(define-abbrev global-abbrev-table "dts" "" 'insert-current-iso-date-seconds)
+(define-abbrev global-abbrev-table "td" "" 'insert-current-iso-date)
+(define-abbrev global-abbrev-table "tds" "" 'insert-current-iso-date-seconds)
 
 ;;; Treesitter (treesit)
 (use-package treesit
