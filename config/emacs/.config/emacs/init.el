@@ -741,6 +741,7 @@
 (gptel-make-openai "OpenAI" :stream t :key gptel-api-key)
 
 ;;; Platform Specifics
+
 ;; for Win32
 ;; TODO: check if fonts exists before setting
 (if (eq system-type 'windows-nt)
@@ -757,6 +758,16 @@
         xfound)
     (setq xfound (seq-some (lambda (x) (if (file-exists-p x) x nil)) xlist))
     (when xfound (setq explicit-shell-file-name xfound))))
+
+;; Still handy having cygwin / mingw for minimal set of Linux CLI tools.
+;; Alternative approach is installing Emacs inside WSL, which has pros and cons
+;; as far as configuring PATH, SHELL, compiler and interop between Linux/Windows.
+;; Overall it depends how much you are interacting with the native Windows NTFS
+;; filesystem vs developing for things inside of Linux.
+(when (eq system-type 'windows-nt)
+  (setq exec-path (cons "C:/cygwin/bin" exec-path))
+  (setenv "PATH" (mapconcat #'identity exec-path path-separator)))
+
 
 ;; Have to change emacs init dir for Windows
 ;; https://emacs.stackexchange.com/a/12886
