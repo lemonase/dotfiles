@@ -114,6 +114,30 @@
 
 ;; save-place-mode enables Emacs to remember the last location within a file
 (add-hook 'after-init-hook #'save-place-mode)
+
+(define-minor-mode clean-trailing-whitespace-mode
+  "Tidy up trailing whitespace with `delete-trailing-whitespace' before saving."
+  :lighter " ctsv"
+  (if clean-trailing-whitespace-mode
+      (add-hook 'before-save-hook #'delete-trailing-whitespace nil t)
+    (remove-hook 'before-save-hook #'delete-trailing-whitespace t)))
+
+(define-minor-mode clean-all-whitespace-mode
+  "Tidy up *all* whitespace with `whitespace-cleanup' before saving."
+  :lighter " casv"
+  (if clean-trailing-whitespace-mode
+      (add-hook 'before-save-hook #'whitespace-cleanup nil t)
+    (remove-hook 'before-save-hook #'whitespace-cleanup t)))
+
+(define-minor-mode check-parens-save-mode
+  "Check the balance of parens with `check-parens' before saving."
+  :lighter " cpns"
+  (if check-parens-save-mode
+      (add-hook 'before-save-mode #'check-parens nil t)
+    (remove-hook 'before-save-mode #'check-parens t)))
+
+(add-hook 'prog-mode #'clean-all-whitespace-mode)
+(add-hook 'emacs-lisp-mode #'check-parens-save-mode)
 ;; End File History, Saving and Reverting
 
 ;;; Comment Settings
@@ -630,9 +654,9 @@
     (interactive)
     (let ((languages (mapcar 'car treesit-language-source-alist)))
       (dolist (lang languages)
-	      (treesit-install-language-grammar lang)
-	      (message "`%s' parser was installed." lang)
-	      (sit-for 0.75)))))
+              (treesit-install-language-grammar lang)
+              (message "`%s' parser was installed." lang)
+              (sit-for 0.75)))))
 
 ;; Tree Sitter auto config
 (use-package treesit-auto
