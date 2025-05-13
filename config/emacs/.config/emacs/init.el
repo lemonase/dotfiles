@@ -299,6 +299,18 @@
 (use-package evil-numbers
   :straight t
   :after evil)
+
+(use-package evil-org
+  :straight t
+  :hook (org-mode . evil-org-mode)
+  :after org
+  :config
+  (require 'evil-org-agenda)
+  (evil-org-agenda-set-keys))
+
+(use-package evil-markdown
+  :straight `(el-patch :type git :host github :repo "Somelauw/evil-markdown")
+  :after evil)
 ;; Custom Evil Keybinds
 
 ;;; Evil customizations
