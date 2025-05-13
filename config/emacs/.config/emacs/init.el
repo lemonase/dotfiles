@@ -62,8 +62,10 @@
 (setq read-extended-command-predicate #'command-completion-default-include-p)
 
 ;;; Theme (Default)
-;; TODO: make this check if font exists
-; (set-frame-font "Maple Mono 12" nil t)
+(cond
+ ((find-font (font-spec :name "Maple Mono"))
+      (set-frame-font "Maple Mono 12" nil t)))
+
 (load-theme 'modus-vivendi t)
 
 ;;; File History, Saving and Reverting
@@ -226,7 +228,6 @@
    (if mark-active (list (region-beginning) (region-end))
      (list (save-excursion (backward-word 1) (point)) (point)))))
 
-
 ;;; * "Sensible Defaults" ends here *
 ;;; ** Start Package Manager (straight.el) **
 ;; bootstrap straight.el package manager
@@ -261,12 +262,16 @@
   (setq evil-undo-system 'undo-fu)
   (setq evil-want-C-u-scroll t)
   (setq evil-want-C-i-jump nil)
+  (setq evil-symbol-word-search t)
+  (setq evil-ex-search-vim-style-regexp t)
+  (setq evil-ex-visual-char-range t)
   (setq evil-disable-insert-state-bindings t)
   (setq evil-insert-state-cursor '(box "violet")
       evil-normal-state-cursor '(box "yellow")
       evil-visual-state-cursor '(box "#1aa5db"))
   (setq evil-want-keybinding nil)
-  :config
+  (setq evil-want-integration t)
+    :config
   (evil-mode 1))
 
 (use-package undo-fu
@@ -312,30 +317,32 @@
 (evil-define-key '(normal visual) 'global (kbd "C-a C-+") 'evil-numbers/inc-at-pt-incremental)
 (evil-define-key '(normal visual) 'global (kbd "C-a C--") 'evil-numbers/dec-at-pt-incremental)
 
+
 ;;; general keybinds
-(define-key evil-normal-state-map (kbd "SPC :") 'execute-extended-command)
-(define-key evil-normal-state-map (kbd "SPC e") 'eval-last-sexp)
-(define-key evil-visual-state-map (kbd "SPC e") 'eval-region)
-(define-key evil-normal-state-map (kbd "SPC p") 'eval-print-last-sexp)
-(define-key evil-normal-state-map (kbd "SPC E") 'eval-expression)
-(define-key evil-normal-state-map (kbd "SPC b") 'eval-buffer)
-(define-key evil-normal-state-map (kbd "SPC w") 'save-buffer)
-(define-key evil-normal-state-map (kbd "SPC W") 'whitespace-mode)
-(define-key evil-normal-state-map (kbd "SPC k") 'kill-buffer)
-(define-key evil-normal-state-map (kbd "SPC f") 'ffap)
-(define-key evil-normal-state-map (kbd "SPC F") 'find-file)
-(define-key evil-normal-state-map (kbd "SPC d") 'dired)
-(define-key evil-normal-state-map (kbd "SPC K") 'dired-jump)
-(define-key evil-normal-state-map (kbd "SPC o") 'occur)
-(define-key evil-normal-state-map (kbd "SPC B") 'bookmark-jump)
-(define-key evil-normal-state-map (kbd "SPC g") 'magit-status)
-(define-key evil-normal-state-map (kbd "SPC r") 'regexp-replace)
-(define-key evil-normal-state-map (kbd "SPC R") 'recentf)
-(define-key evil-normal-state-map (kbd "SPC x") ctl-x-map)
-(define-key evil-normal-state-map (kbd "C-c i") (lambda () (interactive) (find-file user-init-file)))
-(define-key evil-normal-state-map (kbd "SPC O") 'ext-file-browser-in-workdir)
-(define-key evil-normal-state-map (kbd "SPC T") 'ext-terminal-in-workdir)
-(define-key evil-normal-state-map (kbd "SPC A") 'abbrev-mode)
+(evil-set-leader nil (kbd "SPC"))
+(evil-define-key 'normal 'global (kbd "<leader> :") 'execute-extended-command)
+(evil-define-key 'normal 'global (kbd "<leader> e") 'eval-last-sexp)
+(evil-define-key 'visual 'global (kbd "<leader> e") 'eval-region)
+(evil-define-key 'normal 'global (kbd "<leader> p") 'eval-print-last-sexp)
+(evil-define-key 'normal 'global (kbd "<leader> E") 'eval-expression)
+(evil-define-key 'normal 'global (kbd "<leader> b") 'eval-buffer)
+(evil-define-key 'normal 'global (kbd "<leader> w") 'save-buffer)
+(evil-define-key 'normal 'global (kbd "<leader> W") 'whitespace-mode)
+(evil-define-key 'normal 'global (kbd "<leader> k") 'kill-buffer)
+(evil-define-key 'normal 'global (kbd "<leader> f") 'ffap)
+(evil-define-key 'normal 'global (kbd "<leader> F") 'find-file)
+(evil-define-key 'normal 'global (kbd "<leader> d") 'dired)
+(evil-define-key 'normal 'global (kbd "<leader> K") 'dired-jump)
+(evil-define-key 'normal 'global (kbd "<leader> o") 'occur)
+(evil-define-key 'normal 'global (kbd "<leader> B") 'bookmark-jump)
+(evil-define-key 'normal 'global (kbd "<leader> g") 'magit-status)
+(evil-define-key 'normal 'global (kbd "<leader> r") 'replace-regexp)
+(evil-define-key 'normal 'global (kbd "<leader> R") 'recentf)
+(evil-define-key 'normal 'global (kbd "<leader> x") ctl-x-map)
+(evil-define-key 'normal 'global (kbd "<leader> O") 'ext-file-browser-in-workdir)
+(evil-define-key 'normal 'global (kbd "<leader> T") 'ext-terminal-in-workdir)
+(evil-define-key 'normal 'global (kbd "<leader> A") 'abbrev-mode)
+(evil-define-key 'normal 'global (kbd "C-c i") (lambda () (interactive) (find-file user-init-file)))
 ;; end evil
 
 ;; Easy find init file
