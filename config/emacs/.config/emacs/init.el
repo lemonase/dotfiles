@@ -65,13 +65,10 @@
 (cond
  ((find-font (font-spec :name "Maple Mono"))
   (set-frame-font "Maple Mono 12" nil t)))
-
-(load-theme 'modus-vivendi t)
+;; (load-theme 'modus-vivendi t)
 
 ;;; File History, Saving and Reverting
 
-;; Auto-refresh buffers when files on disk change.
-(global-auto-revert-mode t)
 ;; Place backups in a separate folder.
 (setq backup-directory-alist `(("." . "~/.config/emacs/saves")))
 (setq auto-save-file-name-transforms `((".*" "~/.config/emacs/saves/" t)))
@@ -84,6 +81,9 @@
 (setq recentf-max-menu-items 15)
 (setq recentf-auto-cleanup (if (daemonp) 300 'never))
 
+;; recentf  maintains a list of recently accessed files
+(add-hook 'after-init-hook #'(lambda() (let ((inhibit-message t)) (recentf-mode 1))))
+
 ;; `savehist-mode' is an Emacs feature that preserves the minibuffer history
 ;; between sessions.
 (setq history-length 300)
@@ -94,6 +94,16 @@
         mark-ring global-mark-ring       ; marks
         search-ring regexp-search-ring)) ; searches
 
+;; savehist is an Emacs feature that preserves the minibuffer history between sessions
+(add-hook 'after-init-hook #'savehist-mode)
+
+;; save-place-mode enables Emacs to remember the last location within a file
+(add-hook 'after-init-hook #'save-place-mode)
+
+;; Auto-revert in Emacs is a feature that automatically updates buffer to reflect
+;; changes on disk
+(add-hook 'after-init-hook #'global-auto-revert-mode)
+
 ;; Enable `auto-save-mode' to prevent data loss. Use `recover-file' or
 ;; `recover-session' to restore unsaved changes.
 (setq auto-save-default t)
@@ -102,20 +112,10 @@
 (setq auto-save-visited-interval 10)
 (auto-save-visited-mode 1)
 
-;; Auto-revert in Emacs is a feature that automatically updates buffer to reflect
-;; changes on disk
-(add-hook 'after-init-hook #'global-auto-revert-mode)
+;; Auto-refresh buffers when files on disk change.
+(global-auto-revert-mode t)
 
-;; recentf  maintains a list of recently accessed files
-(add-hook 'after-init-hook #'(lambda()
-                               (let ((inhibit-message t))
-                                 (recentf-mode 1))))
-
-;; savehist is an Emacs feature that preserves the minibuffer history between sessions
-(add-hook 'after-init-hook #'savehist-mode)
-
-;; save-place-mode enables Emacs to remember the last location within a file
-(add-hook 'after-init-hook #'save-place-mode)
+;;; Minor Modes
 
 (define-minor-mode clean-trailing-whitespace-mode
   "Tidy up trailing whitespace with `delete-trailing-whitespace' before saving."
@@ -194,19 +194,30 @@
   (interactive "r")
   (shell-command  (buffer-substring-no-properties start end)))
 
-;; TODO: make it work with defaults of Linux/macOS
 (defun ext-terminal-in-workdir ()
   "Open an external terminal emulator in working directory."
   (interactive)
-  (call-process-shell-command (concat "wt -d " default-directory) nil 0))
+  (cond
+   ((eq system-type 'windows-nt)
+      (call-process-shell-command (concat "wt -d " default-directory) nil 0))
+   ((eq system-type 'darwin)
+    (shell-command (concat "open -a iTerm " (shell-quote-argument (expand-file-name default-directory)))))
+   ((eq system-type 'gnu/linux)
+    (let ((process-connection-type nil)) (start-process "" nil "x-terminal-emulator" (concat "--working-directory=" default-directory))))))
 
-;; TODO: make it work with defaults of Linux/macOS
 (defun ext-file-browser-in-workdir ()
   "Open the current file's directory however the OS would."
   (interactive)
-  (if default-directory
-      (shell-command (concat "start " (expand-file-name default-directory)))
-    (error "No `default-directory' to open")))
+  (cond
+   ((eq system-type 'windows-nt)
+      (shell-command (concat "start " (expand-file-name default-directory))))
+   ((eq system-type 'darwin)
+      (shell-command (concat "open " (expand-file-name default-directory))))
+   ((eq system-type 'gnu/linux)
+      (shell-command (concat "xdg-open " (expand-file-name default-directory))))))
+
+;; TODO: Look at using the EAT package for terminal things
+;; https://codeberg.org/akib/emacs-eat
 
 (defun insert-current-time ()
   "Insert the current time H:M:S."
@@ -219,11 +230,6 @@
 (defun insert-current-iso-date-time()
   "Insert the current ISO 8601 date (with time res of seconds)."
   (insert (format-time-string "%Y-%m-%d %H:%M:%S")))
-
-;; Ediff
-;; Configure Ediff to use a single frame and split windows horizontally
-(setq ediff-window-setup-function 'ediff-setup-windows-plain
-      ediff-split-window-function 'split-window-horizontally)
 
 ;;; Backwards kill with C-w
 (defadvice kill-region (before unix-werase activate compile)
@@ -347,33 +353,63 @@
   :straight `(el-patch :type git :host github :repo "Somelauw/evil-markdown")
   :after evil)
 
-;;; Evil keybinds
+;; Custom Evil Keybinds
+;; Evil Guide: https://github.com/noctuid/evil-guide?tab=readme-ov-file#keybindings-and-states
+
+;; Leader (prefix key)
 (evil-set-leader nil (kbd "SPC"))
-(evil-define-key 'normal 'global (kbd "<leader> :") 'execute-extended-command)
+
+;; Eval
+(evil-define-key 'normal 'global (kbd "<leader> :") 'eval-expression)
+(evil-define-key 'normal 'global (kbd "<leader> p") 'execute-extended-command)
 (evil-define-key 'normal 'global (kbd "<leader> e") 'eval-last-sexp)
 (evil-define-key 'visual 'global (kbd "<leader> e") 'eval-region)
-(evil-define-key 'normal 'global (kbd "<leader> p") 'eval-print-last-sexp)
-(evil-define-key 'normal 'global (kbd "<leader> E") 'eval-expression)
-(evil-define-key 'normal 'global (kbd "<leader> b") 'eval-buffer)
+(evil-define-key 'normal 'global (kbd "<leader> E") 'eval-print-last-sexp)
+
+;; Buffer Management
 (evil-define-key 'normal 'global (kbd "<leader> w") 'save-buffer)
-(evil-define-key 'normal 'global (kbd "<leader> W") 'whitespace-mode)
+(evil-define-key 'normal 'global (kbd "<leader> l") 'eval-buffer)
+(evil-define-key 'normal 'global (kbd "<leader> b") 'list-buffers)
 (evil-define-key 'normal 'global (kbd "<leader> k") 'kill-buffer)
-(evil-define-key 'normal 'global (kbd "<leader> f") 'ffap)
-(evil-define-key 'normal 'global (kbd "<leader> F") 'find-file)
 (evil-define-key 'normal 'global (kbd "<leader> d") 'evil-delete-buffer)
-(evil-define-key 'normal 'global (kbd "<leader> K") 'dired-jump)
-(evil-define-key 'normal 'global (kbd "<leader> o") 'occur)
-(evil-define-key 'normal 'global (kbd "<leader> B") 'bookmark-jump)
-(evil-define-key 'normal 'global (kbd "<leader> g") 'magit-status)
-(evil-define-key 'normal 'global (kbd "<leader> r") 'replace-regexp)
-(evil-define-key 'normal 'global (kbd "<leader> R") 'recentf)
-(evil-define-key 'normal 'global (kbd "<leader> P") 'yank-from-kill-ring)
-(evil-define-key 'normal 'global (kbd "<leader> x") ctl-x-map)
-(evil-define-key 'normal 'global (kbd "<leader> O") 'ext-file-browser-in-workdir)
-(evil-define-key 'normal 'global (kbd "<leader> T") 'ext-terminal-in-workdir)
+
+;; Toggles
 (evil-define-key 'normal 'global (kbd "<leader> A") 'abbrev-mode)
+(evil-define-key 'normal 'global (kbd "<leader> W") 'whitespace-mode)
+
+;; Search and replace (interactive)
+(evil-define-key 'normal 'global (kbd "<leader> o") 'occur)
+(evil-define-key 'normal 'global (kbd "<leader> r") 'replace-regexp)
+(evil-define-key 'normal 'global (kbd "<leader> P") 'yank-from-kill-ring)
+
+;; Running external stuff
+(evil-define-key 'normal 'global (kbd "<leader> c") 'compile)
+(evil-define-key 'normal 'global (kbd "<leader> !") 'shell-command)
+(evil-define-key 'normal 'global (kbd "<leader> &") 'async-shell-command)
+(evil-define-key 'normal 'global (kbd "<leader> g") 'magit-status)
+
+;; Jumping places
+(evil-define-key 'normal 'global (kbd "<leader> f") 'ffap)
+(evil-define-key 'normal 'global (kbd "<leader> K") 'dired-jump)
+(evil-define-key 'normal 'global (kbd "<leader> B") 'bookmark-jump)
+(evil-define-key 'normal 'global (kbd "<leader> R") 'recentf)
 (evil-define-key 'normal 'global (kbd "C-c i") (lambda () (interactive) (find-file user-init-file)))
+
+(evil-define-key 'normal 'global (kbd "<leader> O") 'ext-file-browser-in-workdir)
+(evil-define-key 'normal 'global (kbd "<leader> T") 'x-open-in-terminal)
+
+(evil-define-key 'normal 'global (kbd "<leader> x") ctl-x-map)
+;; Extra packages
+(evil-define-key 'normal 'global (kbd "<leader> s") 'yas-insert-snippet)
+(evil-define-key 'normal 'global (kbd "<leader> F") 'format-all-region-or-buffer)
+
+;; Custom Ex commands
+(evil-ex-define-cmd "Fo[rmat]" 'format-all-region-or-buffer)
 ;; end evil
+
+(global-set-key (kbd "C-c C-y") 'yank-from-kill-ring)
+;; TODO: use general to setup more specific keybinds
+;; https://github.com/noctuid/general.el?tab=readme-ov-file
 
 ;;; Easy find init file
 (set-register ?i (cons 'file user-init-file))
@@ -419,7 +455,8 @@
 (use-package doom-themes
   :straight t
   :config
-  (load-theme 'doom-ir-black t))
+  (load-theme 'doom-badger t))
+  ;; (load-theme 'doom-ir-black t))
 
 ;; Highlights TODOs and other configured keywords in buffer
 ;; https://github.com/tarsius/hl-todo
@@ -543,12 +580,12 @@
          (shell-mode . corfu-mode)
          (eshell-mode . corfu-mode))
   :custom
-  (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
-  (corfu-auto t)
-  (corfu-preview-current nil)    ;; Disable current candidate preview
-  (corfu-preselect 'prompt)      ;; Preselect the prompt
-  (corfu-auto-prefix 1)
-  (corfu-auto-delay 0.2)
+  ;; (corfu-auto t)
+  ;; (corfu-auto-prefix 1)
+  ;; (corfu-auto-delay 0.2)
+  ;; (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
+  ;; (corfu-preview-current nil)    ;; Disable current candidate preview
+  ;; (corfu-preselect 'prompt)      ;; Preselect the prompt
   ;; (corfu-quit-at-boundary nil)   ;; Never quit at completion boundary
   ;; (corfu-quit-no-match nil)      ;; Never quit, even if there is no match
   ;; (corfu-on-exact-match nil)     ;; Configure handling of exact matches
@@ -557,7 +594,6 @@
   ;; Disable Ispell completion function. As an alternative try `cape-dict'.
   (text-mode-ispell-word-completion nil)
   (tab-always-indent 'complete)
-
   :init
   (global-corfu-mode)
   (corfu-history-mode)
@@ -682,7 +718,8 @@
          (python-ts-mode . lsp-deferred))
   :commands (lsp lsp-deferred))
 
-;;; Manual tool based code formatting / linting
+;;; External code formatting tool integration (format-all)
+;; https://github.com/lassik/emacs-format-all-the-code
 (use-package format-all
   :straight t)
 
@@ -799,5 +836,35 @@
 ;; (setq user-init-file "C:/Users/user/.emacs.d/init.el")
 ;; (setq user-emacs-directory "C:/Users/user/.emacs")
 ;; (load user-init-file)
+
+;; xah-lee functions
+;; http://xahlee.info/index.html
+
+(defun x-open-in-vscode ()
+  "Open current file or dir in vscode."
+  (interactive)
+  (let ((xpath (if buffer-file-name buffer-file-name (expand-file-name default-directory))))
+    (message "path is %s" xpath)
+    (cond
+     ((eq system-type 'darwin)
+      (shell-command (format "open -a Visual\\ Studio\\ Code.app %s" (shell-quote-argument xpath))))
+     ((eq system-type 'windows-nt)
+      (shell-command (format "code.cmd %s" (shell-quote-argument xpath))))
+     ((eq system-type 'gnu/linux)
+      (shell-command (format "code %s" (shell-quote-argument xpath)))))))
+
+(defun x-open-in-terminal ()
+  "Open the current dir in a new terminal window."
+  (interactive)
+  (cond
+   ((eq system-type 'windows-nt)
+     ((string-equal xah-fly-mswin-terminal "wt") (shell-command (format "wt -d \"%s\"" default-directory))))
+   ((eq system-type 'darwin)
+    (shell-command (concat "open -a iTerm " (shell-quote-argument (expand-file-name default-directory)))))
+   ((eq system-type 'gnu/linux)
+    (let ((process-connection-type nil)) (start-process "" nil "x-terminal-emulator" (concat "--working-directory=" default-directory))))
+   ((eq system-type 'berkeley-unix)
+    (let ((process-connection-type nil)) (start-process "" nil "x-terminal-emulator" (concat "--working-directory=" default-directory))))))
+
 
 ;;; init.el ends here
