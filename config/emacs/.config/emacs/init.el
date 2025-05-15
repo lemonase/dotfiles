@@ -64,7 +64,7 @@
 ;;; Theme (Default)
 (cond
  ((find-font (font-spec :name "Maple Mono"))
-      (set-frame-font "Maple Mono 12" nil t)))
+  (set-frame-font "Maple Mono 12" nil t)))
 
 (load-theme 'modus-vivendi t)
 
@@ -149,7 +149,7 @@
 (add-hook 'emacs-lisp-mode-hook 'outline-minor-mode)
 
 ;;; Custom Tab Settings
-; START TABS CONFIG from https://dougie.io/emacs/indentation/
+;; https://dougie.io/emacs/indentation/
 ;; Create a variable for our preferred tab width
 (setq custom-tab-width 2)
 (setq default-tab-width 4)
@@ -158,9 +158,9 @@
 ;; Two callable functions for enabling/disabling tabs in Emacs
 (defun disable-tabs () "Disable tabs for indenting." (setq indent-tabs-mode nil))
 (defun enable-tabs  () "Enable tabs for indenting."
-  (local-set-key (kbd "TAB") 'tab-to-tab-stop)
-  (setq indent-tabs-mode t)
-  (setq tab-width custom-tab-width))
+       (local-set-key (kbd "TAB") 'tab-to-tab-stop)
+       (setq indent-tabs-mode t)
+       (setq tab-width custom-tab-width))
 
 ;; Hooks to Enable Tabs
 ;; (add-hook 'prog-mode-hook 'enable-tabs)
@@ -185,7 +185,7 @@
 ;; For the vim-like motions of ">>" and "<<".
 (setq-default evil-shift-width custom-tab-width)
 (global-whitespace-mode -1) ; Enable whitespace mode everywhere
-; END TABS CONFIG
+                                        ; END TABS CONFIG
 
 ;;; Custom Vanilla Config
 ;; https://stackoverflow.com/questions/6286579/emacs-shell-mode-how-to-send-region-to-shell/7053298#7053298
@@ -208,11 +208,15 @@
       (shell-command (concat "start " (expand-file-name default-directory)))
     (error "No `default-directory' to open")))
 
+(defun insert-current-time ()
+  "Insert the current time H:M:S."
+  (insert (format-time-string "%H:%M:%S")))
+
 (defun insert-current-iso-date ()
   "Insert the current ISO 8601 date."
   (insert (format-time-string "%Y-%m-%d")))
 
-(defun insert-current-iso-date-seconds()
+(defun insert-current-iso-date-time()
   "Insert the current ISO 8601 date (with time res of seconds)."
   (insert (format-time-string "%Y-%m-%d %H:%M:%S")))
 
@@ -228,8 +232,17 @@
    (if mark-active (list (region-beginning) (region-end))
      (list (save-excursion (backward-word 1) (point)) (point)))))
 
+;;; Basic way to do pulse for evil yank text (like goggles.el package)
+;;; https://blog.meain.io/2020/emacs-highlight-yanked/
+(defun hl-yank-advice (yank-fn beg end &rest args)
+  "Give advice to YANK-FN BEG END ARGS for temp highlighting of region."
+  (pulse-momentary-highlight-region beg end)
+  (apply yank-fn beg end args))
+(advice-add 'evil-yank :around 'hl-yank-advice)
+
 ;;; * "Sensible Defaults" ends here *
 ;;; ** Start Package Manager (straight.el) **
+;; https://github.com/radian-software/straight.el
 ;; bootstrap straight.el package manager
 (defvar bootstrap-version)
 (let ((bootstrap-file
@@ -255,7 +268,9 @@
 (when (memq window-system '(mac ns x))
   (exec-path-from-shell-initialize))
 
-;;; EVIL Config (evil-mode)
+;;; EVIL Config :: Vi/Vim Emulation++ (evil-mode)
+;;; Evil Package
+;; https://github.com/emacs-evil/evil
 (use-package evil
   :straight t
   :init
@@ -267,16 +282,22 @@
   (setq evil-ex-visual-char-range t)
   (setq evil-disable-insert-state-bindings t)
   (setq evil-insert-state-cursor '(box "violet")
-      evil-normal-state-cursor '(box "yellow")
-      evil-visual-state-cursor '(box "#1aa5db"))
+        evil-normal-state-cursor '(box "yellow")
+        evil-visual-state-cursor '(hollow "#1aa5db"))
   (setq evil-want-keybinding nil)
   (setq evil-want-integration t)
-    :config
+  :config
   (evil-mode 1))
 
+
+;;; Undo Nicities
+;; https://github.com/emacsmirror/undo-fu
 (use-package undo-fu
   :straight t)
+;;; TODO: Look into https://codeberg.org/ideasman42/emacs-undo-fu-session
 
+;;; Make Evil work in more modes than by default
+;; https://github.com/emacs-evil/evil-collection
 (use-package evil-collection
   :straight t
   :after evil
@@ -284,22 +305,34 @@
   :init
   (evil-collection-init))
 
+;;; Bindings and functionality to comment out code and other text objects
+;; https://github.com/linktohack/evil-commentary
 (use-package evil-commentary
   :straight t
   :after evil
   :init
   (evil-commentary-mode))
 
+;;; Bindings to surround text objects.
+;; https://github.com/emacs-evil/evil-surround
 (use-package evil-surround
   :straight t
   :after evil
   :config
   (global-evil-surround-mode 1))
 
+;;; Vim like increment and decrement of numbers
+;; https://github.com/cofi/evil-numbers
 (use-package evil-numbers
   :straight t
   :after evil)
+(evil-define-key '(normal visual) 'global (kbd "C-a +") 'evil-numbers/inc-at-pt)
+(evil-define-key '(normal visual) 'global (kbd "C-a -") 'evil-numbers/dec-at-pt)
+(evil-define-key '(normal visual) 'global (kbd "C-a C-+") 'evil-numbers/inc-at-pt-incremental)
+(evil-define-key '(normal visual) 'global (kbd "C-a C--") 'evil-numbers/dec-at-pt-incremental)
 
+;;; Org mode Evil bindings
+;; https://github.com/Somelauw/evil-org-mode
 (use-package evil-org
   :straight t
   :hook (org-mode . evil-org-mode)
@@ -308,29 +341,13 @@
   (require 'evil-org-agenda)
   (evil-org-agenda-set-keys))
 
+;;; Markdown mode Evil bindings
+;; https://github.com/Somelauw/evil-markdown
 (use-package evil-markdown
   :straight `(el-patch :type git :host github :repo "Somelauw/evil-markdown")
   :after evil)
-;; Custom Evil Keybinds
 
-;;; Evil customizations
-
-;;; Basic way to do pulse for evil yank text (like goggles.el package)
-;;; https://blog.meain.io/2020/emacs-highlight-yanked/
-(defun hl-yank-advice (yank-fn beg end &rest args)
-  "Give advice to YANK-FN BEG END ARGS for temp highlighting of region."
-  (pulse-momentary-highlight-region beg end)
-  (apply yank-fn beg end args))
-(advice-add 'evil-yank :around 'hl-yank-advice)
-
-;;; evil-numbers keybinds
-(evil-define-key '(normal visual) 'global (kbd "C-a +") 'evil-numbers/inc-at-pt)
-(evil-define-key '(normal visual) 'global (kbd "C-a -") 'evil-numbers/dec-at-pt)
-(evil-define-key '(normal visual) 'global (kbd "C-a C-+") 'evil-numbers/inc-at-pt-incremental)
-(evil-define-key '(normal visual) 'global (kbd "C-a C--") 'evil-numbers/dec-at-pt-incremental)
-
-
-;;; general keybinds
+;;; Evil keybinds
 (evil-set-leader nil (kbd "SPC"))
 (evil-define-key 'normal 'global (kbd "<leader> :") 'execute-extended-command)
 (evil-define-key 'normal 'global (kbd "<leader> e") 'eval-last-sexp)
@@ -343,13 +360,14 @@
 (evil-define-key 'normal 'global (kbd "<leader> k") 'kill-buffer)
 (evil-define-key 'normal 'global (kbd "<leader> f") 'ffap)
 (evil-define-key 'normal 'global (kbd "<leader> F") 'find-file)
-(evil-define-key 'normal 'global (kbd "<leader> d") 'dired)
+(evil-define-key 'normal 'global (kbd "<leader> d") 'evil-delete-buffer)
 (evil-define-key 'normal 'global (kbd "<leader> K") 'dired-jump)
 (evil-define-key 'normal 'global (kbd "<leader> o") 'occur)
 (evil-define-key 'normal 'global (kbd "<leader> B") 'bookmark-jump)
 (evil-define-key 'normal 'global (kbd "<leader> g") 'magit-status)
 (evil-define-key 'normal 'global (kbd "<leader> r") 'replace-regexp)
 (evil-define-key 'normal 'global (kbd "<leader> R") 'recentf)
+(evil-define-key 'normal 'global (kbd "<leader> P") 'yank-from-kill-ring)
 (evil-define-key 'normal 'global (kbd "<leader> x") ctl-x-map)
 (evil-define-key 'normal 'global (kbd "<leader> O") 'ext-file-browser-in-workdir)
 (evil-define-key 'normal 'global (kbd "<leader> T") 'ext-terminal-in-workdir)
@@ -357,19 +375,37 @@
 (evil-define-key 'normal 'global (kbd "C-c i") (lambda () (interactive) (find-file user-init-file)))
 ;; end evil
 
-;; Easy find init file
+;;; Easy find init file
 (set-register ?i (cons 'file user-init-file))
 
-;;; Writing Org / Markdown / HTML (org-mode, markdown-mode)
+;;; Vanilla+ Packages (dired, magit, org-mode)
+;; Dired (directory editor)
+;; https://www.gnu.org/software/emacs/manual/html_node/emacs/Dired.html
+(use-package dired
+  :straight nil
+  :commands (dired dired-jump)
+  :config
+  (setq dired-dwim-target t))
+
+;; Magit (git interface)
+;; https://magit.vc/
+(use-package magit
+  :straight t)
+
+;; Org mode
+;; https://orgmode.org/
 (use-package org
   :straight nil)
-
-;; TODO: setup org more
+'(org-export-backends '(ascii html icalendar latex man md odt org))
 (global-set-key (kbd "C-c a") #'org-agenda)
 (global-set-key (kbd "C-c c") #'org-capture)
-'(org-export-backends '(ascii html icalendar latex man md odt org))
+(evil-define-key 'normal org-mode-map
+  (kbd "SPC TAB") 'org-todo
+  ">" 'org-shiftmetaright
+  "<" 'org-shiftmetaleft)
 
-;; better markdown
+;;; Markdown support for emacs
+;; https://github.com/jrblevin/markdown-mode
 (use-package markdown-mode
   :straight t
   :mode ("README\\.md\\'" . gfm-mode)
@@ -379,13 +415,14 @@
              ("C-c C-e" . markdown-do)))
 
 ;;; Themes and Colors (doom-themes, hl-todo, rainbow-mode, rainbow-delimiters)
+;; https://github.com/doomemacs/themes
 (use-package doom-themes
   :straight t
   :config
   (load-theme 'doom-ir-black t))
 
-; TODO: look into todo integrations
-; https://github.com/tarsius/hl-todo?tab=readme-ov-file#integrations
+;; Highlights TODOs and other configured keywords in buffer
+;; https://github.com/tarsius/hl-todo
 (use-package hl-todo
   :straight t
   :hook (prog-mode . hl-todo-mode)
@@ -398,26 +435,36 @@
           ("REVIEW"     font-lock-keyword-face bold)
           ("NOTE"       success bold)
           ("DEPRECATED" font-lock-doc-face bold))))
+                                        ; TODO: look into todo integrations
 
+;; Makes yank/delete actions highlighted/pulsed
+;; https://github.com/minad/goggles
 (use-package goggles
   :straight t
   :hook ((prog-mode text-mode) . goggles-mode)
   :config
   (setq-default goggles-pulse t))
 
+;; Colorize color names in buffers
+;; https://github.com/emacsmirror/rainbow-mode
 (use-package rainbow-mode
   :straight t)
 
+;; Rainbow Delimiters - who doesn't love colors
+;; https://github.com/Fanael/rainbow-delimiters
 (use-package rainbow-delimiters
   :straight t
   :init (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
 
+;; Git Gutter -- sidebar / fringe indicators of changes
+;; https://github.com/emacsorphanage/git-gutter
 (use-package git-gutter
   :hook (prog-mode . git-gutter-mode)
   :straight t
   :config
   (setq git-gutter:update-interval 0.2))
 
+;; https://github.com/emacsorphanage/git-gutter-fringe
 (use-package git-gutter-fringe
   :straight t
   :config
@@ -425,22 +472,16 @@
   (define-fringe-bitmap 'git-gutter-fr:modified [224] nil nil '(center repeated))
   (define-fringe-bitmap 'git-gutter-fr:deleted [128 192 224 240] nil nil 'bottom))
 
-;;; Vanilla+ Plugins (dired, magit)
-(use-package dired
-  :straight nil
-  :commands (dired dired-jump)
-  :bind (("C-x C-j" . dired-jump)))
-(setq dired-dwim-target t)
+;;; Mini-buffer improvements (vertico, orderless, marginalia)
 
-(use-package magit
-  :straight t)
-
-;;; Mini-buffer improvements (vertico, orderless, marginalia, embark, consult)
+;; Vertical Completion UI
+;; https://github.com/minad/vertico
 (use-package vertico
   :straight t
-  :init
-  (vertico-mode))
+  :init (vertico-mode))
 
+;; Ordering regex for completion
+;; https://github.com/oantolin/orderless
 (use-package orderless
   :straight t
   :custom
@@ -448,6 +489,8 @@
   (completion-category-defaults nil)
   (completion-category-overrides '((file (styles partial-completion)))))
 
+;; Show docstrings and other useful info in minibuffer
+;; https://github.com/minad/marginalia
 (use-package marginalia
   :straight t
   :defer t
@@ -455,12 +498,15 @@
   :hook (after-init . marginalia-mode))
 
 ;;; Better discoverability for key mappings (which-key)
+;; https://github.com/justbur/emacs-which-key
+;; builtin to emacs > 30.1
 (use-package which-key
-  :straight t
+  :straight nil
   :defer t
   :init (which-key-mode))
 
 ;;; Better help menus (helpful)
+;; https://github.com/Wilfred/helpful
 (use-package helpful
   :straight t
   :bind
@@ -470,7 +516,8 @@
    ("C-h k" . helpful-key)           ; Describe a key binding
    ("C-h x" . helpful-command)))     ; Describe a command
 
-;;; Matching brackets with (electric-pair-mode) and (smartparens)
+;;; Matching brackets and parens with (electric-pair-mode) and (smartparens)
+;; https://github.com/Fuco1/smartparens
 (use-package smartparens
   :straight smartparens
   :hook (prog-mode text-mode markdown-mode)
@@ -478,12 +525,16 @@
   (require 'smartparens-config))
 (electric-pair-mode 1)
 
+;; Syntax checking
+;; https://www.flycheck.org/en/latest/languages.html
+;; https://github.com/flycheck/flycheck
 (use-package flycheck
   :straight t
-  :init (global-flycheck-mode))
+  :init (add-hook 'after-init-hook #'global-flycheck-mode))
 
 ;;; Completions in buffer (corfu and cape)
-;; Corfu Completion Framework
+;; Corfu Completion At Point Framework (similar to company)
+;; https://github.com/minad/corfu
 (use-package corfu
   :straight t
   :defer t
@@ -492,87 +543,125 @@
          (shell-mode . corfu-mode)
          (eshell-mode . corfu-mode))
   :custom
+  (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
+  (corfu-auto t)
+  (corfu-preview-current nil)    ;; Disable current candidate preview
+  (corfu-preselect 'prompt)      ;; Preselect the prompt
   (corfu-auto-prefix 1)
-  (corfu-auto-delay 0.0)
+  (corfu-auto-delay 0.2)
+  ;; (corfu-quit-at-boundary nil)   ;; Never quit at completion boundary
+  ;; (corfu-quit-no-match nil)      ;; Never quit, even if there is no match
+  ;; (corfu-on-exact-match nil)     ;; Configure handling of exact matches
   ;; Hide commands in M-x which do not apply to the current mode.
   (read-extended-command-predicate #'command-completion-default-include-p)
   ;; Disable Ispell completion function. As an alternative try `cape-dict'.
   (text-mode-ispell-word-completion nil)
   (tab-always-indent 'complete)
 
-  ;; Enable Corfu
-  :config
-  (global-corfu-mode))
+  :init
+  (global-corfu-mode)
+  (corfu-history-mode)
+  (corfu-popupinfo-mode))
 
-;; Cape Competion
+;; Cape Completion At Point Extensions
+;; https://github.com/minad/cape
 (use-package cape
   :straight t
   :defer t
   :commands (cape-dabbrev cape-file cape-elisp-block)
   :bind ("C-c p" . cape-prefix-map)
   :init
-  ;; Add to the global default value of `completion-at-point-functions' which is
-  ;; used by `completion-at-point'.
+  (add-hook 'completion-at-point-functions #'cape-abbrev)
   (add-hook 'completion-at-point-functions #'cape-dabbrev)
   (add-hook 'completion-at-point-functions #'cape-file)
-  (add-hook 'completion-at-point-functions #'cape-elisp-block))
+  (add-hook 'completion-at-point-functions #'cape-elisp-block)
+  (add-hook 'completion-at-point-functions #'cape-emoji)
+  (add-hook 'completion-at-point-functions #'cape-dict))
+
+;; Mode for working with emojis
+;; https://github.com/iqbalansari/emacs-emojify
+(use-package emojify
+  :straight t
+  :hook (after-init . global-emojify-mode))
 
 ;; Abbrevs and Snippets
 
-;;; Abbrevs
+;;; General English Abbrevs
 (define-abbrev global-abbrev-table "bg" "background")
 (define-abbrev global-abbrev-table "ty" "thank you")
 (define-abbrev global-abbrev-table "yw" "you are welcome")
 (define-abbrev global-abbrev-table "u" "you")
+;; URLs
 (define-abbrev global-abbrev-table "mygh" "https://github.com/lemonase")
+;; Timestamps
 (define-abbrev global-abbrev-table "dt" "" 'insert-current-iso-date)
-(define-abbrev global-abbrev-table "dts" "" 'insert-current-iso-date-seconds)
+(define-abbrev global-abbrev-table "dts" "" 'insert-current-iso-date-time)
 (define-abbrev global-abbrev-table "td" "" 'insert-current-iso-date)
-(define-abbrev global-abbrev-table "tds" "" 'insert-current-iso-date-seconds)
+(define-abbrev global-abbrev-table "tds" "" 'insert-current-iso-date-time)
 
-;;; Treesitter (treesit)
+;; Snippets
+;; https://github.com/joaotavora/yasnippet
+(use-package yasnippet
+  :straight t
+  :init (yas-global-mode 1))
+
+;; Snippet Files / Contents
+;; https://github.com/AndreaCrotti/yasnippet-snippets
+;; https://github.com/AndreaCrotti/yasnippet-snippets/tree/master/snippets/emacs-lisp-mode
+(use-package yasnippet-snippets
+  :straight t)
+
+;; Emmet: for writing HTML tags much easier and quicker
+;; https://github.com/smihica/emmet-mode
+(use-package emmet-mode
+  :straight t
+  :init)
+
+;;; Treesitter (treesit) Syntax Tree and More
+;; https://emacs-tree-sitter.github.io/getting-started/
 (use-package treesit
   :commands (treesit-install-language-grammar)
-  :init
-  (setq treesit-language-source-alist
-   '((bash . ("https://github.com/tree-sitter/tree-sitter-bash"))
-     (c . ("https://github.com/tree-sitter/tree-sitter-c"))
-     (cpp . ("https://github.com/tree-sitter/tree-sitter-cpp"))
-     (css . ("https://github.com/tree-sitter/tree-sitter-css"))
-     (cmake . ("https://github.com/uyha/tree-sitter-cmake"))
-     (go . ("https://github.com/tree-sitter/tree-sitter-go"))
-     (html . ("https://github.com/tree-sitter/tree-sitter-html"))
-     (javascript . ("https://github.com/tree-sitter/tree-sitter-javascript"))
-     (json . ("https://github.com/tree-sitter/tree-sitter-json"))
-     (julia . ("https://github.com/tree-sitter/tree-sitter-julia"))
-     (lua . ("https://github.com/Azganoth/tree-sitter-lua"))
-     (make . ("https://github.com/alemuller/tree-sitter-make"))
-     (ocaml . ("https://github.com/tree-sitter/tree-sitter-ocaml" "master" "ocaml/src"))
-     (python . ("https://github.com/tree-sitter/tree-sitter-python"))
-     (php . ("https://github.com/tree-sitter/tree-sitter-php"))
-     (typescript . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src"))
-     (tsx . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src"))
-     (ruby . ("https://github.com/tree-sitter/tree-sitter-ruby"))
-     (rust . ("https://github.com/tree-sitter/tree-sitter-rust"))
-     (sql . ("https://github.com/m-novikov/tree-sitter-sql"))
-     (toml . ("https://github.com/tree-sitter/tree-sitter-toml"))
-     (zig . ("https://github.com/GrayJack/tree-sitter-zig"))))
+  :init (setq treesit-language-source-alist
+              '((bash . ("https://github.com/tree-sitter/tree-sitter-bash"))
+                (c . ("https://github.com/tree-sitter/tree-sitter-c"))
+                (cpp . ("https://github.com/tree-sitter/tree-sitter-cpp"))
+                (css . ("https://github.com/tree-sitter/tree-sitter-css"))
+                (cmake . ("https://github.com/uyha/tree-sitter-cmake"))
+                (go . ("https://github.com/tree-sitter/tree-sitter-go"))
+                (html . ("https://github.com/tree-sitter/tree-sitter-html"))
+                (javascript . ("https://github.com/tree-sitter/tree-sitter-javascript"))
+                (json . ("https://github.com/tree-sitter/tree-sitter-json"))
+                (julia . ("https://github.com/tree-sitter/tree-sitter-julia"))
+                (lua . ("https://github.com/Azganoth/tree-sitter-lua"))
+                (make . ("https://github.com/alemuller/tree-sitter-make"))
+                (ocaml . ("https://github.com/tree-sitter/tree-sitter-ocaml" "master" "ocaml/src"))
+                (python . ("https://github.com/tree-sitter/tree-sitter-python"))
+                (php . ("https://github.com/tree-sitter/tree-sitter-php"))
+                (typescript . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src"))
+                (tsx . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src"))
+                (ruby . ("https://github.com/tree-sitter/tree-sitter-ruby"))
+                (rust . ("https://github.com/tree-sitter/tree-sitter-rust"))
+                (sql . ("https://github.com/m-novikov/tree-sitter-sql"))
+                (toml . ("https://github.com/tree-sitter/tree-sitter-toml"))
+                (zig . ("https://github.com/GrayJack/tree-sitter-zig"))))
   :config
   (defun treesit-install-all-languages ()
     "Install all languages specified by `treesit-language-source-alist'."
     (interactive)
     (let ((languages (mapcar 'car treesit-language-source-alist)))
       (dolist (lang languages)
-              (treesit-install-language-grammar lang)
-              (message "`%s' parser was installed." lang)
-              (sit-for 0.75)))))
+        (treesit-install-language-grammar lang)
+        (message "`%s' parser was installed." lang)
+        (sit-for 0.75)))))
+
+;; NOTE: may not need to keep the huge list above with the `treesit-auto' package.
 
 ;; Tree Sitter auto config
+;; https://github.com/renzmann/treesit-auto
 (use-package treesit-auto
   :straight t
   :config
   (global-treesit-auto-mode))
-
 (setq treesit-auto-install 'prompt)
 (setq treesit-auto-langs '(python rust go gomod))
 
@@ -587,15 +676,15 @@
   :commands lsp)
 
 ;; Language mode configurations
+;; TODO: Try out eglot
 (use-package lsp-mode
   :hook ((go-ts-mode . lsp-deferred)
          (python-ts-mode . lsp-deferred))
   :commands (lsp lsp-deferred))
 
-;;; emmet: make writing HTML tags much easier
-(use-package emmet-mode
-  :straight t
-  :init)
+;;; Manual tool based code formatting / linting
+(use-package format-all
+  :straight t)
 
 ;;; Lua
 (use-package lua-mode
@@ -616,14 +705,25 @@
 
 (use-package load-env-vars
   :straight t)
+
 (defvar my-env-file "~/.local/.env" "Local environment file.")
 (let ((my-env-file "~/.local/.env"))
   (if (file-exists-p my-env-file)
-    (load-env-vars my-env-file)))
+      (load-env-vars my-env-file)))
 
 (use-package editorconfig
   :config
   (editorconfig-mode 1))
+
+;; LLM support (must configure with api keys)
+(use-package gptel
+  :straight t)
+
+;; (setq gemini-api-key (funcall (lambda (prompt) (read-passwd prompt)) "Enter Gemini API key: "))
+;; (gptel-make-gemini "Gemini" :key (getenv "GEMINI_API_KEY") :stream t)
+;; (gptel-make-openai "OpenAI" :key (getenv "OPENAI_KEY") :stream t)
+(gptel-make-gemini "Gemini" :stream t :key gptel-api-key)
+(gptel-make-openai "OpenAI" :stream t :key gptel-api-key)
 
 ;;; ** Package Manager (straight.el) ends here **
 ;;; Additional Language Modes
@@ -662,16 +762,6 @@
                 (unless buffer-file-name
                   (let ((buffer-file-name (buffer-name)))
                     (set-auto-mode)))))
-
-;; LLM support (must configure with api keys)
-(use-package gptel
-  :straight t)
-
-;; (setq gemini-api-key (funcall (lambda (prompt) (read-passwd prompt)) "Enter Gemini API key: "))
-;; (gptel-make-gemini "Gemini" :key (getenv "GEMINI_API_KEY") :stream t)
-;; (gptel-make-openai "OpenAI" :key (getenv "OPENAI_KEY") :stream t)
-(gptel-make-gemini "Gemini" :stream t :key gptel-api-key)
-(gptel-make-openai "OpenAI" :stream t :key gptel-api-key)
 
 ;;; Platform Specifics
 
