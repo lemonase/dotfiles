@@ -65,7 +65,8 @@
 (cond
  ((find-font (font-spec :name "Maple Mono"))
   (set-frame-font "Maple Mono 12" nil t)))
-;; (load-theme 'modus-vivendi t)
+(load-theme 'modus-vivendi t)
+;; (load-theme 'modus-operandi t)
 
 ;;; File History, Saving and Reverting
 
@@ -295,7 +296,6 @@
   :config
   (evil-mode 1))
 
-
 ;;; Undo Nicities
 ;; https://github.com/emacsmirror/undo-fu
 (use-package undo-fu
@@ -347,12 +347,6 @@
   (require 'evil-org-agenda)
   (evil-org-agenda-set-keys))
 
-;;; Markdown mode Evil bindings
-;; https://github.com/Somelauw/evil-markdown
-(use-package evil-markdown
-  :straight `(el-patch :type git :host github :repo "Somelauw/evil-markdown")
-  :after evil)
-
 ;; Custom Evil Keybinds
 ;; Evil Guide: https://github.com/noctuid/evil-guide?tab=readme-ov-file#keybindings-and-states
 
@@ -370,7 +364,6 @@
 (evil-define-key 'normal 'global (kbd "<leader> w") 'save-buffer)
 (evil-define-key 'normal 'global (kbd "<leader> l") 'eval-buffer)
 (evil-define-key 'normal 'global (kbd "<leader> b") 'list-buffers)
-(evil-define-key 'normal 'global (kbd "<leader> k") 'kill-buffer)
 (evil-define-key 'normal 'global (kbd "<leader> d") 'evil-delete-buffer)
 
 ;; Toggles
@@ -390,7 +383,7 @@
 
 ;; Jumping places
 (evil-define-key 'normal 'global (kbd "<leader> f") 'ffap)
-(evil-define-key 'normal 'global (kbd "<leader> K") 'dired-jump)
+(evil-define-key 'normal 'global (kbd "<leader> -") 'dired-jump)
 (evil-define-key 'normal 'global (kbd "<leader> B") 'bookmark-jump)
 (evil-define-key 'normal 'global (kbd "<leader> R") 'recentf)
 (evil-define-key 'normal 'global (kbd "C-c i") (lambda () (interactive) (find-file user-init-file)))
@@ -453,9 +446,9 @@
 ;;; Themes and Colors (doom-themes, hl-todo, rainbow-mode, rainbow-delimiters)
 ;; https://github.com/doomemacs/themes
 (use-package doom-themes
-  :straight t
-  :config
-  (load-theme 'doom-badger t))
+  :straight t)
+  ;; :config
+  ;; (load-theme 'doom-badger t))
   ;; (load-theme 'doom-ir-black t))
 
 ;; Highlights TODOs and other configured keywords in buffer
@@ -538,9 +531,8 @@
 ;; https://github.com/justbur/emacs-which-key
 ;; builtin to emacs > 30.1
 (use-package which-key
-  :straight nil
-  :defer t
-  :init (which-key-mode))
+  :straight t
+  :init (which-key-mode 1))
 
 ;;; Better help menus (helpful)
 ;; https://github.com/Wilfred/helpful
@@ -749,6 +741,7 @@
       (load-env-vars my-env-file)))
 
 (use-package editorconfig
+  :straight t
   :config
   (editorconfig-mode 1))
 
