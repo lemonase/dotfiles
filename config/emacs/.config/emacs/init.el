@@ -362,8 +362,8 @@
 
 ;; Buffer Management
 (evil-define-key 'normal 'global (kbd "<leader> w") 'save-buffer)
-(evil-define-key 'normal 'global (kbd "<leader> l") 'eval-buffer)
-(evil-define-key 'normal 'global (kbd "<leader> b") 'list-buffers)
+(evil-define-key 'normal 'global (kbd "<leader> b") 'eval-buffer)
+(evil-define-key 'normal 'global (kbd "<leader> l") 'ibuffer)
 (evil-define-key 'normal 'global (kbd "<leader> d") 'evil-delete-buffer)
 
 ;; Toggles
@@ -373,7 +373,7 @@
 ;; Search and replace (interactive)
 (evil-define-key 'normal 'global (kbd "<leader> o") 'occur)
 (evil-define-key 'normal 'global (kbd "<leader> r") 'replace-regexp)
-(evil-define-key 'normal 'global (kbd "<leader> P") 'yank-from-kill-ring)
+(evil-define-key 'normal 'global (kbd "<leader> y") 'yank-from-kill-ring)
 
 ;; Running external stuff
 (evil-define-key 'normal 'global (kbd "<leader> c") 'compile)
