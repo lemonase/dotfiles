@@ -377,6 +377,7 @@
 
 ;; Running external stuff
 (evil-define-key 'normal 'global (kbd "<leader> c") 'compile)
+(evil-define-key 'normal 'global (kbd "<leader> r") 'recompile)
 (evil-define-key 'normal 'global (kbd "<leader> !") 'shell-command)
 (evil-define-key 'normal 'global (kbd "<leader> &") 'async-shell-command)
 (evil-define-key 'normal 'global (kbd "<leader> g") 'magit-status)
@@ -389,15 +390,14 @@
 (evil-define-key 'normal 'global (kbd "C-c i") (lambda () (interactive) (find-file user-init-file)))
 
 (evil-define-key 'normal 'global (kbd "<leader> O") 'ext-file-browser-in-workdir)
-(evil-define-key 'normal 'global (kbd "<leader> T") 'x-open-in-terminal)
+(evil-define-key 'normal 'global (kbd "<leader> T") 'ext-terminal-in-workdir)
 
 (evil-define-key 'normal 'global (kbd "<leader> x") ctl-x-map)
 ;; Extra packages
 (evil-define-key 'normal 'global (kbd "<leader> s") 'yas-insert-snippet)
 (evil-define-key 'normal 'global (kbd "<leader> F") 'format-all-region-or-buffer)
-
 ;; Custom Ex commands
-(evil-ex-define-cmd "Fo[rmat]" 'format-all-region-or-buffer)
+(evil-ex-define-cmd "Format" 'format-all-region-or-buffer)
 ;; end evil
 
 (global-set-key (kbd "C-c C-y") 'yank-from-kill-ring)
@@ -450,6 +450,12 @@
   ;; :config
   ;; (load-theme 'doom-badger t))
   ;; (load-theme 'doom-ir-black t))
+
+;; Doom Modeline - much easier on the eyes
+;; https://github.com/seagle0128/doom-modeline
+(use-package doom-modeline
+  :straight t
+  :hook (after-init . doom-modeline-mode))
 
 ;; Highlights TODOs and other configured keywords in buffer
 ;; https://github.com/tarsius/hl-todo
@@ -609,8 +615,7 @@
 ;; Mode for working with emojis
 ;; https://github.com/iqbalansari/emacs-emojify
 (use-package emojify
-  :straight t
-  :hook (after-init . global-emojify-mode))
+  :straight t)
 
 ;; Abbrevs and Snippets
 
@@ -851,7 +856,7 @@
   (interactive)
   (cond
    ((eq system-type 'windows-nt)
-     ((string-equal xah-fly-mswin-terminal "wt") (shell-command (format "wt -d \"%s\"" default-directory))))
+    (shell-command (concat "wt -d " (shell-quote-argument (expand-file-name default-directory)))))
    ((eq system-type 'darwin)
     (shell-command (concat "open -a iTerm " (shell-quote-argument (expand-file-name default-directory)))))
    ((eq system-type 'gnu/linux)
