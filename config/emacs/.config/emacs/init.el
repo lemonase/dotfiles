@@ -192,6 +192,19 @@
   (interactive "r")
   (shell-command  (buffer-substring-no-properties start end)))
 
+;; Builtin `rgrep' asks way too many questions. Here's a better one
+;; Inspired by: https://emacs.stackexchange.com/a/26349
+(defun recursive-grep ()
+  "Recursively grep file contents.  `i` case insensitive; `n` print line number;
+`I` ignore binary files; `E` extended regular expressions; `r` recursive"
+  (interactive)
+  (let* ((grep-flags "-inrEI --color=always -C3")
+         (search-term (read-string (format "Recursive regex search with grep %s: " grep-flags)))
+         (search-path (directory-file-name (expand-file-name (read-directory-name "directory:  "))))
+         (default-directory (file-name-as-directory search-path))
+         (grep-command (concat grep-program " " grep-flags " " search-term " " search-path)))
+    (compilation-start grep-command 'grep-mode (lambda (mode) "*grep*") nil)))
+
 (defun ext-terminal-in-workdir ()
   "Open an external terminal emulator in working directory."
   (interactive)
@@ -359,6 +372,7 @@
   "l" 'ibuffer
   "d" 'evil-delete-buffer
   ;; Search and replace (interactive)
+  "o" 'occur
   "r" 'replace-regexp
   "y" 'yank-from-kill-ring
   ;; Running external stuff
@@ -814,8 +828,9 @@
 ;; filesystem vs developing for things inside of Linux.
 (when (eq system-type 'windows-nt)
   (setq exec-path (cons "C:/cygwin/bin" exec-path))
+  (setq find-program "C:/cygwin64/bin/find.exe")
+  (setq grep-program "C:/cygwin64/bin/grep.exe")
   (setenv "PATH" (mapconcat #'identity exec-path path-separator)))
-
 
 ;; Have to change emacs init dir for Windows
 ;; https://emacs.stackexchange.com/a/12886
