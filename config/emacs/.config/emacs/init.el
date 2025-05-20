@@ -453,9 +453,14 @@
   (global-set-key (kbd "C-c a") #'org-agenda)
   (global-set-key (kbd "C-c c") #'org-capture)
   (global-set-key (kbd "C-c l") #'org-store-link)
+  (setq org-clock-persist 'history)
+  (setq org-agenda-files (list "~/Documents/notes/org/life.org"))
+  (org-clock-persistence-insinuate)
+  (setq org-todo-keywords '((sequence "TODO(!)" "IN PROGRESS" "DONE")))
+  (setq org-treat-insert-todo-heading-as-state-change t)
+  (setq org-log-done t)
   (evil-define-key 'normal org-mode-map
     (kbd "SPC TAB") 'org-todo
-    (kbd "SPC t") 'org-todo
     ">" 'org-shiftmetaright
     "<" 'org-shiftmetaleft))
 
