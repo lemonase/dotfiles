@@ -22,7 +22,6 @@
 ;; Lines and columns
 (global-display-line-numbers-mode 1)	; Display line numbers
 (column-number-mode 1)                  ; Toggle column number display in the mode line.
-;; (add-hook 'prog-mode-hook #'display-fill-column-indicator-mode) ; Column width indicator
 
 ;; Bells and whistles
 (setq visible-bell 1)                   ; Flash when the bell rings (no sound)
@@ -183,7 +182,7 @@
 ;; For the vim-like motions of ">>" and "<<".
 (setq-default evil-shift-width custom-tab-width)
 (global-whitespace-mode -1) ; Enable whitespace mode everywhere
-                                        ; END TABS CONFIG
+; END TABS CONFIG
 
 ;;; Custom Vanilla Config
 ;; https://stackoverflow.com/questions/6286579/emacs-shell-mode-how-to-send-region-to-shell/7053298#7053298
@@ -356,7 +355,7 @@
   :straight t
   :config (general-evil-setup))
 
-;; Global Normal Mode Keymaps
+;; Global Normal Mode :: General Keymaps
 (general-nmap
   :prefix "SPC"
   ;; Eval Keybinds
@@ -366,11 +365,11 @@
   "E" 'eval-print-last-sexp
   "b" 'eval-buffer
   "." 'repeat-complex-command
-  "q" 'evil-quit-all
+  "Q" 'evil-quit-all
   ;; Buffer Management
   "w" 'save-buffer
   "l" 'ibuffer
-  "d" 'evil-delete-buffer
+  "q" 'evil-delete-buffer
   ;; Search and replace (interactive)
   "o" 'occur
   "r" 'replace-regexp
@@ -379,7 +378,6 @@
   "c" 'compile
   "!" 'shell-command
   "&" 'async-shell-command
-  "g" 'magit-status
   ;; Jumping places
   "f" 'ffap
   "-" 'dired-jump
@@ -391,13 +389,32 @@
   "s" 'yas-insert-snippet
   "F" 'format-all-region-or-buffer)
 
-;; Global Toggle Keymaps
+;; Global Normal Mode :: Toggle Keymaps
 (general-nmap
   :prefix "SPC t"
   ;; Toggle Modes
-  "A" 'abbrev-mode
-  "W" 'whitespace-mode
-  "P" 'smartparens-mode)
+  "a" 'abbrev-mode
+  "w" 'whitespace-mode
+  "p" 'smartparens-mode
+  "t" 'indent-tabs-mode
+  "c" 'display-fill-column-indicator-mode)
+
+;; Global Normal Mode :: Git Keymaps
+(general-nmap
+  :prefix "SPC g"
+  ;; Magit Commands
+  "s" 'magit-status
+  "l" 'magit-log
+  "d" 'magit-diff-dwim
+  "b" 'magit-branch
+  "i" 'magit-init
+  "a" 'magit-stage-files
+  "t" 'magit-stage-files
+  "u" 'magit-unstage-files
+  "c" 'magit-commit-create
+  "p" 'magit-push-to-remote
+  "f" 'magit-fetch-from-upstream
+  "F" 'magit-pull-from-upstream)
 
 ;; Global Visual Mode Keymaps
 (general-vmap
@@ -524,7 +541,9 @@
 ;; (use-package vertico
 ;;   :straight t
 ;;   :init (vertico-mode))
-(fido-vertical-mode)
+
+;; Let's try [icomplete / fido / ido] mode for a while.
+(fido-mode)
 
 ;; Ordering regex for completion
 ;; https://github.com/oantolin/orderless
