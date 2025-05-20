@@ -45,10 +45,7 @@
 (fset 'yes-or-no-p 'y-or-n-p)
 
 ;; Show paren differently
-(setq show-paren-delay 0.1
-      show-paren-highlight-openparen t
-      show-paren-when-point-inside-paren t
-      show-paren-when-point-in-periphery t)
+(setq show-paren-delay 0.1 show-paren-highlight-openparen t show-paren-when-point-inside-paren t show-paren-when-point-in-periphery t)
 
 ;;; Memory Limits and Performance
 ;; Undo/Redo
@@ -200,7 +197,7 @@
   (interactive)
   (cond
    ((eq system-type 'windows-nt)
-      (call-process-shell-command (concat "wt -d " default-directory) nil 0))
+    (call-process-shell-command (concat "wt -d " default-directory) nil 0))
    ((eq system-type 'darwin)
     (shell-command (concat "open -a iTerm " (shell-quote-argument (expand-file-name default-directory)))))
    ((eq system-type 'gnu/linux)
@@ -211,11 +208,11 @@
   (interactive)
   (cond
    ((eq system-type 'windows-nt)
-      (shell-command (concat "start " (expand-file-name default-directory))))
+    (shell-command (concat "start " (expand-file-name default-directory))))
    ((eq system-type 'darwin)
-      (shell-command (concat "open " (expand-file-name default-directory))))
+    (shell-command (concat "open " (expand-file-name default-directory))))
    ((eq system-type 'gnu/linux)
-      (shell-command (concat "xdg-open " (expand-file-name default-directory))))))
+    (shell-command (concat "xdg-open " (expand-file-name default-directory))))))
 
 ;; TODO: Look at using the EAT package for terminal things
 ;; https://codeberg.org/akib/emacs-eat
@@ -331,81 +328,76 @@
 ;; https://github.com/cofi/evil-numbers
 (use-package evil-numbers
   :straight t
-  :after evil)
-(evil-define-key '(normal visual) 'global (kbd "C-a +") 'evil-numbers/inc-at-pt)
-(evil-define-key '(normal visual) 'global (kbd "C-a -") 'evil-numbers/dec-at-pt)
-(evil-define-key '(normal visual) 'global (kbd "C-a C-+") 'evil-numbers/inc-at-pt-incremental)
-(evil-define-key '(normal visual) 'global (kbd "C-a C--") 'evil-numbers/dec-at-pt-incremental)
-
-;;; Org mode Evil bindings
-;; https://github.com/Somelauw/evil-org-mode
-(use-package evil-org
-  :straight t
-  :hook (org-mode . evil-org-mode)
-  :after org
+  :after evil
   :config
-  (require 'evil-org-agenda)
-  (evil-org-agenda-set-keys))
+  (evil-define-key '(normal visual) 'global (kbd "C-a +") 'evil-numbers/inc-at-pt)
+  (evil-define-key '(normal visual) 'global (kbd "C-a -") 'evil-numbers/dec-at-pt)
+  (evil-define-key '(normal visual) 'global (kbd "C-a C-+") 'evil-numbers/inc-at-pt-incremental)
+  (evil-define-key '(normal visual) 'global (kbd "C-a C--") 'evil-numbers/dec-at-pt-incremental))
 
 ;; Custom Evil Keybinds
 ;; Evil Guide: https://github.com/noctuid/evil-guide?tab=readme-ov-file#keybindings-and-states
+;; General keybind definition helper
+;; https://github.com/noctuid/general.el
+(use-package general
+  :straight t
+  :config (general-evil-setup))
 
-;; Leader (prefix key)
-(evil-set-leader nil (kbd "SPC"))
+;; Global Normal Mode Keymaps
+(general-nmap
+  :prefix "SPC"
+  ;; Eval Keybinds
+  ":" 'eval-expression
+  "p" 'execute-extended-command
+  "e" 'eval-last-sexp
+  "E" 'eval-print-last-sexp
+  "b" 'eval-buffer
+  "." 'repeat-complex-command
+  "q" 'evil-quit-all
+  ;; Buffer Management
+  "w" 'save-buffer
+  "l" 'ibuffer
+  "d" 'evil-delete-buffer
+  ;; Search and replace (interactive)
+  "r" 'replace-regexp
+  "y" 'yank-from-kill-ring
+  ;; Running external stuff
+  "c" 'compile
+  "!" 'shell-command
+  "&" 'async-shell-command
+  "g" 'magit-status
+  ;; Jumping places
+  "f" 'ffap
+  "-" 'dired-jump
+  "B" 'bookmark-jump
+  ;; External Apps
+  "O" 'ext-file-browser-in-workdir
+  "T" 'ext-terminal-in-workdir
+  ;; Extra packages
+  "s" 'yas-insert-snippet
+  "F" 'format-all-region-or-buffer)
 
-;; Eval
-(evil-define-key 'normal 'global (kbd "<leader> :") 'eval-expression)
-(evil-define-key 'normal 'global (kbd "<leader> p") 'execute-extended-command)
-(evil-define-key 'normal 'global (kbd "<leader> e") 'eval-last-sexp)
-(evil-define-key 'visual 'global (kbd "<leader> e") 'eval-region)
-(evil-define-key 'normal 'global (kbd "<leader> E") 'eval-print-last-sexp)
+;; Global Toggle Keymaps
+(general-nmap
+  :prefix "SPC t"
+  ;; Toggle Modes
+  "A" 'abbrev-mode
+  "W" 'whitespace-mode
+  "P" 'smartparens-mode)
 
-;; Buffer Management
-(evil-define-key 'normal 'global (kbd "<leader> w") 'save-buffer)
-(evil-define-key 'normal 'global (kbd "<leader> b") 'eval-buffer)
-(evil-define-key 'normal 'global (kbd "<leader> l") 'ibuffer)
-(evil-define-key 'normal 'global (kbd "<leader> d") 'evil-delete-buffer)
+;; Global Visual Mode Keymaps
+(general-vmap
+  :prefix "SPC"
+  "e" 'eval-region)
 
-;; Toggles
-(evil-define-key 'normal 'global (kbd "<leader> A") 'abbrev-mode)
-(evil-define-key 'normal 'global (kbd "<leader> W") 'whitespace-mode)
-
-;; Search and replace (interactive)
-(evil-define-key 'normal 'global (kbd "<leader> o") 'occur)
-(evil-define-key 'normal 'global (kbd "<leader> r") 'replace-regexp)
-(evil-define-key 'normal 'global (kbd "<leader> y") 'yank-from-kill-ring)
-
-;; Running external stuff
-(evil-define-key 'normal 'global (kbd "<leader> c") 'compile)
-(evil-define-key 'normal 'global (kbd "<leader> r") 'recompile)
-(evil-define-key 'normal 'global (kbd "<leader> !") 'shell-command)
-(evil-define-key 'normal 'global (kbd "<leader> &") 'async-shell-command)
-(evil-define-key 'normal 'global (kbd "<leader> g") 'magit-status)
-
-;; Jumping places
-(evil-define-key 'normal 'global (kbd "<leader> f") 'ffap)
-(evil-define-key 'normal 'global (kbd "<leader> -") 'dired-jump)
-(evil-define-key 'normal 'global (kbd "<leader> B") 'bookmark-jump)
-(evil-define-key 'normal 'global (kbd "<leader> R") 'recentf)
-(evil-define-key 'normal 'global (kbd "C-c i") (lambda () (interactive) (find-file user-init-file)))
-
-(evil-define-key 'normal 'global (kbd "<leader> O") 'ext-file-browser-in-workdir)
-(evil-define-key 'normal 'global (kbd "<leader> T") 'ext-terminal-in-workdir)
-
-(evil-define-key 'normal 'global (kbd "<leader> x") ctl-x-map)
-;; Extra packages
-(evil-define-key 'normal 'global (kbd "<leader> s") 'yas-insert-snippet)
-(evil-define-key 'normal 'global (kbd "<leader> F") 'format-all-region-or-buffer)
 ;; Custom Ex commands
-(evil-ex-define-cmd "Format" 'format-all-region-or-buffer)
+(evil-ex-define-cmd "Format" 'format-all-region-or-buffer) ;; format-all-code
 ;; end evil
 
-(global-set-key (kbd "C-c C-y") 'yank-from-kill-ring)
-;; TODO: use general to setup more specific keybinds
-;; https://github.com/noctuid/general.el?tab=readme-ov-file
-
-;;; Easy find init file
-(set-register ?i (cons 'file user-init-file))
+;;; Regular Keybinds
+(global-set-key (kbd "C-c i") (lambda () (interactive) (find-file user-init-file)))
+(global-set-key (kbd "C-c d") (lambda () (interactive) (find-file (getenv "DOTFILES"))))
+(global-set-key (kbd "C-c g") (lambda () (interactive) (find-file (concat (getenv "DOTFILES") "/config/emacs/.config/emacs/init.el"))))
 
 ;;; Vanilla+ Packages (dired, magit, org-mode)
 ;; Dired (directory editor)
@@ -416,22 +408,25 @@
   :config
   (setq dired-dwim-target t))
 
-;; Magit (git interface)
+;; Magit (intuitive git interface)
 ;; https://magit.vc/
 (use-package magit
   :straight t)
 
-;; Org mode
+;; Org mode (organization framework)
 ;; https://orgmode.org/
 (use-package org
-  :straight nil)
-'(org-export-backends '(ascii html icalendar latex man md odt org))
-(global-set-key (kbd "C-c a") #'org-agenda)
-(global-set-key (kbd "C-c c") #'org-capture)
-(evil-define-key 'normal org-mode-map
-  (kbd "SPC TAB") 'org-todo
-  ">" 'org-shiftmetaright
-  "<" 'org-shiftmetaleft)
+  :straight nil
+  :config
+  '(org-export-backends '(ascii html icalendar latex man md odt org))
+  (global-set-key (kbd "C-c a") #'org-agenda)
+  (global-set-key (kbd "C-c c") #'org-capture)
+  (global-set-key (kbd "C-c l") #'org-store-link)
+  (evil-define-key 'normal org-mode-map
+    (kbd "SPC TAB") 'org-todo
+    (kbd "SPC t") 'org-todo
+    ">" 'org-shiftmetaright
+    "<" 'org-shiftmetaleft))
 
 ;;; Markdown support for emacs
 ;; https://github.com/jrblevin/markdown-mode
@@ -447,9 +442,9 @@
 ;; https://github.com/doomemacs/themes
 (use-package doom-themes
   :straight t)
-  ;; :config
-  ;; (load-theme 'doom-badger t))
-  ;; (load-theme 'doom-ir-black t))
+;; :config
+;; (load-theme 'doom-badger t))
+;; (load-theme 'doom-ir-black t))
 
 ;; Doom Modeline - much easier on the eyes
 ;; https://github.com/seagle0128/doom-modeline
@@ -508,13 +503,14 @@
   (define-fringe-bitmap 'git-gutter-fr:modified [224] nil nil '(center repeated))
   (define-fringe-bitmap 'git-gutter-fr:deleted [128 192 224 240] nil nil 'bottom))
 
-;;; Mini-buffer improvements (vertico, orderless, marginalia)
+;;; Mini-buffer improvements (fido, orderless, marginalia)
 
 ;; Vertical Completion UI
 ;; https://github.com/minad/vertico
-(use-package vertico
-  :straight t
-  :init (vertico-mode))
+;; (use-package vertico
+;;   :straight t
+;;   :init (vertico-mode))
+(fido-vertical-mode)
 
 ;; Ordering regex for completion
 ;; https://github.com/oantolin/orderless
@@ -619,11 +615,6 @@
 
 ;; Abbrevs and Snippets
 
-;;; General English Abbrevs
-(define-abbrev global-abbrev-table "bg" "background")
-(define-abbrev global-abbrev-table "ty" "thank you")
-(define-abbrev global-abbrev-table "yw" "you are welcome")
-(define-abbrev global-abbrev-table "u" "you")
 ;; URLs
 (define-abbrev global-abbrev-table "mygh" "https://github.com/lemonase")
 ;; Timestamps
@@ -720,11 +711,10 @@
 (use-package format-all
   :straight t)
 
-;;; Lua
+;;; Other misc modes (lua, docker, gptel, load-env-vars, csv-mode)
 (use-package lua-mode
   :straight t)
 
-;;; Other misc modes (docker, gptel, load-env-vars, csv-mode)
 (use-package docker
   :straight t
   :defer t)
