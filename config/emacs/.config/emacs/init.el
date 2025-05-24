@@ -4,19 +4,17 @@
 ;;; Maintainer: James Dixon <notjamesdixon@gmail.com>
 ;;;
 ;;; Commentary:
-;;; My Emacs Config
+;;; My Literate Emacs Config
 ;;;
 ;;; Code:
-;;;
-;;; User Info
 
 (setq user-full-name "James Dixon")
 (setq user-mail-address "notjamesdixon@gmail.com")
 
-;;; * Start "Sensible Defaults" *
-
-;; Set Default Encoding to  UTF-8
+;; Set default language encoding to UTF-8
 (set-language-environment "UTF-8")
+
+(setq use-short-answers t) ; Allow for shorter responses: "y" for yes and "n" for no.
 
 ;; Do not do these things
 (setq inhibit-startup-screen t)        ; Don't show the splash screen
@@ -27,36 +25,37 @@
 (scroll-bar-mode -1)                    ; Disable scroll bar
 (menu-bar-mode -1)                      ; Disable menu bar
 
-;; Do these things instead
-;; Show lines and columns
-(global-display-line-numbers-mode 1)    ; Display line numbers
-(column-number-mode 1)                  ; Toggle column number display in the mode line.
-
-;; Enable bells and whistles
+;; Enable visual bells and disable whistles
 (setq visible-bell 1)                   ; Flash when the bell rings (no sound)
 (setq frame-resize-pixelwise t)         ; Yes, I would like to be able to **resize** emacs frame, thanks!
 (setq window-resize-pixelwise nil)      ; Not for windows inside emacs though
 (winner-mode 1)                         ; Record the changes in window configuration (undo/redo window changes)
+
+;; Show lines and columns
+(global-display-line-numbers-mode 1)    ; Display line numbers
+(column-number-mode 1)                  ; Toggle column number display in the mode line.
 
 ;; Mark and go-to modes
 (transient-mark-mode 1)                 ; Easier starting of marks/regions
 (delete-selection-mode 1)               ; Easier deleting of marks/regions
 (global-goto-address-mode 1)            ; Make links and addresses go-to able
 
-;; (setq use-short-answers t)
-(fset 'yes-or-no-p 'y-or-n-p) ; Allow for shorter responses: "y" for yes and "n" for no.
-
 ;; Show paren differently
 (setq show-paren-delay 0.1
-      show-paren-highlight-openparen t
-      show-paren-when-point-inside-paren t
-      show-paren-when-point-in-periphery t)
+	show-paren-highlight-openparen t
+	show-paren-when-point-inside-paren t
+	show-paren-when-point-in-periphery t)
+
+;;; Comment Settings
+(setq comment-multi-line t)
+(setq comment-empty-lines t)
+(setq-default fill-column 80)
 
 ;;; Memory Limits and Performance
 ;; Undo/Redo
 (setq undo-limit (* 13 160000)
-      undo-strong-limit (* 13 240000)
-      undo-outer-limit (* 13 24000000))
+	undo-strong-limit (* 13 240000)
+	undo-outer-limit (* 13 24000000))
 
 ;; Garbage Collection
 (setq gc-cons-threshold-original gc-cons-threshold)
@@ -64,11 +63,6 @@
 
 ;; Perf: Reduce command completion overhead.
 (setq read-extended-command-predicate #'command-completion-default-include-p)
-
-;;; Comment Settings
-(setq comment-multi-line t)
-(setq comment-empty-lines t)
-(setq-default fill-column 80)
 
 ;;; Theme (Default)
 (cond
@@ -94,11 +88,10 @@
 (setq history-length 300)
 (setq savehist-save-minibuffer-history t)  ;; Default
 (setq savehist-additional-variables
-      '(kill-ring                        ; clipboard
-        register-alist                   ; macros
-        mark-ring global-mark-ring       ; marks
-        search-ring regexp-search-ring)) ; searches
-
+	'(kill-ring                        ; clipboard
+	  register-alist                   ; macros
+	  mark-ring global-mark-ring       ; marks
+	  search-ring regexp-search-ring)) ; searches
 ;; savehist is an Emacs feature that preserves the minibuffer history between sessions
 (add-hook 'after-init-hook #'savehist-mode)
 ;; save-place-mode enables Emacs to remember the last location within a file
@@ -117,33 +110,31 @@
 ;; Auto-refresh buffers when files on disk change.
 (global-auto-revert-mode t)
 
-;;; Minor Modes
 (define-minor-mode clean-trailing-whitespace-mode
   "Tidy up trailing whitespace with `delete-trailing-whitespace' before saving."
   :lighter " ctsv"
   (if clean-trailing-whitespace-mode
-      (add-hook 'before-save-hook #'delete-trailing-whitespace nil t)
+	(add-hook 'before-save-hook #'delete-trailing-whitespace nil t)
     (remove-hook 'before-save-hook #'delete-trailing-whitespace t)))
 
 (define-minor-mode clean-all-whitespace-mode
   "Tidy up *all* whitespace with `whitespace-cleanup' before saving."
   :lighter " casv"
   (if clean-trailing-whitespace-mode
-      (add-hook 'before-save-hook #'whitespace-cleanup nil t)
+	(add-hook 'before-save-hook #'whitespace-cleanup nil t)
     (remove-hook 'before-save-hook #'whitespace-cleanup t)))
 
 (define-minor-mode check-parens-save-mode
   "Check the balance of parens with `check-parens' before saving."
   :lighter " cpns"
   (if check-parens-save-mode
-      (add-hook 'before-save-mode #'check-parens nil t)
+	(add-hook 'before-save-mode #'check-parens nil t)
     (remove-hook 'before-save-mode #'check-parens t)))
 
 ;;; Minor Mode Hooks
 (add-hook 'prog-mode #'clean-all-whitespace-mode)
 (add-hook 'emacs-lisp-mode #'check-parens-save-mode)
 (add-hook 'emacs-lisp-mode #'outline-minor-mode)
-;; End File History, Saving and Reverting
 
 ;;; Custom Tab Settings
 ;; https://dougie.io/emacs/indentation/
@@ -185,9 +176,7 @@
 
 ;; Make the backspace properly erase the tab instead of removing 1 space at a time.
 (setq backward-delete-char-untabify-method 'hungry)
-; End Custom Tab Settings
 
-;;; Vanilla Emacs Improvements
 ;; https://stackoverflow.com/questions/6286579/emacs-shell-mode-how-to-send-region-to-shell/7053298#7053298
 (defun shell-region (start end)
   "Execute region START to END in an inferior shell."
@@ -201,10 +190,10 @@
 `I` ignore binary files; `E` extended regular expressions; `r` recursive"
   (interactive)
   (let* ((grep-flags "-inrEI --color=always -C3")
-         (search-term (read-string (format "Recursive regex search with grep %s: " grep-flags)))
-         (search-path (directory-file-name (expand-file-name (read-directory-name "directory:  "))))
-         (default-directory (file-name-as-directory search-path))
-         (grep-command (concat grep-program " " grep-flags " " search-term " " search-path)))
+	   (search-term (read-string (format "Recursive regex search with grep %s: " grep-flags)))
+	   (search-path (directory-file-name (expand-file-name (read-directory-name "directory:  "))))
+	   (default-directory (file-name-as-directory search-path))
+	   (grep-command (concat grep-program " " grep-flags " " search-term " " search-path)))
     (compilation-start grep-command 'grep-mode (lambda (mode) "*grep*") nil)))
 
 ;; Open External Terminal Emulator
@@ -255,31 +244,24 @@
   "Give advice to YANK-FN BEG END ARGS for temp highlighting of region."
   (pulse-momentary-highlight-region beg end)
   (apply yank-fn beg end args))
-;; (advice-add 'evil-yank :around 'hl-yank-advice)
+(advice-add 'evil-yank :around 'hl-yank-advice)
 
-;;; * "Sensible Defaults" ends here *
-
-;;; ----------------
-;;  Here be packages
-;;; ----------------
-
-;;; ** Start Package Manager (straight.el) **
 ;; https://github.com/radian-software/straight.el
 ;; bootstrap straight.el package manager
 (defvar bootstrap-version)
 (let ((bootstrap-file
-       (expand-file-name
-        "straight/repos/straight.el/bootstrap.el"
-        (or (bound-and-true-p straight-base-dir)
-            user-emacs-directory)))
-      (bootstrap-version 7))
+	 (expand-file-name
+	  "straight/repos/straight.el/bootstrap.el"
+	  (or (bound-and-true-p straight-base-dir)
+	      user-emacs-directory)))
+	(bootstrap-version 7))
   (unless (file-exists-p bootstrap-file)
     (with-current-buffer
-        (url-retrieve-synchronously
-         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
-         'silent 'inhibit-cookies)
-      (goto-char (point-max))
-      (eval-print-last-sexp)))
+	  (url-retrieve-synchronously
+	   "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+	   'silent 'inhibit-cookies)
+	(goto-char (point-max))
+	(eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
 
 ;;; Set Emacs path == shell path (exec-path-from-shell)
@@ -304,8 +286,8 @@
   (setq evil-ex-visual-char-range t)
   (setq evil-disable-insert-state-bindings t)
   (setq evil-insert-state-cursor '(box "violet")
-        evil-normal-state-cursor '(box "yellow")
-        evil-visual-state-cursor '(hollow "#1aa5db"))
+	  evil-normal-state-cursor '(box "yellow")
+	  evil-visual-state-cursor '(hollow "#1aa5db"))
   (setq evil-want-keybinding nil)
   (setq evil-want-integration t)
   :config
@@ -436,8 +418,6 @@
 (global-set-key (kbd "C-c d") (lambda () (interactive) (find-file (getenv "DOTFILES"))))
 (global-set-key (kbd "C-c g") (lambda () (interactive) (find-file (concat (getenv "DOTFILES") "/config/emacs/.config/emacs/init.el"))))
 
-;;; Vanilla+ Packages (dired, magit, org-mode)
-;; Dired (directory editor)
 ;; https://www.gnu.org/software/emacs/manual/html_node/emacs/Dired.html
 (use-package dired
   :straight nil
@@ -445,12 +425,7 @@
   :config
   (setq dired-dwim-target t))
 
-;; Magit (intuitive git interface)
-;; https://magit.vc/
-(use-package magit
-  :straight t)
-
-;; Org mode (organization framework)
+;; Org mode (organization outline framework)
 ;; https://orgmode.org/
 (use-package org
   :straight nil
@@ -466,9 +441,9 @@
   (setq org-treat-insert-todo-heading-as-state-change t)
   (setq org-log-done t)
   (evil-define-key 'normal org-mode-map
-    (kbd "SPC TAB") 'org-todo
-    ">" 'org-shiftmetaright
-    "<" 'org-shiftmetaleft))
+	(kbd "SPC TAB") 'org-todo
+	">" 'org-shiftmetaright
+	"<" 'org-shiftmetaleft))
 
 ;;; Markdown support for emacs
 ;; https://github.com/jrblevin/markdown-mode
@@ -478,14 +453,18 @@
   :init (setq markdown-command "multimarkdown")
   (setq markdown-fontify-code-blocks-natively t) ; Make code block syntax highlighted
   :bind(:map markdown-mode-map
-             ("C-c C-e" . markdown-do)))
+	       ("C-c C-e" . markdown-do)))
 
-;;; Themes and Colors (doom-themes, hl-todo, rainbow-mode, rainbow-delimiters)
+;; Magit (intuitive git interface)
+;; https://magit.vc/
+(use-package magit
+  :straight t)
+
 ;; https://github.com/doomemacs/themes
 (use-package doom-themes
   :straight t
   :config)
-;; (load-theme 'doom-badger t))
+  ;; (load-theme 'doom-badger t))
   ;; (load-theme 'doom-ir-black t))
 
 ;; Doom Modeline - much easier on the eyes
@@ -501,14 +480,14 @@
   :hook (prog-mode . hl-todo-mode)
   :config
   (setq hl-todo-highlight-punctuation ":"
-        hl-todo-keyword-faces
-        `(("TODO"       warning bold)
-          ("FIXME"      error bold)
-          ("HACK"       font-lock-constant-face bold)
-          ("REVIEW"     font-lock-keyword-face bold)
-          ("NOTE"       success bold)
-          ("DEPRECATED" font-lock-doc-face bold))))
-                                        ; TODO: look into todo integrations
+	  hl-todo-keyword-faces
+	  `(("TODO"       warning bold)
+	    ("FIXME"      error bold)
+	    ("HACK"       font-lock-constant-face bold)
+	    ("REVIEW"     font-lock-keyword-face bold)
+	    ("NOTE"       success bold)
+	    ("DEPRECATED" font-lock-doc-face bold))))
+					  ; TODO: look into todo integrations
 
 ;; Colorize color names in buffers
 ;; https://github.com/emacsmirror/rainbow-mode
@@ -575,8 +554,16 @@
   :straight t
   :init (add-hook 'after-init-hook #'global-flycheck-mode))
 
-;;; Matching brackets and parens with (electric-pair-mode)
-(electric-pair-mode 1)
+;;; External code formatting tool integration (format-all)
+;; https://github.com/lassik/emacs-format-all-the-code
+(use-package format-all
+  :straight t)
+
+;; Editorconfig
+(use-package editorconfig
+  :straight t
+  :config
+  (editorconfig-mode 1))
 
 ;; Abbrevs and Snippets
 ;; URLs
@@ -586,6 +573,9 @@
 (define-abbrev global-abbrev-table "dts" "" 'insert-current-iso-date-time)
 (define-abbrev global-abbrev-table "td" "" 'insert-current-iso-date)
 (define-abbrev global-abbrev-table "tds" "" 'insert-current-iso-date-time)
+
+;;; Matching brackets and parens with (electric-pair-mode)
+(electric-pair-mode 1)
 
 ;; Snippets
 ;; https://github.com/joaotavora/yasnippet
@@ -604,17 +594,6 @@
 (use-package emmet-mode
   :straight t
   :init)
-
-;; Editorconfig
-(use-package editorconfig
-  :straight t
-  :config
-  (editorconfig-mode 1))
-
-;;; External code formatting tool integration (format-all)
-;; https://github.com/lassik/emacs-format-all-the-code
-(use-package format-all
-  :straight t)
 
 ;; TODO: install/configure eglot lsp
 
@@ -636,17 +615,6 @@
   :straight t
   :defer t)
 
-;; Local Environment File
-(use-package load-env-vars
-  :straight t)
-
-(defvar my-env-file "~/.local/.env" "Local environment file.")
-(let ((my-env-file "~/.local/.env"))
-  (if (file-exists-p my-env-file)
-      (load-env-vars my-env-file)))
-
-;;; ** Package Manager (straight.el) ends here **
-;;; Additional Language Modes
 ;; JavaScript
 (use-package js
   :defer t
@@ -684,10 +652,19 @@
   (package-install 'json-mode))
 
 (setq-default major-mode
-              (lambda () ; guess major mode from file name
-                (unless buffer-file-name
-                  (let ((buffer-file-name (buffer-name)))
-                    (set-auto-mode)))))
+		(lambda () ; guess major mode from file name
+		  (unless buffer-file-name
+		    (let ((buffer-file-name (buffer-name)))
+		      (set-auto-mode)))))
+
+;; Local Environment File
+(use-package load-env-vars
+  :straight t)
+
+(defvar my-env-file "~/.local/.env" "Local environment file.")
+(let ((my-env-file "~/.local/.env"))
+  (if (file-exists-p my-env-file)
+	(load-env-vars my-env-file)))
 
 ;; LLM support (must configure with api keys)
 ;; (use-package gptel
@@ -698,8 +675,6 @@
 ;; (gptel-make-gemini "Gemini" :stream t :key gptel-api-key)
 ;; (gptel-make-openai "OpenAI" :stream t :key gptel-api-key)
 
-;;; Platform Specifics
-
 ;; for Win32
 (when (eq system-type 'windows-nt)
   ;; Powershell
@@ -709,12 +684,12 @@
   (set-frame-font "Cascadia Code 12" nil t)
 
   (let ((xlist
-         '(
-           "C:/Program Files/PowerShell/7/pwsh.exe"
-           "~/AppData/Local/Microsoft/WindowsApps/pwsh.exe"
-           "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe"
-           ))
-        xfound)
+	   '(
+	     "C:/Program Files/PowerShell/7/pwsh.exe"
+	     "~/AppData/Local/Microsoft/WindowsApps/pwsh.exe"
+	     "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe"
+	     ))
+	  xfound)
     (setq xfound (seq-some (lambda (x) (if (file-exists-p x) x nil)) xlist))
     (when xfound (setq explicit-shell-file-name xfound))))
 
@@ -747,11 +722,11 @@
     (message "path is %s" xpath)
     (cond
      ((eq system-type 'darwin)
-      (shell-command (format "open -a Visual\\ Studio\\ Code.app %s" (shell-quote-argument xpath))))
+	(shell-command (format "open -a Visual\\ Studio\\ Code.app %s" (shell-quote-argument xpath))))
      ((eq system-type 'windows-nt)
-      (shell-command (format "code.cmd %s" (shell-quote-argument xpath))))
+	(shell-command (format "code.cmd %s" (shell-quote-argument xpath))))
      ((eq system-type 'gnu/linux)
-      (shell-command (format "code %s" (shell-quote-argument xpath)))))))
+	(shell-command (format "code %s" (shell-quote-argument xpath)))))))
 
 (defun x-open-in-terminal ()
   "Open the current dir in a new terminal window."
@@ -766,5 +741,9 @@
    ((eq system-type 'berkeley-unix)
     (let ((process-connection-type nil)) (start-process "" nil "x-terminal-emulator" (concat "--working-directory=" default-directory))))))
 
-
+;;; Buffer local variables - ask to save/tangle.
+;; Local Variables:
+;; eval: (add-hook 'after-save-hook (lambda ()(if (y-or-n-p "Reload?")(load-file user-init-file))) nil t)
+;; eval: (add-hook 'after-save-hook (lambda ()(if (y-or-n-p "Tangle?")(org-babel-tangle))) nil t)
+;; End:
 ;;; init.el ends here
