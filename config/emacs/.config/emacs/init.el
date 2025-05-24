@@ -133,6 +133,8 @@
 
 ;;; Minor Mode Hooks
 (add-hook 'prog-mode #'clean-all-whitespace-mode)
+(add-hook 'org-mode #'clean-all-whitespace-mode)
+
 (add-hook 'emacs-lisp-mode #'check-parens-save-mode)
 (add-hook 'emacs-lisp-mode #'outline-minor-mode)
 
@@ -415,6 +417,7 @@
 
 ;;; Regular Keybinds
 (global-set-key (kbd "C-c i") (lambda () (interactive) (find-file user-init-file)))
+(global-set-key (kbd "C-c o") (lambda () (interactive) (find-file (concat user-emacs-directory "/init.org"))))
 (global-set-key (kbd "C-c d") (lambda () (interactive) (find-file (getenv "DOTFILES"))))
 (global-set-key (kbd "C-c g") (lambda () (interactive) (find-file (concat (getenv "DOTFILES") "/config/emacs/.config/emacs/init.el"))))
 

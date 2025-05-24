@@ -193,6 +193,8 @@ Cleaning up whitespace and checking balanced parens are something that should be
 
   ;;; Minor Mode Hooks
   (add-hook 'prog-mode #'clean-all-whitespace-mode)
+  (add-hook 'org-mode #'clean-all-whitespace-mode)
+
   (add-hook 'emacs-lisp-mode #'check-parens-save-mode)
   (add-hook 'emacs-lisp-mode #'outline-minor-mode)
 #+end_src
@@ -512,6 +514,7 @@ Set settings as well as load EVIL and complementary packages.
 
   ;;; Regular Keybinds
   (global-set-key (kbd "C-c i") (lambda () (interactive) (find-file user-init-file)))
+  (global-set-key (kbd "C-c o") (lambda () (interactive) (find-file (concat user-emacs-directory "/init.org"))))
   (global-set-key (kbd "C-c d") (lambda () (interactive) (find-file (getenv "DOTFILES"))))
   (global-set-key (kbd "C-c g") (lambda () (interactive) (find-file (concat (getenv "DOTFILES") "/config/emacs/.config/emacs/init.el"))))
 #+end_src
@@ -555,7 +558,7 @@ Emacs directory editor
 
 *** Markdown Mode
 
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp :tangle "init.el"
   ;;; Markdown support for emacs
   ;; https://github.com/jrblevin/markdown-mode
   (use-package markdown-mode
@@ -569,7 +572,7 @@ Emacs directory editor
 
 *** Magit
 
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp :tangle "init.el"
   ;; Magit (intuitive git interface)
   ;; https://magit.vc/
   (use-package magit
@@ -578,7 +581,7 @@ Emacs directory editor
 
 *** Theme and Highlight
 
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp :tangle "init.el"
   ;; https://github.com/doomemacs/themes
   (use-package doom-themes
     :straight t
@@ -630,7 +633,7 @@ Emacs directory editor
 
 *** Completion, Menu and Minibuffer
 
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp :tangle "init.el"
   ;;; Mini-buffer improvements (fido, orderless, marginalia)
   ;; Let's try [icomplete / fido / ido] mode for a while.
   (icomplete-vertical-mode)
@@ -673,7 +676,7 @@ Emacs directory editor
 
 *** Syntax Checking and Formatting
 
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp :tangle "init.el"
   ;; Syntax checking
   ;; https://www.flycheck.org/en/latest/languages.html
   ;; https://github.com/flycheck/flycheck
@@ -695,7 +698,7 @@ Emacs directory editor
 
 *** Abbrevs and Snippets
 
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp :tangle "init.el"
   ;; Abbrevs and Snippets
   ;; URLs
   (define-abbrev global-abbrev-table "mygh" "https://github.com/lemonase")
@@ -729,7 +732,7 @@ Emacs directory editor
 
 *** Extra Language Modes
 
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp :tangle "init.el"
   ;; TODO: install/configure eglot lsp
 
   ;;; Extra Language Modes
@@ -753,7 +756,7 @@ Emacs directory editor
 
 *** Additional Language Settings
 
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp :tangle "init.el"
   ;; JavaScript
   (use-package js
     :defer t
@@ -799,7 +802,7 @@ Emacs directory editor
 
 *** Local Environment Variables
 
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp :tangle "init.el"
   ;; Local Environment File
   (use-package load-env-vars
     :straight t)
@@ -812,7 +815,7 @@ Emacs directory editor
 
 *** LLM Support
 
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp :tangle "init.el"
   ;; LLM support (must configure with api keys)
   ;; (use-package gptel
   ;;   :straight t)
@@ -825,7 +828,7 @@ Emacs directory editor
 
 *** Windows / Win32
 
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp :tangle "init.el"
   ;; for Win32
   (when (eq system-type 'windows-nt)
     ;; Powershell
@@ -891,16 +894,16 @@ Emacs directory editor
       (let ((process-connection-type nil)) (start-process "" nil "x-terminal-emulator" (concat "--working-directory=" default-directory))))
      ((eq system-type 'berkeley-unix)
       (let ((process-connection-type nil)) (start-process "" nil "x-terminal-emulator" (concat "--working-directory=" default-directory))))))
-
 #+end_src
 
 *** Auto Reload + Save / Tangle for Org
 
 #+begin_src emacs-lisp :tangle "init.el"
-    ;;; Buffer local variables - ask to save/tangle.
-    ;; Local Variables:
-    ;; eval: (add-hook 'after-save-hook (lambda ()(if (y-or-n-p "Reload?")(load-file user-init-file))) nil t)
-    ;; eval: (add-hook 'after-save-hook (lambda ()(if (y-or-n-p "Tangle?")(org-babel-tangle))) nil t)
-    ;; End:
-    ;;; init.el ends here
+
+  ;;; Buffer local variables - ask to save/tangle.
+  ;; Local Variables:
+  ;; eval: (add-hook 'after-save-hook (lambda ()(if (y-or-n-p "Reload?")(load-file user-init-file))) nil t)
+  ;; eval: (add-hook 'after-save-hook (lambda ()(if (y-or-n-p "Tangle?")(org-babel-tangle))) nil t)
+  ;; End:
+  ;;; init.el ends here
 #+end_src
