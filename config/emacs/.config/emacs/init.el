@@ -9,6 +9,7 @@
 ;;; Code:
 ;;;
 ;;; User Info
+
 (setq user-full-name "James Dixon")
 (setq user-mail-address "notjamesdixon@gmail.com")
 
@@ -28,21 +29,22 @@
 
 ;; Do these things instead
 ;; Show lines and columns
-(global-display-line-numbers-mode 1)	; Display line numbers
+(global-display-line-numbers-mode 1)    ; Display line numbers
 (column-number-mode 1)                  ; Toggle column number display in the mode line.
 
 ;; Enable bells and whistles
 (setq visible-bell 1)                   ; Flash when the bell rings (no sound)
 (setq frame-resize-pixelwise t)         ; Yes, I would like to be able to **resize** emacs frame, thanks!
 (setq window-resize-pixelwise nil)      ; Not for windows inside emacs though
+(winner-mode 1)                         ; Record the changes in window configuration (undo/redo window changes)
 
 ;; Mark and go-to modes
 (transient-mark-mode 1)                 ; Easier starting of marks/regions
 (delete-selection-mode 1)               ; Easier deleting of marks/regions
 (global-goto-address-mode 1)            ; Make links and addresses go-to able
 
-;; Allow for shorter responses: "y" for yes and "n" for no.
-(fset 'yes-or-no-p 'y-or-n-p)
+;; (setq use-short-answers t)
+(fset 'yes-or-no-p 'y-or-n-p) ; Allow for shorter responses: "y" for yes and "n" for no.
 
 ;; Show paren differently
 (setq show-paren-delay 0.1
@@ -365,6 +367,7 @@
   ;; Eval Keybinds
   ":" 'eval-expression
   "p" 'execute-extended-command
+  "x" 'eval-defun
   "e" 'eval-last-sexp
   "E" 'eval-print-last-sexp
   "b" 'eval-buffer
@@ -505,6 +508,7 @@
           ("REVIEW"     font-lock-keyword-face bold)
           ("NOTE"       success bold)
           ("DEPRECATED" font-lock-doc-face bold))))
+                                        ; TODO: look into todo integrations
 
 ;; Colorize color names in buffers
 ;; https://github.com/emacsmirror/rainbow-mode
@@ -686,24 +690,24 @@
                     (set-auto-mode)))))
 
 ;; LLM support (must configure with api keys)
-(use-package gptel
-  :straight t)
-
+;; (use-package gptel
+;;   :straight t)
 ;; (setq gemini-api-key (funcall (lambda (prompt) (read-passwd prompt)) "Enter Gemini API key: "))
 ;; (gptel-make-gemini "Gemini" :key (getenv "GEMINI_API_KEY") :stream t)
 ;; (gptel-make-openai "OpenAI" :key (getenv "OPENAI_KEY") :stream t)
-(gptel-make-gemini "Gemini" :stream t :key gptel-api-key)
-(gptel-make-openai "OpenAI" :stream t :key gptel-api-key)
+;; (gptel-make-gemini "Gemini" :stream t :key gptel-api-key)
+;; (gptel-make-openai "OpenAI" :stream t :key gptel-api-key)
 
 ;;; Platform Specifics
 
 ;; for Win32
-;; TODO: check if fonts exists before setting
-(if (eq system-type 'windows-nt)
-    (set-frame-font "Cascadia Code 12" nil t))
-
-;; on windows, make pwsh the default shell
 (when (eq system-type 'windows-nt)
+  ;; Powershell
+  (use-package powershell
+    :straight t)
+
+  (set-frame-font "Cascadia Code 12" nil t)
+
   (let ((xlist
          '(
            "C:/Program Files/PowerShell/7/pwsh.exe"
