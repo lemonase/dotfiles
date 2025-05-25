@@ -289,9 +289,10 @@
   (setq evil-disable-insert-state-bindings t)
   (setq evil-insert-state-cursor '(box "violet")
 	  evil-normal-state-cursor '(box "yellow")
-	  evil-visual-state-cursor '(hollow "#1aa5db"))
-  (setq evil-want-keybinding nil)
-  (setq evil-want-integration t)
+	  evil-visual-state-cursor '(hollow "#1aa5db")
+          evil-emacs-state-cursor '(box "cyan"))
+  ;; (setq evil-want-keybinding nil)
+  ;; (setq evil-want-integration t)
   :config
   (evil-mode 1))
 
@@ -301,14 +302,14 @@
   :straight t)
 ;;; TODO: Look into https://codeberg.org/ideasman42/emacs-undo-fu-session
 
-;;; Make Evil work in more modes than by default
-;; https://github.com/emacs-evil/evil-collection
-(use-package evil-collection
-  :straight t
-  :after evil
-  :defer t
-  :init
-  (evil-collection-init))
+;; ;;; Make Evil work in more modes than by default
+;; ;; https://github.com/emacs-evil/evil-collection
+;; (use-package evil-collection
+;;   :straight t
+;;   :after evil
+;;   :defer t
+;;   :init
+;;   (evil-collection-init))
 
 ;;; Bindings and functionality to comment out code and other text objects
 ;; https://github.com/linktohack/evil-commentary
@@ -337,6 +338,9 @@
   (evil-define-key '(normal visual) 'global (kbd "C-a C-+") 'evil-numbers/inc-at-pt-incremental)
   (evil-define-key '(normal visual) 'global (kbd "C-a C--") 'evil-numbers/dec-at-pt-incremental))
 
+;; more ergo keybind for switching to normal<->emacs state
+(global-set-key (kbd "C-;") (kbd "C-z"))
+
 ;; Custom Evil Keybinds
 ;; Evil Guide: https://github.com/noctuid/evil-guide?tab=readme-ov-file#keybindings-and-states
 ;; General keybind definition helper
@@ -356,6 +360,7 @@
   "E" 'eval-print-last-sexp
   "b" 'eval-buffer
   "." 'repeat-complex-command
+  "q" 'evil-quit
   "Q" 'evil-quit-all
   ;; Buffer Management
   "w" 'save-buffer
@@ -389,7 +394,7 @@
   "t" 'indent-tabs-mode
   "c" 'display-fill-column-indicator-mode)
 
-;; Global Normal Mode :: Git Keymaps
+;; Global Normal Mode :: Magit Keymaps
 (general-nmap
   :prefix "SPC g"
   ;; Magit Commands
@@ -413,9 +418,8 @@
 
 ;; Custom Ex commands
 (evil-ex-define-cmd "Format" 'format-all-region-or-buffer) ;; format-all-code
-;; end evil
 
-;;; Regular Keybinds
+;;; Vanilla Emacs Keybinds
 (global-set-key (kbd "C-c i") (lambda () (interactive) (find-file user-init-file)))
 (global-set-key (kbd "C-c o") (lambda () (interactive) (find-file (concat user-emacs-directory "/init.org"))))
 (global-set-key (kbd "C-c d") (lambda () (interactive) (find-file (getenv "DOTFILES"))))
@@ -437,6 +441,7 @@
   (global-set-key (kbd "C-c a") #'org-agenda)
   (global-set-key (kbd "C-c c") #'org-capture)
   (global-set-key (kbd "C-c l") #'org-store-link)
+  (setq org-html-htmlize-output-type 'css)
   (setq org-clock-persist 'history)
   (setq org-agenda-files (list "~/Documents/notes/org/life.org"))
   (org-clock-persistence-insinuate)
@@ -447,6 +452,13 @@
 	(kbd "SPC TAB") 'org-todo
 	">" 'org-shiftmetaright
 	"<" 'org-shiftmetaleft))
+
+;; css and syntax highlighting for exported docs
+(use-package htmlize
+  :straight t)
+;; org-export packages
+;; (use-package ox-pandoc
+;;   :straight t)
 
 ;;; Markdown support for emacs
 ;; https://github.com/jrblevin/markdown-mode

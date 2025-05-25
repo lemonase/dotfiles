@@ -1,5 +1,6 @@
 #+TITLE: Emacs Literate Config
 #+AUTHOR: James Dixon
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="https://gongzhitaao.org/orgcss/org.css"/>
 
 * My Literate Emacs with EVIL
 
@@ -267,10 +268,10 @@ Better functions for some of the defaults.
   `I` ignore binary files; `E` extended regular expressions; `r` recursive"
     (interactive)
     (let* ((grep-flags "-inrEI --color=always -C3")
-	   (search-term (read-string (format "Recursive regex search with grep %s: " grep-flags)))
-	   (search-path (directory-file-name (expand-file-name (read-directory-name "directory:  "))))
-	   (default-directory (file-name-as-directory search-path))
-	   (grep-command (concat grep-program " " grep-flags " " search-term " " search-path)))
+  	   (search-term (read-string (format "Recursive regex search with grep %s: " grep-flags)))
+  	   (search-path (directory-file-name (expand-file-name (read-directory-name "directory:  "))))
+  	   (default-directory (file-name-as-directory search-path))
+  	   (grep-command (concat grep-program " " grep-flags " " search-term " " search-path)))
       (compilation-start grep-command 'grep-mode (lambda (mode) "*grep*") nil)))
 
   ;; Open External Terminal Emulator
@@ -380,10 +381,11 @@ Set settings as well as load EVIL and complementary packages.
     (setq evil-ex-visual-char-range t)
     (setq evil-disable-insert-state-bindings t)
     (setq evil-insert-state-cursor '(box "violet")
-	  evil-normal-state-cursor '(box "yellow")
-	  evil-visual-state-cursor '(hollow "#1aa5db"))
-    (setq evil-want-keybinding nil)
-    (setq evil-want-integration t)
+  	  evil-normal-state-cursor '(box "yellow")
+  	  evil-visual-state-cursor '(hollow "#1aa5db")
+            evil-emacs-state-cursor '(box "cyan"))
+    ;; (setq evil-want-keybinding nil)
+    ;; (setq evil-want-integration t)
     :config
     (evil-mode 1))
 
@@ -393,14 +395,14 @@ Set settings as well as load EVIL and complementary packages.
     :straight t)
   ;;; TODO: Look into https://codeberg.org/ideasman42/emacs-undo-fu-session
 
-  ;;; Make Evil work in more modes than by default
-  ;; https://github.com/emacs-evil/evil-collection
-  (use-package evil-collection
-    :straight t
-    :after evil
-    :defer t
-    :init
-    (evil-collection-init))
+  ;; ;;; Make Evil work in more modes than by default
+  ;; ;; https://github.com/emacs-evil/evil-collection
+  ;; (use-package evil-collection
+  ;;   :straight t
+  ;;   :after evil
+  ;;   :defer t
+  ;;   :init
+  ;;   (evil-collection-init))
 
   ;;; Bindings and functionality to comment out code and other text objects
   ;; https://github.com/linktohack/evil-commentary
@@ -429,9 +431,11 @@ Set settings as well as load EVIL and complementary packages.
     (evil-define-key '(normal visual) 'global (kbd "C-a C-+") 'evil-numbers/inc-at-pt-incremental)
     (evil-define-key '(normal visual) 'global (kbd "C-a C--") 'evil-numbers/dec-at-pt-incremental))
 
+  ;; more ergo keybind for switching to normal<->emacs state
+  (global-set-key (kbd "C-;") (kbd "C-z"))
 #+end_src
 
-*** General Keybinds
+*** General Prefix/Leader Keybinds
 
 #+begin_src emacs-lisp :tangle "init.el"
   ;; Custom Evil Keybinds
@@ -453,6 +457,7 @@ Set settings as well as load EVIL and complementary packages.
     "E" 'eval-print-last-sexp
     "b" 'eval-buffer
     "." 'repeat-complex-command
+    "q" 'evil-quit
     "Q" 'evil-quit-all
     ;; Buffer Management
     "w" 'save-buffer
@@ -486,7 +491,7 @@ Set settings as well as load EVIL and complementary packages.
     "t" 'indent-tabs-mode
     "c" 'display-fill-column-indicator-mode)
 
-  ;; Global Normal Mode :: Git Keymaps
+  ;; Global Normal Mode :: Magit Keymaps
   (general-nmap
     :prefix "SPC g"
     ;; Magit Commands
@@ -510,9 +515,8 @@ Set settings as well as load EVIL and complementary packages.
 
   ;; Custom Ex commands
   (evil-ex-define-cmd "Format" 'format-all-region-or-buffer) ;; format-all-code
-  ;; end evil
 
-  ;;; Regular Keybinds
+  ;;; Vanilla Emacs Keybinds
   (global-set-key (kbd "C-c i") (lambda () (interactive) (find-file user-init-file)))
   (global-set-key (kbd "C-c o") (lambda () (interactive) (find-file (concat user-emacs-directory "/init.org"))))
   (global-set-key (kbd "C-c d") (lambda () (interactive) (find-file (getenv "DOTFILES"))))
@@ -532,31 +536,39 @@ Emacs directory editor
     (setq dired-dwim-target t))
 #+end_src
 
-*** Org
+*** Org (org-mode)
 
 #+begin_src emacs-lisp :tangle "init.el"
-    ;; Org mode (organization outline framework)
-    ;; https://orgmode.org/
-    (use-package org
-      :straight nil
-      :config
-      '(org-export-backends '(ascii html icalendar latex man md odt org))
-      (global-set-key (kbd "C-c a") #'org-agenda)
-      (global-set-key (kbd "C-c c") #'org-capture)
-      (global-set-key (kbd "C-c l") #'org-store-link)
-      (setq org-clock-persist 'history)
-      (setq org-agenda-files (list "~/Documents/notes/org/life.org"))
-      (org-clock-persistence-insinuate)
-      (setq org-todo-keywords '((sequence "TODO(!)" "IN PROGRESS" "DONE")))
-      (setq org-treat-insert-todo-heading-as-state-change t)
-      (setq org-log-done t)
-      (evil-define-key 'normal org-mode-map
-	(kbd "SPC TAB") 'org-todo
-	">" 'org-shiftmetaright
-	"<" 'org-shiftmetaleft))
+  ;; Org mode (organization outline framework)
+  ;; https://orgmode.org/
+  (use-package org
+    :straight nil
+    :config
+    '(org-export-backends '(ascii html icalendar latex man md odt org))
+    (global-set-key (kbd "C-c a") #'org-agenda)
+    (global-set-key (kbd "C-c c") #'org-capture)
+    (global-set-key (kbd "C-c l") #'org-store-link)
+    (setq org-html-htmlize-output-type 'css)
+    (setq org-clock-persist 'history)
+    (setq org-agenda-files (list "~/Documents/notes/org/life.org"))
+    (org-clock-persistence-insinuate)
+    (setq org-todo-keywords '((sequence "TODO(!)" "IN PROGRESS" "DONE")))
+    (setq org-treat-insert-todo-heading-as-state-change t)
+    (setq org-log-done t)
+    (evil-define-key 'normal org-mode-map
+  	(kbd "SPC TAB") 'org-todo
+  	">" 'org-shiftmetaright
+  	"<" 'org-shiftmetaleft))
+
+  ;; css and syntax highlighting for exported docs
+  (use-package htmlize
+    :straight t)
+  ;; org-export packages
+  ;; (use-package ox-pandoc
+  ;;   :straight t)
 #+end_src
 
-*** Markdown Mode
+*** Markdown Mode (markdown-mode)
 
 #+begin_src emacs-lisp :tangle "init.el"
   ;;; Markdown support for emacs
@@ -570,7 +582,7 @@ Emacs directory editor
 	       ("C-c C-e" . markdown-do)))
 #+end_src
 
-*** Magit
+*** Magit (git mode)
 
 #+begin_src emacs-lisp :tangle "init.el"
   ;; Magit (intuitive git interface)
@@ -579,7 +591,7 @@ Emacs directory editor
     :straight t)
 #+end_src
 
-*** Theme and Highlight
+*** Theme and Highlight (doom-themes)
 
 #+begin_src emacs-lisp :tangle "init.el"
   ;; https://github.com/doomemacs/themes
@@ -906,4 +918,5 @@ Emacs directory editor
   ;; eval: (add-hook 'after-save-hook (lambda ()(if (y-or-n-p "Tangle?")(org-babel-tangle))) nil t)
   ;; End:
   ;;; init.el ends here
+
 #+end_src
