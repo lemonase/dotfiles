@@ -132,11 +132,11 @@
     (remove-hook 'before-save-mode #'check-parens t)))
 
 ;;; Minor Mode Hooks
-(add-hook 'prog-mode #'clean-all-whitespace-mode)
-(add-hook 'org-mode #'clean-all-whitespace-mode)
-
-(add-hook 'emacs-lisp-mode #'check-parens-save-mode)
-(add-hook 'emacs-lisp-mode #'outline-minor-mode)
+;; (add-hook 'prog-mode #'clean-all-whitespace-mode)
+;; (add-hook 'org-mode #'clean-all-whitespace-mode)
+;;
+;; (add-hook 'emacs-lisp-mode #'check-parens-save-mode)
+;; (add-hook 'emacs-lisp-mode #'outline-minor-mode)
 
 ;;; Custom Tab Settings
 ;; https://dougie.io/emacs/indentation/
@@ -227,8 +227,10 @@
 
 (defun insert-current-time ()
   "Insert the current time H:M:S." (insert (format-time-string "%H:%M:%S")))
+
 (defun insert-current-iso-date ()
   "Insert the current ISO 8601 date." (insert (format-time-string "%Y-%m-%d")))
+
 (defun insert-current-iso-date-time()
   "Insert the current ISO 8601 date (with time res of seconds)."
   (insert (format-time-string "%Y-%m-%d %H:%M:%S")))
@@ -240,6 +242,7 @@
    (if mark-active (list (region-beginning) (region-end))
      (list (save-excursion (backward-word 1) (point)) (point)))))
 
+;; TODO: disable this in terminal mode
 ;;; Basic way to do pulse for evil yank text (like goggles.el package)
 ;;; https://blog.meain.io/2020/emacs-highlight-yanked/
 (defun hl-yank-advice (yank-fn beg end &rest args)
@@ -288,9 +291,9 @@
   (setq evil-ex-visual-char-range t)
   (setq evil-disable-insert-state-bindings t)
   (setq evil-insert-state-cursor '(box "violet")
-	  evil-normal-state-cursor '(box "yellow")
-	  evil-visual-state-cursor '(hollow "#1aa5db")
-          evil-emacs-state-cursor '(box "cyan"))
+	    evil-normal-state-cursor '(box "yellow")
+	    evil-visual-state-cursor '(hollow "#1aa5db")
+	      evil-emacs-state-cursor '(box "cyan"))
   ;; (setq evil-want-keybinding nil)
   ;; (setq evil-want-integration t)
   :config
@@ -310,6 +313,8 @@
 ;;   :defer t
 ;;   :init
 ;;   (evil-collection-init))
+(evil-set-initial-state 'dired-mode 'emacs)
+(evil-set-initial-state 'magit-mode 'emacs)
 
 ;;; Bindings and functionality to comment out code and other text objects
 ;; https://github.com/linktohack/evil-commentary
@@ -338,9 +343,6 @@
   (evil-define-key '(normal visual) 'global (kbd "C-a C-+") 'evil-numbers/inc-at-pt-incremental)
   (evil-define-key '(normal visual) 'global (kbd "C-a C--") 'evil-numbers/dec-at-pt-incremental))
 
-;; more ergo keybind for switching to normal<->emacs state
-(global-set-key (kbd "C-;") (kbd "C-z"))
-
 ;; Custom Evil Keybinds
 ;; Evil Guide: https://github.com/noctuid/evil-guide?tab=readme-ov-file#keybindings-and-states
 ;; General keybind definition helper
@@ -354,6 +356,7 @@
   :prefix "SPC"
   ;; Eval Keybinds
   ":" 'eval-expression
+  ";" 'execute-extended-command
   "p" 'execute-extended-command
   "x" 'eval-defun
   "e" 'eval-last-sexp
@@ -383,7 +386,13 @@
   "T" 'ext-terminal-in-workdir
   ;; Extra packages
   "s" 'yas-insert-snippet
-  "F" 'format-all-region-or-buffer)
+  "F" 'format-all-region-or-buffer
+  "D" 'dirvish-side)
+
+;; Meta prefixes (with space)
+(general-nmap
+  :prefix "SPC m"
+  "x" 'execute-extended-command)
 
 ;; Global Normal Mode :: Toggle Keymaps
 (general-nmap
@@ -420,10 +429,12 @@
 (evil-ex-define-cmd "Format" 'format-all-region-or-buffer) ;; format-all-code
 
 ;;; Vanilla Emacs Keybinds
-(global-set-key (kbd "C-c i") (lambda () (interactive) (find-file user-init-file)))
-(global-set-key (kbd "C-c o") (lambda () (interactive) (find-file (concat user-emacs-directory "/init.org"))))
+(global-set-key (kbd "C-c i") (lambda () (interactive) (find-file (concat user-emacs-directory "/init.org"))))
 (global-set-key (kbd "C-c d") (lambda () (interactive) (find-file (getenv "DOTFILES"))))
 (global-set-key (kbd "C-c g") (lambda () (interactive) (find-file (concat (getenv "DOTFILES") "/config/emacs/.config/emacs/init.el"))))
+
+;; more ergo keybind for switching to normal<->emacs state
+(global-set-key (kbd "C-;") (kbd "C-z"))
 
 ;; https://www.gnu.org/software/emacs/manual/html_node/emacs/Dired.html
 (use-package dired
@@ -432,7 +443,50 @@
   :config
   (setq dired-dwim-target t))
 
+;; Fancy, polished and modernized dired
+;; https://github.com/alexluigit/dirvish
+;; https://github.com/alexluigit/dirvish/blob/main/docs/CUSTOMIZING.org#sample-config
+(use-package dirvish
+  :straight t
+  :init
+  (dirvish-override-dired-mode)
+  :custom
+  (dirvish-quick-access-entries
+   '(("h" "~/"                          "Home")
+     ("d" "~/Downloads/"                "Downloads")))
+  :config
+  (dirvish-peek-mode)
+  (dirvish-side-follow-mode)
+  (setq dirvish-mode-line-format
+	  '(:left (sort symlink) :right (omit yank index)))
+  (setq dirvish-attributes           ; The order *MATTERS* for some attributes
+	  '(vc-state subtree-state nerd-icons collapse git-msg file-time file-size)
+	  dirvish-side-attributes
+	  '(vc-state nerd-icons collapse file-size))
+  (setq dirvish-large-directory-threshold 20000)
+  :bind
+  (("C-c -" . dirvish-side)
+    :map dirvish-mode-map               ; Dirvish inherits `dired-mode-map'
+    (";"   . dired-up-directory)        ; So you can adjust `dired' bindings here
+    ("?"   . dirvish-dispatch)          ; [?] a helpful cheatsheet
+    ("a"   . dirvish-setup-menu)        ; [a]ttributes settings:`t' toggles mtime, `f' toggles fullframe, etc.
+    ("f"   . dirvish-file-info-menu)    ; [f]ile info
+    ("o"   . dirvish-quick-access)      ; [o]pen `dirvish-quick-access-entries'
+    ("s"   . dirvish-quicksort)         ; [s]ort flie list
+    ("r"   . dirvish-history-jump)      ; [r]ecent visited
+    ("l"   . dirvish-ls-switches-menu)  ; [l]s command flags
+    ("v"   . dirvish-vc-menu)           ; [v]ersion control commands
+    ("*"   . dirvish-mark-menu)
+    ("y"   . dirvish-yank-menu)
+    ("N"   . dirvish-narrow)
+    ("^"   . dirvish-history-last)
+    ("TAB" . dirvish-subtree-toggle)
+    ("M-f" . dirvish-history-go-forward)
+    ("M-b" . dirvish-history-go-backward)
+    ("M-e" . dirvish-emerge-menu)))
+
 ;; Org mode (organization outline framework)
+(straight-use-package '(org :type built-in)) ;; use builtin org
 ;; https://orgmode.org/
 (use-package org
   :straight nil
@@ -447,11 +501,14 @@
   (org-clock-persistence-insinuate)
   (setq org-todo-keywords '((sequence "TODO(!)" "IN PROGRESS" "DONE")))
   (setq org-treat-insert-todo-heading-as-state-change t)
-  (setq org-log-done t)
-  (evil-define-key 'normal org-mode-map
-	(kbd "SPC TAB") 'org-todo
-	">" 'org-shiftmetaright
-	"<" 'org-shiftmetaleft))
+  (setq org-log-done t))
+
+;; Keep headers stuck to the top of the buffer
+;; https://github.com/alphapapa/org-sticky-header/tree/master
+(use-package org-sticky-header
+  :config
+  (setq org-sticky-header-full-path 'full)
+  :straight t)
 
 ;; css and syntax highlighting for exported docs
 (use-package htmlize
@@ -479,14 +536,20 @@
 (use-package doom-themes
   :straight t
   :config)
-  ;; (load-theme 'doom-badger t))
-  ;; (load-theme 'doom-ir-black t))
+;; (load-theme 'doom-badger t))
+;; (load-theme 'doom-ir-black t))
 
 ;; Doom Modeline - much easier on the eyes
 ;; https://github.com/seagle0128/doom-modeline
 (use-package doom-modeline
   :straight t
   :hook (after-init . doom-modeline-mode))
+
+(use-package topsy
+:straight t
+:hook
+(prog-mode . topsy-mode)
+(magit-section-mode . topsy-mode))
 
 ;; Highlights TODOs and other configured keywords in buffer
 ;; https://github.com/tarsius/hl-todo
@@ -495,14 +558,14 @@
   :hook (prog-mode . hl-todo-mode)
   :config
   (setq hl-todo-highlight-punctuation ":"
-	  hl-todo-keyword-faces
-	  `(("TODO"       warning bold)
-	    ("FIXME"      error bold)
-	    ("HACK"       font-lock-constant-face bold)
-	    ("REVIEW"     font-lock-keyword-face bold)
-	    ("NOTE"       success bold)
-	    ("DEPRECATED" font-lock-doc-face bold))))
-					  ; TODO: look into todo integrations
+	    hl-todo-keyword-faces
+	    `(("TODO"       warning bold)
+	      ("FIXME"      error bold)
+	      ("HACK"       font-lock-constant-face bold)
+	      ("REVIEW"     font-lock-keyword-face bold)
+	      ("NOTE"       success bold)
+	      ("DEPRECATED" font-lock-doc-face bold))))
+					    ; TODO: look into todo integrations
 
 ;; Colorize color names in buffers
 ;; https://github.com/emacsmirror/rainbow-mode
@@ -523,9 +586,28 @@
   :config
   (setq git-gutter:update-interval 0.2))
 
+;; TODO: disable this in terminal mode
+;; highlights the modified region (yank/kill)
+;; https://github.com/minad/goggles
+(use-package goggles
+  :straight t
+  :hook ((prog-mode org-mode) . goggles-mode)
+  :config
+  (goggles-define yank evil-paste-after) ; make pasting from evil mode highlighted
+  (setq-default goggles-pulse t))
+
 ;;; Mini-buffer improvements (fido, orderless, marginalia)
 ;; Let's try [icomplete / fido / ido] mode for a while.
-(icomplete-vertical-mode)
+;; (icomplete-vertical-mode)
+
+;; Minibuffer style stwaeks
+;; https://github.com/minad/vertico
+(use-package vertico
+  :straight t
+  :init
+  (vertico-indexed-mode)
+  (vertico-reverse-mode)
+  (vertico-mode))
 
 ;; Ordering regex for completion
 ;; https://github.com/oantolin/orderless
@@ -544,6 +626,74 @@
   :commands (marginalia-mode marginalia-cycle)
   :hook (after-init . marginalia-mode))
 
+;; Example configuration for Consult
+(use-package consult
+  :straight t
+  :bind (
+	 ("C-x M-:" . consult-complex-command)     ;; orig. repeat-complex-command
+	 ("C-x b" . consult-buffer)                ;; orig. switch-to-buffer
+	 ("C-x 4 b" . consult-buffer-other-window) ;; orig. switch-to-buffer-other-window
+	 ("C-x 5 b" . consult-buffer-other-frame)  ;; orig. switch-to-buffer-other-frame
+	 ("C-x t b" . consult-buffer-other-tab)    ;; orig. switch-to-buffer-other-tab
+	 ("C-x r b" . consult-bookmark)            ;; orig. bookmark-jump
+	 ("C-x p b" . consult-project-buffer)      ;; orig. project-switch-to-buffer
+	 ;; Custom M-# bindings for fast register access
+	 ("M-#" . consult-register-load)
+	 ("M-'" . consult-register-store)          ;; orig. abbrev-prefix-mark (unrelated)
+	 ("C-M-#" . consult-register)
+	 ;; Other custom bindings
+	 ("M-y" . consult-yank-pop)                ;; orig. yank-pop
+	 ;; Minibuffer history
+	 :map minibuffer-local-map
+	 ("M-s" . consult-history)                 ;; orig. next-matching-history-element
+	 ("M-r" . consult-history))                ;; orig. previous-matching-history-element
+  :hook (completion-list-mode . consult-preview-at-point-mode)
+  :init
+  (advice-add #'register-preview :override #'consult-register-window)
+  (setq register-preview-delay 0.5)
+  (setq xref-show-xrefs-function #'consult-xref
+	  xref-show-definitions-function #'consult-xref))
+
+;; corfu: mini completion ui
+;;https://github.com/minad/corfu
+(use-package corfu
+  :straight t
+  :custom
+  (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
+  ;; (corfu-auto t)                 ;; Enable auto completion
+  ;; (corfu-quit-at-boundary nil)   ;; Never quit at completion boundary
+  ;; (corfu-quit-no-match nil)      ;; Never quit, even if there is no match
+  ;; (corfu-preview-current nil)    ;; Disable current candidate preview
+  ;; (corfu-preselect 'prompt)      ;; Preselect the prompt
+  ;; (corfu-on-exact-match nil)     ;; Configure handling of exact matches
+  ;; Enable Corfu only for certain modes. See also `global-corfu-modes'.
+  ;; :hook ((prog-mode . corfu-mode)
+  ;;        (shell-mode . corfu-mode)
+  ;;        (eshell-mode . corfu-mode))
+  :init
+  (global-corfu-mode)
+  ;; Enable optional extension modes:
+  (corfu-history-mode)
+  (corfu-popupinfo-mode))
+
+;; Add corfu extensions
+(use-package cape
+  :bind ("M-p" . cape-prefix-map)
+  :init
+  (add-hook 'completion-at-point-functions #'cape-dabbrev)
+  (add-hook 'completion-at-point-functions #'cape-file)
+  (add-hook 'completion-at-point-functions #'cape-elisp-block)
+  (add-hook 'completion-at-point-functions #'cape-history))
+
+(use-package emacs
+  :custom
+  (tab-always-indent 'complete) ;; Enable indentation+completion using the TAB key.
+  (text-mode-ispell-word-completion nil) ; Emacs 30 and newer: Disable Ispell completion function, use `cape-dict' as an alternative.
+  ;; Hide commands in M-x which do not apply to the current mode.  Corfu
+  ;; commands are hidden, since they are not used via M-x. This setting is
+  ;; useful beyond Corfu.
+  (read-extended-command-predicate #'command-completion-default-include-p))
+
 ;;; Better discoverability for key mappings (which-key)
 ;; https://github.com/justbur/emacs-which-key
 ;; builtin to emacs > 30.1
@@ -551,7 +701,7 @@
   :straight t
   :init (which-key-mode 1))
 
-;;; Better help menus (helpful)
+  ;;; Better help menus (helpful)
 ;; https://github.com/Wilfred/helpful
 (use-package helpful
   :straight t
@@ -579,6 +729,12 @@
   :straight t
   :config
   (editorconfig-mode 1))
+
+;; Whitespace cleanup
+(use-package whitespace-cleanup-mode
+  :straight t
+  :config
+  (global-whitespace-cleanup-mode))
 
 ;; Abbrevs and Snippets
 ;; URLs
@@ -611,6 +767,9 @@
   :init)
 
 ;; TODO: install/configure eglot lsp
+(use-package eglot
+  :straight nil
+  :defer t)
 
 ;;; Extra Language Modes
 ;; Lua mode
