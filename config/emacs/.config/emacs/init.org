@@ -78,9 +78,9 @@ These are things what I would consider more sensible defaults for emacs.
 
   ;; Show paren differently
   (setq show-paren-delay 0.1
-	show-paren-highlight-openparen t
-	show-paren-when-point-inside-paren t
-	show-paren-when-point-in-periphery t)
+  	show-paren-highlight-openparen t
+  	show-paren-when-point-inside-paren t
+  	show-paren-when-point-in-periphery t)
 
   ;;; Comment Settings
   (setq comment-multi-line t)
@@ -236,6 +236,7 @@ really do not help simplify the situation. This is what works for now...
 
   ;; Language-Specific Tab Tweaks
   (setq-default python-indent-offset custom-tab-width) ;; Python
+  (setq-default python-indent-level custom-tab-width)  ;; Python
   (setq-default js-indent-level custom-tab-width)      ;; Javascript
   (setq-default sh-indent-level custom-tab-width)      ;; Shell
   (setq-default sh-basic-offset custom-tab-width)      ;; Shell
@@ -348,6 +349,8 @@ Better functions for some of the defaults.
 	(goto-char (point-max))
 	(eval-print-last-sexp)))
     (load bootstrap-file nil 'nomessage))
+
+  (setq package-install-upgrade-built-in t)
 #+end_src
 
 *** Use PATH from shell environment
@@ -386,8 +389,8 @@ Set settings as well as load EVIL and complementary packages.
 	    evil-normal-state-cursor '(box "yellow")
 	    evil-visual-state-cursor '(hollow "#1aa5db")
 	      evil-emacs-state-cursor '(box "cyan"))
-    ;; (setq evil-want-keybinding nil)
-    ;; (setq evil-want-integration t)
+    (setq evil-want-keybinding nil)
+    (setq evil-want-integration t)
     :config
     (evil-mode 1))
 
@@ -399,14 +402,14 @@ Set settings as well as load EVIL and complementary packages.
 
   ;; ;;; Make Evil work in more modes than by default
   ;; ;; https://github.com/emacs-evil/evil-collection
-  ;; (use-package evil-collection
-  ;;   :straight t
-  ;;   :after evil
-  ;;   :defer t
-  ;;   :init
-  ;;   (evil-collection-init))
-  (evil-set-initial-state 'dired-mode 'emacs)
-  (evil-set-initial-state 'magit-mode 'emacs)
+  (use-package evil-collection
+    :straight t
+    :after evil
+    :defer t
+    :init
+    (evil-collection-init))
+  ;; (evil-set-initial-state 'dired-mode 'emacs)
+  ;; (evil-set-initial-state 'magit-mode 'emacs)
 
   ;;; Bindings and functionality to comment out code and other text objects
   ;; https://github.com/linktohack/evil-commentary
@@ -465,12 +468,9 @@ Set settings as well as load EVIL and complementary packages.
     "w" 'save-buffer
     "l" 'ibuffer
     "q" 'evil-delete-buffer
-    ;; Search and replace (interactive)
-    "o" 'occur
-    "r" 'replace-regexp
-    "y" 'yank-from-kill-ring
     ;; Running external stuff
     "c" 'compile
+    "r" 'recompile
     "!" 'shell-command
     "&" 'async-shell-command
     ;; Jumping places
@@ -483,9 +483,10 @@ Set settings as well as load EVIL and complementary packages.
     ;; Extra packages
     "s" 'yas-insert-snippet
     "F" 'format-all-region-or-buffer
-    "D" 'dirvish-side)
+    "D" 'dirvish-side
+    "/" 'consult-line)
 
-  ;; Meta prefixes (with space)
+  ;; Extra meta prefixes
   (general-nmap
     :prefix "SPC m"
     "x" 'execute-extended-command)
@@ -533,9 +534,17 @@ Set settings as well as load EVIL and complementary packages.
   (global-set-key (kbd "C-;") (kbd "C-z"))
 #+end_src
 
+*** Compile Mode
+
+#+begin_src emacs-lisp :tangle "init.el"
+  (add-hook 'python-mode-hook
+	    (lambda () (set (make-local-variable 'compile-command)
+			    (format "python3 %s" (file-name-nondirectory buffer-file-name)))))
+#+end_src
+
 *** Dired
 
-Emacs directory editor
+Builtin Emacs directory editor
 
 #+begin_src emacs-lisp :tangle "init.el"
   ;; https://www.gnu.org/software/emacs/manual/html_node/emacs/Dired.html
@@ -544,48 +553,6 @@ Emacs directory editor
     :commands (dired dired-jump)
     :config
     (setq dired-dwim-target t))
-
-  ;; Fancy, polished and modernized dired
-  ;; https://github.com/alexluigit/dirvish
-  ;; https://github.com/alexluigit/dirvish/blob/main/docs/CUSTOMIZING.org#sample-config
-  (use-package dirvish
-    :straight t
-    :init
-    (dirvish-override-dired-mode)
-    :custom
-    (dirvish-quick-access-entries
-     '(("h" "~/"                          "Home")
-       ("d" "~/Downloads/"                "Downloads")))
-    :config
-    (dirvish-peek-mode)
-    (dirvish-side-follow-mode)
-    (setq dirvish-mode-line-format
-	  '(:left (sort symlink) :right (omit yank index)))
-    (setq dirvish-attributes           ; The order *MATTERS* for some attributes
-	  '(vc-state subtree-state nerd-icons collapse git-msg file-time file-size)
-	  dirvish-side-attributes
-	  '(vc-state nerd-icons collapse file-size))
-    (setq dirvish-large-directory-threshold 20000)
-    :bind
-    (("C-c -" . dirvish-side)
-      :map dirvish-mode-map               ; Dirvish inherits `dired-mode-map'
-      (";"   . dired-up-directory)        ; So you can adjust `dired' bindings here
-      ("?"   . dirvish-dispatch)          ; [?] a helpful cheatsheet
-      ("a"   . dirvish-setup-menu)        ; [a]ttributes settings:`t' toggles mtime, `f' toggles fullframe, etc.
-      ("f"   . dirvish-file-info-menu)    ; [f]ile info
-      ("o"   . dirvish-quick-access)      ; [o]pen `dirvish-quick-access-entries'
-      ("s"   . dirvish-quicksort)         ; [s]ort flie list
-      ("r"   . dirvish-history-jump)      ; [r]ecent visited
-      ("l"   . dirvish-ls-switches-menu)  ; [l]s command flags
-      ("v"   . dirvish-vc-menu)           ; [v]ersion control commands
-      ("*"   . dirvish-mark-menu)
-      ("y"   . dirvish-yank-menu)
-      ("N"   . dirvish-narrow)
-      ("^"   . dirvish-history-last)
-      ("TAB" . dirvish-subtree-toggle)
-      ("M-f" . dirvish-history-go-forward)
-      ("M-b" . dirvish-history-go-backward)
-      ("M-e" . dirvish-emerge-menu)))
 #+end_src
 
 *** Org (org-mode)
@@ -609,16 +576,18 @@ Emacs directory editor
     (setq org-treat-insert-todo-heading-as-state-change t)
     (setq org-log-done t))
 
-  ;; Keep headers stuck to the top of the buffer
+  ;; Sticky headers at the top of the buffer (matching org outline)
   ;; https://github.com/alphapapa/org-sticky-header/tree/master
   (use-package org-sticky-header
     :config
     (setq org-sticky-header-full-path 'full)
-    :straight t)
+    :straight t
+    :hook (org-mode . org-sticky-header-mode))
 
   ;; css and syntax highlighting for exported docs
   (use-package htmlize
     :straight t)
+
   ;; org-export packages
   ;; (use-package ox-pandoc
   ;;   :straight t)
@@ -647,6 +616,52 @@ Emacs directory editor
     :straight t)
 #+end_src
 
+*** Dirvish (fancy/modern dired)
+
+#+begin_src emacs-lisp :tangle "init.el"
+  ;; Fancy, polished and modernized dired
+  ;; https://github.com/alexluigit/dirvish
+  ;; https://github.com/alexluigit/dirvish/blob/main/docs/CUSTOMIZING.org#sample-config
+  (use-package dirvish
+    :straight t
+    :init
+    (dirvish-override-dired-mode)
+    :custom
+    (dirvish-quick-access-entries
+     '(("h" "~/"                          "Home")
+       ("d" "~/Downloads/"                "Downloads")))
+    :config
+    (dirvish-peek-mode)
+    (dirvish-side-follow-mode)
+    (setq dirvish-mode-line-format
+  	  '(:left (sort symlink) :right (omit yank index)))
+    (setq dirvish-attributes           ; The order *MATTERS* for some attributes
+  	  '(vc-state subtree-state nerd-icons collapse git-msg file-time file-size)
+  	  dirvish-side-attributes
+  	  '(vc-state nerd-icons collapse file-size))
+    (setq dirvish-large-directory-threshold 20000)
+    :bind
+    (("C-c -" . dirvish-side)
+      :map dirvish-mode-map               ; Dirvish inherits `dired-mode-map'
+      (";"   . dired-up-directory)        ; So you can adjust `dired' bindings here
+      ("?"   . dirvish-dispatch)          ; [?] a helpful cheatsheet
+      ("a"   . dirvish-setup-menu)        ; [a]ttributes settings:`t' toggles mtime, `f' toggles fullframe, etc.
+      ("f"   . dirvish-file-info-menu)    ; [f]ile info
+      ("o"   . dirvish-quick-access)      ; [o]pen `dirvish-quick-access-entries'
+      ("s"   . dirvish-quicksort)         ; [s]ort flie list
+      ("r"   . dirvish-history-jump)      ; [r]ecent visited
+      ("l"   . dirvish-ls-switches-menu)  ; [l]s command flags
+      ("v"   . dirvish-vc-menu)           ; [v]ersion control commands
+      ("*"   . dirvish-mark-menu)
+      ("y"   . dirvish-yank-menu)
+      ("N"   . dirvish-narrow)
+      ("^"   . dirvish-history-last)
+      ("TAB" . dirvish-subtree-toggle)
+      ("M-f" . dirvish-history-go-forward)
+      ("M-b" . dirvish-history-go-backward)
+      ("M-e" . dirvish-emerge-menu)))
+#+end_src
+
 *** Theme and Highlight (doom-themes)
 
 #+begin_src emacs-lisp :tangle "init.el"
@@ -663,11 +678,11 @@ Emacs directory editor
     :straight t
     :hook (after-init . doom-modeline-mode))
 
+  ;; Sticky headers for programming modes
+  ;; https://github.com/alphapapa/topsy.el
   (use-package topsy
-  :straight t
-  :hook
-  (prog-mode . topsy-mode)
-  (magit-section-mode . topsy-mode))
+  :straight t)
+  ;; :hook (prog-mode . topsy-mode))
 
   ;; Highlights TODOs and other configured keywords in buffer
   ;; https://github.com/tarsius/hl-todo
@@ -676,14 +691,14 @@ Emacs directory editor
     :hook (prog-mode . hl-todo-mode)
     :config
     (setq hl-todo-highlight-punctuation ":"
-	    hl-todo-keyword-faces
-	    `(("TODO"       warning bold)
-	      ("FIXME"      error bold)
-	      ("HACK"       font-lock-constant-face bold)
-	      ("REVIEW"     font-lock-keyword-face bold)
-	      ("NOTE"       success bold)
-	      ("DEPRECATED" font-lock-doc-face bold))))
-					    ; TODO: look into todo integrations
+  	    hl-todo-keyword-faces
+  	    `(("TODO"       warning bold)
+  	      ("FIXME"      error bold)
+  	      ("HACK"       font-lock-constant-face bold)
+  	      ("REVIEW"     font-lock-keyword-face bold)
+  	      ("NOTE"       success bold)
+  	      ("DEPRECATED" font-lock-doc-face bold))))
+  					    ; TODO: look into todo integrations
 
   ;; Colorize color names in buffers
   ;; https://github.com/emacsmirror/rainbow-mode
@@ -781,7 +796,6 @@ Emacs directory editor
 *** Completion At Point (in main buffers)
 
 #+begin_src emacs-lisp :tangle "init.el"
-
   ;; corfu: mini completion ui
   ;;https://github.com/minad/corfu
   (use-package corfu
@@ -910,10 +924,11 @@ Emacs directory editor
 *** Extra Language Modes
 
 #+begin_src emacs-lisp :tangle "init.el"
-  ;; TODO: install/configure eglot lsp
   (use-package eglot
     :straight nil
-    :defer t)
+    :defer t
+    :hook ((python-mode . eglot-ensure)
+  	   (go-mode . eglot-ensure)))
 
   ;;; Extra Language Modes
   ;; Lua mode
@@ -1074,6 +1089,34 @@ Emacs directory editor
       (let ((process-connection-type nil)) (start-process "" nil "x-terminal-emulator" (concat "--working-directory=" default-directory))))
      ((eq system-type 'berkeley-unix)
       (let ((process-connection-type nil)) (start-process "" nil "x-terminal-emulator" (concat "--working-directory=" default-directory))))))
+#+end_src
+
+*** Misc Windows Dotfiles Setup
+
+**** Setting up Windows Dotfile path variable
+
+Create env variable pointing to dotfiles
+
+#+begin_src powershell
+  # set user environment variable pointing to dotfiles
+  [Environment]::SetEnvironmentVariable("DOTFILES", "C:\Users\<user>\path\to\dotfiles", "User")
+#+end_src
+
+**** Linking emacs config to dotfiles repo tracked by Git
+
+#+begin_src powershell
+  New-Item -ItemType SymbolicLink -Path ~/.emacs.d/init.org -Value $env:DOTFILES\config\emacs\.config\emacs\init.org
+  New-Item -ItemType SymbolicLink -Path ~/.emacs.d/init.el -Value $env:DOTFILES\config\emacs\.config\emacs\init.el
+#+end_src
+
+**** PS Readline Emulation
+
+`$PROFILE` is loaded by PowerShell, similar to `.bashrc` in bash.
+
+#+begin_src powershell
+  # PS C:\Users\<user>\.emacs.d> echo $PROFILE
+  # C:\Users\<user>\Documents\PowerShell\Microsoft.PowerShell_profile.ps1
+  echo "Set-PSReadLineOption -EditMode Emacs" >> $PROFILE
 #+end_src
 
 ** FIN

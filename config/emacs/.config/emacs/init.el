@@ -169,6 +169,7 @@
 
 ;; Language-Specific Tab Tweaks
 (setq-default python-indent-offset custom-tab-width) ;; Python
+(setq-default python-indent-level custom-tab-width)  ;; Python
 (setq-default js-indent-level custom-tab-width)      ;; Javascript
 (setq-default sh-indent-level custom-tab-width)      ;; Shell
 (setq-default sh-basic-offset custom-tab-width)      ;; Shell
@@ -255,19 +256,21 @@
 ;; bootstrap straight.el package manager
 (defvar bootstrap-version)
 (let ((bootstrap-file
-	 (expand-file-name
-	  "straight/repos/straight.el/bootstrap.el"
-	  (or (bound-and-true-p straight-base-dir)
-	      user-emacs-directory)))
-	(bootstrap-version 7))
+       (expand-file-name
+        "straight/repos/straight.el/bootstrap.el"
+        (or (bound-and-true-p straight-base-dir)
+            user-emacs-directory)))
+      (bootstrap-version 7))
   (unless (file-exists-p bootstrap-file)
     (with-current-buffer
-	  (url-retrieve-synchronously
-	   "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
-	   'silent 'inhibit-cookies)
-	(goto-char (point-max))
-	(eval-print-last-sexp)))
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
+
+(setq package-install-upgrade-built-in t)
 
 ;;; Set Emacs path == shell path (exec-path-from-shell)
 ;; add paths from shell by default
@@ -294,8 +297,8 @@
 	    evil-normal-state-cursor '(box "yellow")
 	    evil-visual-state-cursor '(hollow "#1aa5db")
 	      evil-emacs-state-cursor '(box "cyan"))
-  ;; (setq evil-want-keybinding nil)
-  ;; (setq evil-want-integration t)
+  (setq evil-want-keybinding nil)
+  (setq evil-want-integration t)
   :config
   (evil-mode 1))
 
@@ -307,14 +310,14 @@
 
 ;; ;;; Make Evil work in more modes than by default
 ;; ;; https://github.com/emacs-evil/evil-collection
-;; (use-package evil-collection
-;;   :straight t
-;;   :after evil
-;;   :defer t
-;;   :init
-;;   (evil-collection-init))
-(evil-set-initial-state 'dired-mode 'emacs)
-(evil-set-initial-state 'magit-mode 'emacs)
+(use-package evil-collection
+  :straight t
+  :after evil
+  :defer t
+  :init
+  (evil-collection-init))
+;; (evil-set-initial-state 'dired-mode 'emacs)
+;; (evil-set-initial-state 'magit-mode 'emacs)
 
 ;;; Bindings and functionality to comment out code and other text objects
 ;; https://github.com/linktohack/evil-commentary
@@ -369,12 +372,9 @@
   "w" 'save-buffer
   "l" 'ibuffer
   "q" 'evil-delete-buffer
-  ;; Search and replace (interactive)
-  "o" 'occur
-  "r" 'replace-regexp
-  "y" 'yank-from-kill-ring
   ;; Running external stuff
   "c" 'compile
+  "r" 'recompile
   "!" 'shell-command
   "&" 'async-shell-command
   ;; Jumping places
@@ -387,9 +387,10 @@
   ;; Extra packages
   "s" 'yas-insert-snippet
   "F" 'format-all-region-or-buffer
-  "D" 'dirvish-side)
+  "D" 'dirvish-side
+  "/" 'consult-line)
 
-;; Meta prefixes (with space)
+;; Extra meta prefixes
 (general-nmap
   :prefix "SPC m"
   "x" 'execute-extended-command)
@@ -436,12 +437,65 @@
 ;; more ergo keybind for switching to normal<->emacs state
 (global-set-key (kbd "C-;") (kbd "C-z"))
 
+(add-hook 'python-mode-hook
+	    (lambda () (set (make-local-variable 'compile-command)
+			    (format "python3 %s" (file-name-nondirectory buffer-file-name)))))
+
 ;; https://www.gnu.org/software/emacs/manual/html_node/emacs/Dired.html
 (use-package dired
   :straight nil
   :commands (dired dired-jump)
   :config
   (setq dired-dwim-target t))
+
+;; Org mode (organization outline framework)
+(straight-use-package '(org :type built-in)) ;; use builtin org
+;; https://orgmode.org/
+(use-package org
+  :straight nil
+  :config
+  '(org-export-backends '(ascii html icalendar latex man md odt org))
+  (global-set-key (kbd "C-c a") #'org-agenda)
+  (global-set-key (kbd "C-c c") #'org-capture)
+  (global-set-key (kbd "C-c l") #'org-store-link)
+  (setq org-html-htmlize-output-type 'css)
+  (setq org-clock-persist 'history)
+  (setq org-agenda-files (list "~/Documents/notes/org/life.org"))
+  (org-clock-persistence-insinuate)
+  (setq org-todo-keywords '((sequence "TODO(!)" "IN PROGRESS" "DONE")))
+  (setq org-treat-insert-todo-heading-as-state-change t)
+  (setq org-log-done t))
+
+;; Sticky headers at the top of the buffer (matching org outline)
+;; https://github.com/alphapapa/org-sticky-header/tree/master
+(use-package org-sticky-header
+  :config
+  (setq org-sticky-header-full-path 'full)
+  :straight t
+  :hook (org-mode . org-sticky-header-mode))
+
+;; css and syntax highlighting for exported docs
+(use-package htmlize
+  :straight t)
+
+;; org-export packages
+;; (use-package ox-pandoc
+;;   :straight t)
+
+;;; Markdown support for emacs
+;; https://github.com/jrblevin/markdown-mode
+(use-package markdown-mode
+  :straight t
+  :mode ("README\\.md\\'" . gfm-mode)
+  :init (setq markdown-command "multimarkdown")
+  (setq markdown-fontify-code-blocks-natively t) ; Make code block syntax highlighted
+  :bind(:map markdown-mode-map
+	       ("C-c C-e" . markdown-do)))
+
+;; Magit (intuitive git interface)
+;; https://magit.vc/
+(use-package magit
+  :straight t)
 
 ;; Fancy, polished and modernized dired
 ;; https://github.com/alexluigit/dirvish
@@ -485,53 +539,6 @@
     ("M-b" . dirvish-history-go-backward)
     ("M-e" . dirvish-emerge-menu)))
 
-;; Org mode (organization outline framework)
-(straight-use-package '(org :type built-in)) ;; use builtin org
-;; https://orgmode.org/
-(use-package org
-  :straight nil
-  :config
-  '(org-export-backends '(ascii html icalendar latex man md odt org))
-  (global-set-key (kbd "C-c a") #'org-agenda)
-  (global-set-key (kbd "C-c c") #'org-capture)
-  (global-set-key (kbd "C-c l") #'org-store-link)
-  (setq org-html-htmlize-output-type 'css)
-  (setq org-clock-persist 'history)
-  (setq org-agenda-files (list "~/Documents/notes/org/life.org"))
-  (org-clock-persistence-insinuate)
-  (setq org-todo-keywords '((sequence "TODO(!)" "IN PROGRESS" "DONE")))
-  (setq org-treat-insert-todo-heading-as-state-change t)
-  (setq org-log-done t))
-
-;; Keep headers stuck to the top of the buffer
-;; https://github.com/alphapapa/org-sticky-header/tree/master
-(use-package org-sticky-header
-  :config
-  (setq org-sticky-header-full-path 'full)
-  :straight t)
-
-;; css and syntax highlighting for exported docs
-(use-package htmlize
-  :straight t)
-;; org-export packages
-;; (use-package ox-pandoc
-;;   :straight t)
-
-;;; Markdown support for emacs
-;; https://github.com/jrblevin/markdown-mode
-(use-package markdown-mode
-  :straight t
-  :mode ("README\\.md\\'" . gfm-mode)
-  :init (setq markdown-command "multimarkdown")
-  (setq markdown-fontify-code-blocks-natively t) ; Make code block syntax highlighted
-  :bind(:map markdown-mode-map
-	       ("C-c C-e" . markdown-do)))
-
-;; Magit (intuitive git interface)
-;; https://magit.vc/
-(use-package magit
-  :straight t)
-
 ;; https://github.com/doomemacs/themes
 (use-package doom-themes
   :straight t
@@ -545,11 +552,11 @@
   :straight t
   :hook (after-init . doom-modeline-mode))
 
+;; Sticky headers for programming modes
+;; https://github.com/alphapapa/topsy.el
 (use-package topsy
-:straight t
-:hook
-(prog-mode . topsy-mode)
-(magit-section-mode . topsy-mode))
+:straight t)
+;; :hook (prog-mode . topsy-mode))
 
 ;; Highlights TODOs and other configured keywords in buffer
 ;; https://github.com/tarsius/hl-todo
@@ -766,10 +773,11 @@
   :straight t
   :init)
 
-;; TODO: install/configure eglot lsp
 (use-package eglot
   :straight nil
-  :defer t)
+  :defer t
+  :hook ((python-mode . eglot-ensure)
+	   (go-mode . eglot-ensure)))
 
 ;;; Extra Language Modes
 ;; Lua mode
