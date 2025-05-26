@@ -1,10 +1,10 @@
-;;; init.el -- EMACS -*- lexical-binding: t -*-
+;;; init.el -*- lexical-binding: t -*-
 ;;;
 ;;; Author: James Dixon <notjamesdixon@gmail.com>
 ;;; Maintainer: James Dixon <notjamesdixon@gmail.com>
 ;;;
 ;;; Commentary:
-;;; My Literate Emacs Config
+;;; My Emacs Config
 ;;;
 ;;; Code:
 
@@ -42,9 +42,9 @@
 
 ;; Show paren differently
 (setq show-paren-delay 0.1
-	show-paren-highlight-openparen t
-	show-paren-when-point-inside-paren t
-	show-paren-when-point-in-periphery t)
+      show-paren-highlight-openparen t
+      show-paren-when-point-inside-paren t
+      show-paren-when-point-in-periphery t)
 
 ;;; Comment Settings
 (setq comment-multi-line t)
@@ -54,8 +54,8 @@
 ;;; Memory Limits and Performance
 ;; Undo/Redo
 (setq undo-limit (* 13 160000)
-	undo-strong-limit (* 13 240000)
-	undo-outer-limit (* 13 24000000))
+      undo-strong-limit (* 13 240000)
+      undo-outer-limit (* 13 24000000))
 
 ;; Garbage Collection
 (setq gc-cons-threshold-original gc-cons-threshold)
@@ -88,10 +88,10 @@
 (setq history-length 300)
 (setq savehist-save-minibuffer-history t)  ;; Default
 (setq savehist-additional-variables
-	'(kill-ring                        ; clipboard
-	  register-alist                   ; macros
-	  mark-ring global-mark-ring       ; marks
-	  search-ring regexp-search-ring)) ; searches
+      '(kill-ring                        ; clipboard
+	register-alist                   ; macros
+	mark-ring global-mark-ring       ; marks
+	search-ring regexp-search-ring)) ; searches
 ;; savehist is an Emacs feature that preserves the minibuffer history between sessions
 (add-hook 'after-init-hook #'savehist-mode)
 ;; save-place-mode enables Emacs to remember the last location within a file
@@ -109,34 +109,6 @@
 
 ;; Auto-refresh buffers when files on disk change.
 (global-auto-revert-mode t)
-
-(define-minor-mode clean-trailing-whitespace-mode
-  "Tidy up trailing whitespace with `delete-trailing-whitespace' before saving."
-  :lighter " ctsv"
-  (if clean-trailing-whitespace-mode
-	(add-hook 'before-save-hook #'delete-trailing-whitespace nil t)
-    (remove-hook 'before-save-hook #'delete-trailing-whitespace t)))
-
-(define-minor-mode clean-all-whitespace-mode
-  "Tidy up *all* whitespace with `whitespace-cleanup' before saving."
-  :lighter " casv"
-  (if clean-trailing-whitespace-mode
-	(add-hook 'before-save-hook #'whitespace-cleanup nil t)
-    (remove-hook 'before-save-hook #'whitespace-cleanup t)))
-
-(define-minor-mode check-parens-save-mode
-  "Check the balance of parens with `check-parens' before saving."
-  :lighter " cpns"
-  (if check-parens-save-mode
-	(add-hook 'before-save-mode #'check-parens nil t)
-    (remove-hook 'before-save-mode #'check-parens t)))
-
-;;; Minor Mode Hooks
-;; (add-hook 'prog-mode #'clean-all-whitespace-mode)
-;; (add-hook 'org-mode #'clean-all-whitespace-mode)
-;;
-;; (add-hook 'emacs-lisp-mode #'check-parens-save-mode)
-;; (add-hook 'emacs-lisp-mode #'outline-minor-mode)
 
 ;;; Custom Tab Settings
 ;; https://dougie.io/emacs/indentation/
@@ -180,6 +152,34 @@
 ;; Make the backspace properly erase the tab instead of removing 1 space at a time.
 (setq backward-delete-char-untabify-method 'hungry)
 
+(define-minor-mode clean-trailing-whitespace-mode
+  "Tidy up trailing whitespace with `delete-trailing-whitespace' before saving."
+  :lighter " ctsv"
+  (if clean-trailing-whitespace-mode
+      (add-hook 'before-save-hook #'delete-trailing-whitespace nil t)
+    (remove-hook 'before-save-hook #'delete-trailing-whitespace t)))
+
+(define-minor-mode clean-all-whitespace-mode
+  "Tidy up *all* whitespace with `whitespace-cleanup' before saving."
+  :lighter " casv"
+  (if clean-trailing-whitespace-mode
+      (add-hook 'before-save-hook #'whitespace-cleanup nil t)
+    (remove-hook 'before-save-hook #'whitespace-cleanup t)))
+
+(define-minor-mode check-parens-save-mode
+  "Check the balance of parens with `check-parens' before saving."
+  :lighter " cpns"
+  (if check-parens-save-mode
+      (add-hook 'before-save-mode #'check-parens nil t)
+    (remove-hook 'before-save-mode #'check-parens t)))
+
+;;; Minor Mode Hooks
+;; (add-hook 'prog-mode #'clean-all-whitespace-mode)
+;; (add-hook 'org-mode #'clean-all-whitespace-mode)
+;;
+;; (add-hook 'emacs-lisp-mode #'check-parens-save-mode)
+;; (add-hook 'emacs-lisp-mode #'outline-minor-mode)
+
 ;; https://stackoverflow.com/questions/6286579/emacs-shell-mode-how-to-send-region-to-shell/7053298#7053298
 (defun shell-region (start end)
   "Execute region START to END in an inferior shell."
@@ -193,10 +193,10 @@
 `I` ignore binary files; `E` extended regular expressions; `r` recursive"
   (interactive)
   (let* ((grep-flags "-inrEI --color=always -C3")
-	   (search-term (read-string (format "Recursive regex search with grep %s: " grep-flags)))
-	   (search-path (directory-file-name (expand-file-name (read-directory-name "directory:  "))))
-	   (default-directory (file-name-as-directory search-path))
-	   (grep-command (concat grep-program " " grep-flags " " search-term " " search-path)))
+	 (search-term (read-string (format "Recursive regex search with grep %s: " grep-flags)))
+	 (search-path (directory-file-name (expand-file-name (read-directory-name "directory:  "))))
+	 (default-directory (file-name-as-directory search-path))
+	 (grep-command (concat grep-program " " grep-flags " " search-term " " search-path)))
     (compilation-start grep-command 'grep-mode (lambda (mode) "*grep*") nil)))
 
 ;; Open External Terminal Emulator
@@ -257,15 +257,15 @@
 (defvar bootstrap-version)
 (let ((bootstrap-file
        (expand-file-name
-        "straight/repos/straight.el/bootstrap.el"
-        (or (bound-and-true-p straight-base-dir)
-            user-emacs-directory)))
+	"straight/repos/straight.el/bootstrap.el"
+	(or (bound-and-true-p straight-base-dir)
+	    user-emacs-directory)))
       (bootstrap-version 7))
   (unless (file-exists-p bootstrap-file)
     (with-current-buffer
-        (url-retrieve-synchronously
-         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
-         'silent 'inhibit-cookies)
+	(url-retrieve-synchronously
+	 "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+	 'silent 'inhibit-cookies)
       (goto-char (point-max))
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
@@ -294,9 +294,9 @@
   (setq evil-ex-visual-char-range t)
   (setq evil-disable-insert-state-bindings t)
   (setq evil-insert-state-cursor '(box "violet")
-	    evil-normal-state-cursor '(box "yellow")
-	    evil-visual-state-cursor '(hollow "#1aa5db")
-	      evil-emacs-state-cursor '(box "cyan"))
+	evil-normal-state-cursor '(box "yellow")
+	evil-visual-state-cursor '(hollow "#1aa5db")
+	evil-emacs-state-cursor '(box "cyan"))
   (setq evil-want-keybinding nil)
   (setq evil-want-integration t)
   :config
@@ -432,21 +432,27 @@
 ;;; Vanilla Emacs Keybinds
 (global-set-key (kbd "C-c i") (lambda () (interactive) (find-file (concat user-emacs-directory "/init.org"))))
 (global-set-key (kbd "C-c d") (lambda () (interactive) (find-file (getenv "DOTFILES"))))
-(global-set-key (kbd "C-c g") (lambda () (interactive) (find-file (concat (getenv "DOTFILES") "/config/emacs/.config/emacs/init.el"))))
 
 ;; more ergo keybind for switching to normal<->emacs state
 (global-set-key (kbd "C-;") (kbd "C-z"))
 
-(add-hook 'python-mode-hook
-	    (lambda () (set (make-local-variable 'compile-command)
-			    (format "python3 %s" (file-name-nondirectory buffer-file-name)))))
+;;; Better discoverability for key mappings (which-key)
+;; https://github.com/justbur/emacs-which-key
+;; builtin to emacs > 30.1
+(use-package which-key
+  :straight t
+  :init (which-key-mode 1))
 
-;; https://www.gnu.org/software/emacs/manual/html_node/emacs/Dired.html
-(use-package dired
-  :straight nil
-  :commands (dired dired-jump)
-  :config
-  (setq dired-dwim-target t))
+  ;;; Better help menus (helpful)
+;; https://github.com/Wilfred/helpful
+(use-package helpful
+  :straight t
+  :bind
+  (("C-c C-d" . helpful-at-point)    ; Lookup the symbol at point
+   ("C-h f" . helpful-callable)      ; Describe a function
+   ("C-h v" . helpful-variable)      ; Describe a variable
+   ("C-h k" . helpful-key)           ; Describe a key binding
+   ("C-h x" . helpful-command)))     ; Describe a command
 
 ;; Org mode (organization outline framework)
 (straight-use-package '(org :type built-in)) ;; use builtin org
@@ -490,12 +496,19 @@
   :init (setq markdown-command "multimarkdown")
   (setq markdown-fontify-code-blocks-natively t) ; Make code block syntax highlighted
   :bind(:map markdown-mode-map
-	       ("C-c C-e" . markdown-do)))
+	     ("C-c C-e" . markdown-do)))
 
 ;; Magit (intuitive git interface)
 ;; https://magit.vc/
 (use-package magit
   :straight t)
+
+;; https://www.gnu.org/software/emacs/manual/html_node/emacs/Dired.html
+(use-package dired
+  :straight nil
+  :commands (dired dired-jump)
+  :config
+  (setq dired-dwim-target t))
 
 ;; Fancy, polished and modernized dired
 ;; https://github.com/alexluigit/dirvish
@@ -512,45 +525,45 @@
   (dirvish-peek-mode)
   (dirvish-side-follow-mode)
   (setq dirvish-mode-line-format
-	  '(:left (sort symlink) :right (omit yank index)))
+	'(:left (sort symlink) :right (omit yank index)))
   (setq dirvish-attributes           ; The order *MATTERS* for some attributes
-	  '(vc-state subtree-state nerd-icons collapse git-msg file-time file-size)
-	  dirvish-side-attributes
-	  '(vc-state nerd-icons collapse file-size))
+	'(vc-state subtree-state nerd-icons collapse git-msg file-time file-size)
+	dirvish-side-attributes
+	'(vc-state nerd-icons collapse file-size))
   (setq dirvish-large-directory-threshold 20000)
   :bind
   (("C-c -" . dirvish-side)
-    :map dirvish-mode-map               ; Dirvish inherits `dired-mode-map'
-    (";"   . dired-up-directory)        ; So you can adjust `dired' bindings here
-    ("?"   . dirvish-dispatch)          ; [?] a helpful cheatsheet
-    ("a"   . dirvish-setup-menu)        ; [a]ttributes settings:`t' toggles mtime, `f' toggles fullframe, etc.
-    ("f"   . dirvish-file-info-menu)    ; [f]ile info
-    ("o"   . dirvish-quick-access)      ; [o]pen `dirvish-quick-access-entries'
-    ("s"   . dirvish-quicksort)         ; [s]ort flie list
-    ("r"   . dirvish-history-jump)      ; [r]ecent visited
-    ("l"   . dirvish-ls-switches-menu)  ; [l]s command flags
-    ("v"   . dirvish-vc-menu)           ; [v]ersion control commands
-    ("*"   . dirvish-mark-menu)
-    ("y"   . dirvish-yank-menu)
-    ("N"   . dirvish-narrow)
-    ("^"   . dirvish-history-last)
-    ("TAB" . dirvish-subtree-toggle)
-    ("M-f" . dirvish-history-go-forward)
-    ("M-b" . dirvish-history-go-backward)
-    ("M-e" . dirvish-emerge-menu)))
+   :map dirvish-mode-map               ; Dirvish inherits `dired-mode-map'
+   (";"   . dired-up-directory)        ; So you can adjust `dired' bindings here
+   ("?"   . dirvish-dispatch)          ; [?] a helpful cheatsheet
+   ("a"   . dirvish-setup-menu)        ; [a]ttributes settings:`t' toggles mtime, `f' toggles fullframe, etc.
+   ("f"   . dirvish-file-info-menu)    ; [f]ile info
+   ("o"   . dirvish-quick-access)      ; [o]pen `dirvish-quick-access-entries'
+   ("s"   . dirvish-quicksort)         ; [s]ort flie list
+   ("r"   . dirvish-history-jump)      ; [r]ecent visited
+   ("l"   . dirvish-ls-switches-menu)  ; [l]s command flags
+   ("v"   . dirvish-vc-menu)           ; [v]ersion control commands
+   ("*"   . dirvish-mark-menu)
+   ("y"   . dirvish-yank-menu)
+   ("N"   . dirvish-narrow)
+   ("^"   . dirvish-history-last)
+   ("TAB" . dirvish-subtree-toggle)
+   ("M-f" . dirvish-history-go-forward)
+   ("M-b" . dirvish-history-go-backward)
+   ("M-e" . dirvish-emerge-menu)))
 
 ;; https://github.com/doomemacs/themes
 (use-package doom-themes
-  :straight t
-  :config)
+:straight t
+:config)
 ;; (load-theme 'doom-badger t))
 ;; (load-theme 'doom-ir-black t))
 
 ;; Doom Modeline - much easier on the eyes
 ;; https://github.com/seagle0128/doom-modeline
 (use-package doom-modeline
-  :straight t
-  :hook (after-init . doom-modeline-mode))
+:straight t
+:hook (after-init . doom-modeline-mode))
 
 ;; Sticky headers for programming modes
 ;; https://github.com/alphapapa/topsy.el
@@ -561,47 +574,52 @@
 ;; Highlights TODOs and other configured keywords in buffer
 ;; https://github.com/tarsius/hl-todo
 (use-package hl-todo
-  :straight t
-  :hook (prog-mode . hl-todo-mode)
-  :config
-  (setq hl-todo-highlight-punctuation ":"
-	    hl-todo-keyword-faces
-	    `(("TODO"       warning bold)
-	      ("FIXME"      error bold)
-	      ("HACK"       font-lock-constant-face bold)
-	      ("REVIEW"     font-lock-keyword-face bold)
-	      ("NOTE"       success bold)
-	      ("DEPRECATED" font-lock-doc-face bold))))
-					    ; TODO: look into todo integrations
+:straight t
+:hook (prog-mode . hl-todo-mode)
+:config
+(setq hl-todo-highlight-punctuation ":"
+    hl-todo-keyword-faces
+    `(("TODO"       warning bold)
+      ("FIXME"      error bold)
+      ("HACK"       font-lock-constant-face bold)
+      ("REVIEW"     font-lock-keyword-face bold)
+      ("NOTE"       success bold)
+      ("DEPRECATED" font-lock-doc-face bold))))
+				      ; TODO: look into todo integrations
 
 ;; Colorize color names in buffers
 ;; https://github.com/emacsmirror/rainbow-mode
 (use-package rainbow-mode
-  :straight t)
+:straight t)
 
 ;; Rainbow Delimiters - who doesn't love colors
 ;; https://github.com/Fanael/rainbow-delimiters
 (use-package rainbow-delimiters
-  :straight t
-  :init (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
+:straight t
+:init (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
 
 ;; Git Gutter -- sidebar / fringe indicators of changes
 ;; https://github.com/emacsorphanage/git-gutter
 (use-package git-gutter
-  :hook (prog-mode . git-gutter-mode)
-  :straight t
-  :config
-  (setq git-gutter:update-interval 0.2))
+:hook (prog-mode . git-gutter-mode)
+:straight t
+:config
+(setq git-gutter:update-interval 0.2))
 
 ;; TODO: disable this in terminal mode
 ;; highlights the modified region (yank/kill)
 ;; https://github.com/minad/goggles
 (use-package goggles
-  :straight t
-  :hook ((prog-mode org-mode) . goggles-mode)
-  :config
-  (goggles-define yank evil-paste-after) ; make pasting from evil mode highlighted
-  (setq-default goggles-pulse t))
+:straight t
+:hook ((prog-mode org-mode) . goggles-mode)
+:config
+(goggles-define yank evil-paste-after) ; make pasting from evil mode highlighted
+(setq-default goggles-pulse t))
+
+;; NYAN x inf
+;; https://github.com/TeMPOraL/nyan-mode
+(use-package nyan-mode
+:straight t)
 
 ;;; Mini-buffer improvements (fido, orderless, marginalia)
 ;; Let's try [icomplete / fido / ido] mode for a while.
@@ -659,7 +677,7 @@
   (advice-add #'register-preview :override #'consult-register-window)
   (setq register-preview-delay 0.5)
   (setq xref-show-xrefs-function #'consult-xref
-	  xref-show-definitions-function #'consult-xref))
+	xref-show-definitions-function #'consult-xref))
 
 ;; corfu: mini completion ui
 ;;https://github.com/minad/corfu
@@ -701,30 +719,12 @@
   ;; useful beyond Corfu.
   (read-extended-command-predicate #'command-completion-default-include-p))
 
-;;; Better discoverability for key mappings (which-key)
-;; https://github.com/justbur/emacs-which-key
-;; builtin to emacs > 30.1
-(use-package which-key
-  :straight t
-  :init (which-key-mode 1))
-
-  ;;; Better help menus (helpful)
-;; https://github.com/Wilfred/helpful
-(use-package helpful
-  :straight t
-  :bind
-  (("C-c C-d" . helpful-at-point)    ; Lookup the symbol at point
-   ("C-h f" . helpful-callable)      ; Describe a function
-   ("C-h v" . helpful-variable)      ; Describe a variable
-   ("C-h k" . helpful-key)           ; Describe a key binding
-   ("C-h x" . helpful-command)))     ; Describe a command
-
 ;; Syntax checking
 ;; https://www.flycheck.org/en/latest/languages.html
 ;; https://github.com/flycheck/flycheck
 (use-package flycheck
   :straight t
-  :init (add-hook 'after-init-hook #'global-flycheck-mode))
+  :init (global-flycheck-mode))
 
 ;;; External code formatting tool integration (format-all)
 ;; https://github.com/lassik/emacs-format-all-the-code
@@ -742,6 +742,15 @@
   :straight t
   :config
   (global-whitespace-cleanup-mode))
+
+(use-package compile
+  :straight nil
+  :config
+  (setq compilation-scroll-output t))
+
+(add-hook 'python-mode-hook
+  	  (lambda () (set (make-local-variable 'compile-command)
+  			  (format "python3 %s" (file-name-nondirectory buffer-file-name)))))
 
 ;; Abbrevs and Snippets
 ;; URLs
@@ -773,29 +782,24 @@
   :straight t
   :init)
 
+;; LSP Modes
 (use-package eglot
   :straight nil
   :defer t
   :hook ((python-mode . eglot-ensure)
-	   (go-mode . eglot-ensure)))
+	 (go-mode . eglot-ensure)))
 
-;;; Extra Language Modes
+;; Allow flycheck errors to show with eglot
+;;https://github.com/flycheck/flycheck-eglot
+;; (use-package flycheck-eglot
+;;   :straight t
+;;   :after (flycheck eglot)
+;;   :config
+;;   (global-flycheck-eglot-mode 1))
+
 ;; Lua mode
 (use-package lua-mode
   :straight t)
-
-;;; Other misc modes (docker, gptel, load-env-vars, csv-mode)
-(use-package docker
-  :straight t
-  :defer t)
-
-(use-package dockerfile-mode
-  :straight t
-  :defer t)
-
-(use-package csv-mode
-  :straight t
-  :defer t)
 
 ;; JavaScript
 (use-package js
@@ -834,10 +838,28 @@
   (package-install 'json-mode))
 
 (setq-default major-mode
-		(lambda () ; guess major mode from file name
-		  (unless buffer-file-name
-		    (let ((buffer-file-name (buffer-name)))
-		      (set-auto-mode)))))
+	      (lambda () ; guess major mode from file name
+		(unless buffer-file-name
+		  (let ((buffer-file-name (buffer-name)))
+		    (set-auto-mode)))))
+
+;;; Extra Language Modes
+;; docker
+(use-package docker
+  :straight t
+  :defer t)
+(use-package dockerfile-mode
+  :straight t
+  :defer t)
+
+;; csv
+(use-package csv-mode
+  :straight t
+  :defer t)
+
+;; vimrc 
+(use-package vimrc-mode
+  :straight t)
 
 ;; Local Environment File
 (use-package load-env-vars
@@ -846,7 +868,7 @@
 (defvar my-env-file "~/.local/.env" "Local environment file.")
 (let ((my-env-file "~/.local/.env"))
   (if (file-exists-p my-env-file)
-	(load-env-vars my-env-file)))
+      (load-env-vars my-env-file)))
 
 ;; LLM support (must configure with api keys)
 ;; (use-package gptel
@@ -866,12 +888,12 @@
   (set-frame-font "Cascadia Code 12" nil t)
 
   (let ((xlist
-	   '(
-	     "C:/Program Files/PowerShell/7/pwsh.exe"
-	     "~/AppData/Local/Microsoft/WindowsApps/pwsh.exe"
-	     "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe"
-	     ))
-	  xfound)
+	 '(
+	   "C:/Program Files/PowerShell/7/pwsh.exe"
+	   "~/AppData/Local/Microsoft/WindowsApps/pwsh.exe"
+	   "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe"
+	   ))
+	xfound)
     (setq xfound (seq-some (lambda (x) (if (file-exists-p x) x nil)) xlist))
     (when xfound (setq explicit-shell-file-name xfound))))
 
@@ -897,31 +919,18 @@
 ;; xah-lee functions
 ;; http://xahlee.info/index.html
 
-(defun x-open-in-vscode ()
+(defun open-in-vscode ()
   "Open current file or dir in vscode."
   (interactive)
   (let ((xpath (if buffer-file-name buffer-file-name (expand-file-name default-directory))))
     (message "path is %s" xpath)
     (cond
      ((eq system-type 'darwin)
-	(shell-command (format "open -a Visual\\ Studio\\ Code.app %s" (shell-quote-argument xpath))))
+      (shell-command (format "open -a Visual\\ Studio\\ Code.app %s" (shell-quote-argument xpath))))
      ((eq system-type 'windows-nt)
-	(shell-command (format "code.cmd %s" (shell-quote-argument xpath))))
+      (shell-command (format "code.cmd %s" (shell-quote-argument xpath))))
      ((eq system-type 'gnu/linux)
-	(shell-command (format "code %s" (shell-quote-argument xpath)))))))
-
-(defun x-open-in-terminal ()
-  "Open the current dir in a new terminal window."
-  (interactive)
-  (cond
-   ((eq system-type 'windows-nt)
-    (shell-command (concat "wt -d " (shell-quote-argument (expand-file-name default-directory)))))
-   ((eq system-type 'darwin)
-    (shell-command (concat "open -a iTerm " (shell-quote-argument (expand-file-name default-directory)))))
-   ((eq system-type 'gnu/linux)
-    (let ((process-connection-type nil)) (start-process "" nil "x-terminal-emulator" (concat "--working-directory=" default-directory))))
-   ((eq system-type 'berkeley-unix)
-    (let ((process-connection-type nil)) (start-process "" nil "x-terminal-emulator" (concat "--working-directory=" default-directory))))))
+      (shell-command (format "code %s" (shell-quote-argument xpath)))))))
 
 ;;; Buffer local variables - ask to save/tangle.
 ;; Local Variables:

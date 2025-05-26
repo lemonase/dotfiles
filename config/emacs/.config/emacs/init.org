@@ -1,37 +1,36 @@
 #+TITLE: Emacs Literate Config
 #+AUTHOR: James Dixon
 
-* My Literate Emacs with EVIL
+* Emacs Config
+
+Made with +evil+ love
 
 ** Prelude and Initial Comments
 
 Initial comment prelude to appease the commnent gods.
 
 #+begin_src emacs-lisp :tangle "init.el"
-  ;;; init.el -- EMACS -*- lexical-binding: t -*-
+  ;;; init.el -*- lexical-binding: t -*-
   ;;;
   ;;; Author: James Dixon <notjamesdixon@gmail.com>
   ;;; Maintainer: James Dixon <notjamesdixon@gmail.com>
   ;;;
   ;;; Commentary:
-  ;;; My Literate Emacs Config
+  ;;; My Emacs Config
   ;;;
   ;;; Code:
 #+end_src
 
 ** Setting User and Email
 
-We set this for use later on with email and other packages.
+We set this for later use with git, email and other misc. packages.
 
 #+begin_src emacs-lisp :tangle "init.el"
   (setq user-full-name "James Dixon")
   (setq user-mail-address "notjamesdixon@gmail.com")
 #+end_src
 
-** Sensible Defaults
-
-These are things what I would consider more sensible defaults for emacs.
-
+** More Sensible Defaults
 *** UI Settings
 
 - Setting UTF-8 encoding for language
@@ -78,9 +77,9 @@ These are things what I would consider more sensible defaults for emacs.
 
   ;; Show paren differently
   (setq show-paren-delay 0.1
-  	show-paren-highlight-openparen t
-  	show-paren-when-point-inside-paren t
-  	show-paren-when-point-in-periphery t)
+        show-paren-highlight-openparen t
+        show-paren-when-point-inside-paren t
+        show-paren-when-point-in-periphery t)
 
   ;;; Comment Settings
   (setq comment-multi-line t)
@@ -96,8 +95,8 @@ Undo and Garbage Collection Limits Upgrade
   ;;; Memory Limits and Performance
   ;; Undo/Redo
   (setq undo-limit (* 13 160000)
-	undo-strong-limit (* 13 240000)
-	undo-outer-limit (* 13 24000000))
+        undo-strong-limit (* 13 240000)
+        undo-outer-limit (* 13 24000000))
 
   ;; Garbage Collection
   (setq gc-cons-threshold-original gc-cons-threshold)
@@ -107,7 +106,7 @@ Undo and Garbage Collection Limits Upgrade
   (setq read-extended-command-predicate #'command-completion-default-include-p)
 #+end_src
 
-** Theme and Font
+*** Set Default Theme and Font
 
 #+begin_src emacs-lisp :tangle "init.el"
   ;;; Theme (Default)
@@ -118,7 +117,7 @@ Undo and Garbage Collection Limits Upgrade
   ;; (load-theme 'modus-operandi t)
 #+end_src
 
-** File History, Saving, Reverting and Backups
+*** File History, Saving, Reverting and Backups
 
 #+begin_src emacs-lisp :tangle "init.el"
   ;;; File History, Saving and Reverting
@@ -138,10 +137,10 @@ Undo and Garbage Collection Limits Upgrade
   (setq history-length 300)
   (setq savehist-save-minibuffer-history t)  ;; Default
   (setq savehist-additional-variables
-	'(kill-ring                        ; clipboard
-	  register-alist                   ; macros
-	  mark-ring global-mark-ring       ; marks
-	  search-ring regexp-search-ring)) ; searches
+        '(kill-ring                        ; clipboard
+  	register-alist                   ; macros
+  	mark-ring global-mark-ring       ; marks
+  	search-ring regexp-search-ring)) ; searches
   ;; savehist is an Emacs feature that preserves the minibuffer history between sessions
   (add-hook 'after-init-hook #'savehist-mode)
   ;; save-place-mode enables Emacs to remember the last location within a file
@@ -161,48 +160,13 @@ Undo and Garbage Collection Limits Upgrade
   (global-auto-revert-mode t)
 #+end_src
 
-** Basic Minor Modes and Hooks
-
-Adding some basic minor modes for ease of adding as hooks.
-
-*** Whitespace and Parens
-
-Cleaning up whitespace and checking balanced parens are something that should be handled automatically.
-
-#+begin_src emacs-lisp :tangle "init.el"
-  (define-minor-mode clean-trailing-whitespace-mode
-    "Tidy up trailing whitespace with `delete-trailing-whitespace' before saving."
-    :lighter " ctsv"
-    (if clean-trailing-whitespace-mode
-	(add-hook 'before-save-hook #'delete-trailing-whitespace nil t)
-      (remove-hook 'before-save-hook #'delete-trailing-whitespace t)))
-
-  (define-minor-mode clean-all-whitespace-mode
-    "Tidy up *all* whitespace with `whitespace-cleanup' before saving."
-    :lighter " casv"
-    (if clean-trailing-whitespace-mode
-	(add-hook 'before-save-hook #'whitespace-cleanup nil t)
-      (remove-hook 'before-save-hook #'whitespace-cleanup t)))
-
-  (define-minor-mode check-parens-save-mode
-    "Check the balance of parens with `check-parens' before saving."
-    :lighter " cpns"
-    (if check-parens-save-mode
-	(add-hook 'before-save-mode #'check-parens nil t)
-      (remove-hook 'before-save-mode #'check-parens t)))
-
-  ;;; Minor Mode Hooks
-  ;; (add-hook 'prog-mode #'clean-all-whitespace-mode)
-  ;; (add-hook 'org-mode #'clean-all-whitespace-mode)
-  ;;
-  ;; (add-hook 'emacs-lisp-mode #'check-parens-save-mode)
-  ;; (add-hook 'emacs-lisp-mode #'outline-minor-mode)
-#+end_src
-
-** Tab and Indent Settings
+*** Tab and Indent Settings
 
 Tabs are horribly confusing to deal with in Emacs and some programming minor modes
-really do not help simplify the situation. This is what works for now...
+really do not help simplify the situation.
+This works somewhat, but need a quick way to change indent/tab settings in a buffer.
+
+**** Custom Tab Settings
 
 #+begin_src emacs-lisp :tangle "init.el"
   ;;; Custom Tab Settings
@@ -248,11 +212,44 @@ really do not help simplify the situation. This is what works for now...
   (setq backward-delete-char-untabify-method 'hungry)
 #+end_src
 
-** Custom Enhanced Defuns
+*** Whitespace and Parens
 
-Better functions for some of the defaults.
+Cleaning up whitespace and checking balanced parens are something that should be handled automatically.
 
-*** Vanilla Emacs Improvements
+#+begin_src emacs-lisp :tangle "init.el"
+  (define-minor-mode clean-trailing-whitespace-mode
+    "Tidy up trailing whitespace with `delete-trailing-whitespace' before saving."
+    :lighter " ctsv"
+    (if clean-trailing-whitespace-mode
+        (add-hook 'before-save-hook #'delete-trailing-whitespace nil t)
+      (remove-hook 'before-save-hook #'delete-trailing-whitespace t)))
+
+  (define-minor-mode clean-all-whitespace-mode
+    "Tidy up *all* whitespace with `whitespace-cleanup' before saving."
+    :lighter " casv"
+    (if clean-trailing-whitespace-mode
+        (add-hook 'before-save-hook #'whitespace-cleanup nil t)
+      (remove-hook 'before-save-hook #'whitespace-cleanup t)))
+
+  (define-minor-mode check-parens-save-mode
+    "Check the balance of parens with `check-parens' before saving."
+    :lighter " cpns"
+    (if check-parens-save-mode
+        (add-hook 'before-save-mode #'check-parens nil t)
+      (remove-hook 'before-save-mode #'check-parens t)))
+
+  ;;; Minor Mode Hooks
+  ;; (add-hook 'prog-mode #'clean-all-whitespace-mode)
+  ;; (add-hook 'org-mode #'clean-all-whitespace-mode)
+  ;;
+  ;; (add-hook 'emacs-lisp-mode #'check-parens-save-mode)
+  ;; (add-hook 'emacs-lisp-mode #'outline-minor-mode)
+#+end_src
+
+*** Better Builtin Functions
+
+=Enhanced= functions for some of the defaults.
+
 
 #+begin_src emacs-lisp :tangle "init.el"
   ;; https://stackoverflow.com/questions/6286579/emacs-shell-mode-how-to-send-region-to-shell/7053298#7053298
@@ -268,10 +265,10 @@ Better functions for some of the defaults.
   `I` ignore binary files; `E` extended regular expressions; `r` recursive"
     (interactive)
     (let* ((grep-flags "-inrEI --color=always -C3")
-	   (search-term (read-string (format "Recursive regex search with grep %s: " grep-flags)))
-	   (search-path (directory-file-name (expand-file-name (read-directory-name "directory:  "))))
-	   (default-directory (file-name-as-directory search-path))
-	   (grep-command (concat grep-program " " grep-flags " " search-term " " search-path)))
+  	 (search-term (read-string (format "Recursive regex search with grep %s: " grep-flags)))
+  	 (search-path (directory-file-name (expand-file-name (read-directory-name "directory:  "))))
+  	 (default-directory (file-name-as-directory search-path))
+  	 (grep-command (concat grep-program " " grep-flags " " search-term " " search-path)))
       (compilation-start grep-command 'grep-mode (lambda (mode) "*grep*") nil)))
 
   ;; Open External Terminal Emulator
@@ -328,7 +325,7 @@ Better functions for some of the defaults.
   (advice-add 'evil-yank :around 'hl-yank-advice)
 #+end_src
 
-** Here be Packages
+** Emacs lisp packages
 *** Bootstrap straight.el
 
 #+begin_src emacs-lisp :tangle "init.el"
@@ -336,18 +333,18 @@ Better functions for some of the defaults.
   ;; bootstrap straight.el package manager
   (defvar bootstrap-version)
   (let ((bootstrap-file
-	 (expand-file-name
-	  "straight/repos/straight.el/bootstrap.el"
-	  (or (bound-and-true-p straight-base-dir)
-	      user-emacs-directory)))
-	(bootstrap-version 7))
+         (expand-file-name
+  	"straight/repos/straight.el/bootstrap.el"
+  	(or (bound-and-true-p straight-base-dir)
+  	    user-emacs-directory)))
+        (bootstrap-version 7))
     (unless (file-exists-p bootstrap-file)
       (with-current-buffer
-	  (url-retrieve-synchronously
-	   "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
-	   'silent 'inhibit-cookies)
-	(goto-char (point-max))
-	(eval-print-last-sexp)))
+  	(url-retrieve-synchronously
+  	 "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+  	 'silent 'inhibit-cookies)
+        (goto-char (point-max))
+        (eval-print-last-sexp)))
     (load bootstrap-file nil 'nomessage))
 
   (setq package-install-upgrade-built-in t)
@@ -355,7 +352,7 @@ Better functions for some of the defaults.
 
 *** Use PATH from shell environment
 
-Emacs does not properly pick up PATH from shell environment.
+Emacs does not properly pick up PATH from shell environment on macOS (or Windows).
 
 #+begin_src emacs-lisp :tangle "init.el"
   ;;; Set Emacs path == shell path (exec-path-from-shell)
@@ -367,9 +364,10 @@ Emacs does not properly pick up PATH from shell environment.
     (exec-path-from-shell-initialize))
 #+end_src
 
-*** Use EVIL
+*** Setup Keybinds
+**** Evil
 
-Set settings as well as load EVIL and complementary packages.
+Set initial evil settings as well as adding complementary evil packages.
 
 #+begin_src emacs-lisp :tangle "init.el"
   ;;; EVIL Config :: Vi/Vim Emulation++ (evil-mode)
@@ -386,9 +384,9 @@ Set settings as well as load EVIL and complementary packages.
     (setq evil-ex-visual-char-range t)
     (setq evil-disable-insert-state-bindings t)
     (setq evil-insert-state-cursor '(box "violet")
-	    evil-normal-state-cursor '(box "yellow")
-	    evil-visual-state-cursor '(hollow "#1aa5db")
-	      evil-emacs-state-cursor '(box "cyan"))
+  	evil-normal-state-cursor '(box "yellow")
+  	evil-visual-state-cursor '(hollow "#1aa5db")
+  	evil-emacs-state-cursor '(box "cyan"))
     (setq evil-want-keybinding nil)
     (setq evil-want-integration t)
     :config
@@ -439,7 +437,11 @@ Set settings as well as load EVIL and complementary packages.
     (evil-define-key '(normal visual) 'global (kbd "C-a C--") 'evil-numbers/dec-at-pt-incremental))
 #+end_src
 
-*** General Prefix/Leader Keybinds
+**** Evil Keybinds : General
+
+Keybinds grouped varying degrees of organization.
+
+Prefix / leader key of <SPC>.
 
 #+begin_src emacs-lisp :tangle "init.el"
   ;; Custom Evil Keybinds
@@ -524,38 +526,51 @@ Set settings as well as load EVIL and complementary packages.
 
   ;; Custom Ex commands
   (evil-ex-define-cmd "Format" 'format-all-region-or-buffer) ;; format-all-code
+#+end_src
 
+**** Emacs Global Keybinds
+
+#+begin_src emacs-lisp :tangle "init.el"
   ;;; Vanilla Emacs Keybinds
   (global-set-key (kbd "C-c i") (lambda () (interactive) (find-file (concat user-emacs-directory "/init.org"))))
   (global-set-key (kbd "C-c d") (lambda () (interactive) (find-file (getenv "DOTFILES"))))
-  (global-set-key (kbd "C-c g") (lambda () (interactive) (find-file (concat (getenv "DOTFILES") "/config/emacs/.config/emacs/init.el"))))
 
   ;; more ergo keybind for switching to normal<->emacs state
   (global-set-key (kbd "C-;") (kbd "C-z"))
 #+end_src
 
-*** Compile Mode
+**** More helpful Help and Key Menus
+
+It can be difficult to memorize key binds... `which-key` helps greatly by giving a transient pop-up buffer.
+
+`helpful` is also a great package that changes the look and layout of the interactive help buffers in Emacs
+as well as adding supplemental information. The result is a better experience with help menus all around.
+
 
 #+begin_src emacs-lisp :tangle "init.el"
-  (add-hook 'python-mode-hook
-	    (lambda () (set (make-local-variable 'compile-command)
-			    (format "python3 %s" (file-name-nondirectory buffer-file-name)))))
+  ;;; Better discoverability for key mappings (which-key)
+  ;; https://github.com/justbur/emacs-which-key
+  ;; builtin to emacs > 30.1
+  (use-package which-key
+    :straight t
+    :init (which-key-mode 1))
+
+    ;;; Better help menus (helpful)
+  ;; https://github.com/Wilfred/helpful
+  (use-package helpful
+    :straight t
+    :bind
+    (("C-c C-d" . helpful-at-point)    ; Lookup the symbol at point
+     ("C-h f" . helpful-callable)      ; Describe a function
+     ("C-h v" . helpful-variable)      ; Describe a variable
+     ("C-h k" . helpful-key)           ; Describe a key binding
+     ("C-h x" . helpful-command)))     ; Describe a command
 #+end_src
 
-*** Dired
+*** Configure Modes
+**** Org Mode (org-mode)
 
-Builtin Emacs directory editor
-
-#+begin_src emacs-lisp :tangle "init.el"
-  ;; https://www.gnu.org/software/emacs/manual/html_node/emacs/Dired.html
-  (use-package dired
-    :straight nil
-    :commands (dired dired-jump)
-    :config
-    (setq dired-dwim-target t))
-#+end_src
-
-*** Org (org-mode)
+Org mode. Cut my life into pizzas. This is my plastic fork!1 |dmb|
 
 #+begin_src emacs-lisp :tangle "init.el"
   ;; Org mode (organization outline framework)
@@ -593,7 +608,9 @@ Builtin Emacs directory editor
   ;;   :straight t)
 #+end_src
 
-*** Markdown Mode (markdown-mode)
+**** Markdown Mode (markdown-mode)
+
+Markdown is not supported filetype with Emacs, must use package.
 
 #+begin_src emacs-lisp :tangle "init.el"
   ;;; Markdown support for emacs
@@ -604,10 +621,12 @@ Builtin Emacs directory editor
     :init (setq markdown-command "multimarkdown")
     (setq markdown-fontify-code-blocks-natively t) ; Make code block syntax highlighted
     :bind(:map markdown-mode-map
-	       ("C-c C-e" . markdown-do)))
+  	     ("C-c C-e" . markdown-do)))
 #+end_src
 
-*** Magit (git mode)
+**** Magit (git)
+
+It is magit. Git UI in Emacs.
 
 #+begin_src emacs-lisp :tangle "init.el"
   ;; Magit (intuitive git interface)
@@ -616,7 +635,22 @@ Builtin Emacs directory editor
     :straight t)
 #+end_src
 
-*** Dirvish (fancy/modern dired)
+**** Dired Mode
+
+Builtin Emacs directory editor
+
+#+begin_src emacs-lisp :tangle "init.el"
+  ;; https://www.gnu.org/software/emacs/manual/html_node/emacs/Dired.html
+  (use-package dired
+    :straight nil
+    :commands (dired dired-jump)
+    :config
+    (setq dired-dwim-target t))
+#+end_src
+
+**** Dirvish (fancy/modern dired)
+
+This package makes `dired` look completely different (in a good way).
 
 #+begin_src emacs-lisp :tangle "init.el"
   ;; Fancy, polished and modernized dired
@@ -634,103 +668,115 @@ Builtin Emacs directory editor
     (dirvish-peek-mode)
     (dirvish-side-follow-mode)
     (setq dirvish-mode-line-format
-  	  '(:left (sort symlink) :right (omit yank index)))
+  	'(:left (sort symlink) :right (omit yank index)))
     (setq dirvish-attributes           ; The order *MATTERS* for some attributes
-  	  '(vc-state subtree-state nerd-icons collapse git-msg file-time file-size)
-  	  dirvish-side-attributes
-  	  '(vc-state nerd-icons collapse file-size))
+  	'(vc-state subtree-state nerd-icons collapse git-msg file-time file-size)
+  	dirvish-side-attributes
+  	'(vc-state nerd-icons collapse file-size))
     (setq dirvish-large-directory-threshold 20000)
     :bind
     (("C-c -" . dirvish-side)
-      :map dirvish-mode-map               ; Dirvish inherits `dired-mode-map'
-      (";"   . dired-up-directory)        ; So you can adjust `dired' bindings here
-      ("?"   . dirvish-dispatch)          ; [?] a helpful cheatsheet
-      ("a"   . dirvish-setup-menu)        ; [a]ttributes settings:`t' toggles mtime, `f' toggles fullframe, etc.
-      ("f"   . dirvish-file-info-menu)    ; [f]ile info
-      ("o"   . dirvish-quick-access)      ; [o]pen `dirvish-quick-access-entries'
-      ("s"   . dirvish-quicksort)         ; [s]ort flie list
-      ("r"   . dirvish-history-jump)      ; [r]ecent visited
-      ("l"   . dirvish-ls-switches-menu)  ; [l]s command flags
-      ("v"   . dirvish-vc-menu)           ; [v]ersion control commands
-      ("*"   . dirvish-mark-menu)
-      ("y"   . dirvish-yank-menu)
-      ("N"   . dirvish-narrow)
-      ("^"   . dirvish-history-last)
-      ("TAB" . dirvish-subtree-toggle)
-      ("M-f" . dirvish-history-go-forward)
-      ("M-b" . dirvish-history-go-backward)
-      ("M-e" . dirvish-emerge-menu)))
+     :map dirvish-mode-map               ; Dirvish inherits `dired-mode-map'
+     (";"   . dired-up-directory)        ; So you can adjust `dired' bindings here
+     ("?"   . dirvish-dispatch)          ; [?] a helpful cheatsheet
+     ("a"   . dirvish-setup-menu)        ; [a]ttributes settings:`t' toggles mtime, `f' toggles fullframe, etc.
+     ("f"   . dirvish-file-info-menu)    ; [f]ile info
+     ("o"   . dirvish-quick-access)      ; [o]pen `dirvish-quick-access-entries'
+     ("s"   . dirvish-quicksort)         ; [s]ort flie list
+     ("r"   . dirvish-history-jump)      ; [r]ecent visited
+     ("l"   . dirvish-ls-switches-menu)  ; [l]s command flags
+     ("v"   . dirvish-vc-menu)           ; [v]ersion control commands
+     ("*"   . dirvish-mark-menu)
+     ("y"   . dirvish-yank-menu)
+     ("N"   . dirvish-narrow)
+     ("^"   . dirvish-history-last)
+     ("TAB" . dirvish-subtree-toggle)
+     ("M-f" . dirvish-history-go-forward)
+     ("M-b" . dirvish-history-go-backward)
+     ("M-e" . dirvish-emerge-menu)))
 #+end_src
 
-*** Theme and Highlight (doom-themes)
+**** Extra Themes, Colorschemes, Highlight and Random Effects
+
+Change the look and feel of Emacs.
 
 #+begin_src emacs-lisp :tangle "init.el"
-  ;; https://github.com/doomemacs/themes
-  (use-package doom-themes
-    :straight t
-    :config)
-  ;; (load-theme 'doom-badger t))
-  ;; (load-theme 'doom-ir-black t))
+;; https://github.com/doomemacs/themes
+(use-package doom-themes
+:straight t
+:config)
+;; (load-theme 'doom-badger t))
+;; (load-theme 'doom-ir-black t))
 
-  ;; Doom Modeline - much easier on the eyes
-  ;; https://github.com/seagle0128/doom-modeline
-  (use-package doom-modeline
-    :straight t
-    :hook (after-init . doom-modeline-mode))
+;; Doom Modeline - much easier on the eyes
+;; https://github.com/seagle0128/doom-modeline
+(use-package doom-modeline
+:straight t
+:hook (after-init . doom-modeline-mode))
 
-  ;; Sticky headers for programming modes
-  ;; https://github.com/alphapapa/topsy.el
-  (use-package topsy
-  :straight t)
-  ;; :hook (prog-mode . topsy-mode))
+;; Sticky headers for programming modes
+;; https://github.com/alphapapa/topsy.el
+(use-package topsy
+:straight t)
+;; :hook (prog-mode . topsy-mode))
 
-  ;; Highlights TODOs and other configured keywords in buffer
-  ;; https://github.com/tarsius/hl-todo
-  (use-package hl-todo
-    :straight t
-    :hook (prog-mode . hl-todo-mode)
-    :config
-    (setq hl-todo-highlight-punctuation ":"
-  	    hl-todo-keyword-faces
-  	    `(("TODO"       warning bold)
-  	      ("FIXME"      error bold)
-  	      ("HACK"       font-lock-constant-face bold)
-  	      ("REVIEW"     font-lock-keyword-face bold)
-  	      ("NOTE"       success bold)
-  	      ("DEPRECATED" font-lock-doc-face bold))))
-  					    ; TODO: look into todo integrations
+;; Highlights TODOs and other configured keywords in buffer
+;; https://github.com/tarsius/hl-todo
+(use-package hl-todo
+:straight t
+:hook (prog-mode . hl-todo-mode)
+:config
+(setq hl-todo-highlight-punctuation ":"
+    hl-todo-keyword-faces
+    `(("TODO"       warning bold)
+      ("FIXME"      error bold)
+      ("HACK"       font-lock-constant-face bold)
+      ("REVIEW"     font-lock-keyword-face bold)
+      ("NOTE"       success bold)
+      ("DEPRECATED" font-lock-doc-face bold))))
+				      ; TODO: look into todo integrations
 
-  ;; Colorize color names in buffers
-  ;; https://github.com/emacsmirror/rainbow-mode
-  (use-package rainbow-mode
-    :straight t)
+;; Colorize color names in buffers
+;; https://github.com/emacsmirror/rainbow-mode
+(use-package rainbow-mode
+:straight t)
 
-  ;; Rainbow Delimiters - who doesn't love colors
-  ;; https://github.com/Fanael/rainbow-delimiters
-  (use-package rainbow-delimiters
-    :straight t
-    :init (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
+;; Rainbow Delimiters - who doesn't love colors
+;; https://github.com/Fanael/rainbow-delimiters
+(use-package rainbow-delimiters
+:straight t
+:init (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
 
-  ;; Git Gutter -- sidebar / fringe indicators of changes
-  ;; https://github.com/emacsorphanage/git-gutter
-  (use-package git-gutter
-    :hook (prog-mode . git-gutter-mode)
-    :straight t
-    :config
-    (setq git-gutter:update-interval 0.2))
+;; Git Gutter -- sidebar / fringe indicators of changes
+;; https://github.com/emacsorphanage/git-gutter
+(use-package git-gutter
+:hook (prog-mode . git-gutter-mode)
+:straight t
+:config
+(setq git-gutter:update-interval 0.2))
 
-  ;; TODO: disable this in terminal mode
-  ;; highlights the modified region (yank/kill)
-  ;; https://github.com/minad/goggles
-  (use-package goggles
-    :straight t
-    :hook ((prog-mode org-mode) . goggles-mode)
-    :config
-    (goggles-define yank evil-paste-after) ; make pasting from evil mode highlighted
-    (setq-default goggles-pulse t))
+;; TODO: disable this in terminal mode
+;; highlights the modified region (yank/kill)
+;; https://github.com/minad/goggles
+(use-package goggles
+:straight t
+:hook ((prog-mode org-mode) . goggles-mode)
+:config
+(goggles-define yank evil-paste-after) ; make pasting from evil mode highlighted
+(setq-default goggles-pulse t))
+
+;; NYAN x inf
+;; https://github.com/TeMPOraL/nyan-mode
+(use-package nyan-mode
+:straight t)
 #+end_src
 
-*** Minibuffer Completion
+*** Completion
+**** Minibuffer Completion Packages
+
+Minibuffer defaults are pretty rough out of the box. Completion is there, but the UX is pretty bad...
+
+These packages (vertico, orderless, marginalia) give better UX for minibuffer as well as ease of customization.
 
 #+begin_src emacs-lisp :tangle "init.el"
     ;;; Mini-buffer improvements (fido, orderless, marginalia)
@@ -767,33 +813,36 @@ Builtin Emacs directory editor
   (use-package consult
     :straight t
     :bind (
-	 ("C-x M-:" . consult-complex-command)     ;; orig. repeat-complex-command
-	 ("C-x b" . consult-buffer)                ;; orig. switch-to-buffer
-	 ("C-x 4 b" . consult-buffer-other-window) ;; orig. switch-to-buffer-other-window
-	 ("C-x 5 b" . consult-buffer-other-frame)  ;; orig. switch-to-buffer-other-frame
-	 ("C-x t b" . consult-buffer-other-tab)    ;; orig. switch-to-buffer-other-tab
-	 ("C-x r b" . consult-bookmark)            ;; orig. bookmark-jump
-	 ("C-x p b" . consult-project-buffer)      ;; orig. project-switch-to-buffer
-	 ;; Custom M-# bindings for fast register access
-	 ("M-#" . consult-register-load)
-	 ("M-'" . consult-register-store)          ;; orig. abbrev-prefix-mark (unrelated)
-	 ("C-M-#" . consult-register)
-	 ;; Other custom bindings
-	 ("M-y" . consult-yank-pop)                ;; orig. yank-pop
-	 ;; Minibuffer history
-	 :map minibuffer-local-map
-	 ("M-s" . consult-history)                 ;; orig. next-matching-history-element
-	 ("M-r" . consult-history))                ;; orig. previous-matching-history-element
+  	 ("C-x M-:" . consult-complex-command)     ;; orig. repeat-complex-command
+  	 ("C-x b" . consult-buffer)                ;; orig. switch-to-buffer
+  	 ("C-x 4 b" . consult-buffer-other-window) ;; orig. switch-to-buffer-other-window
+  	 ("C-x 5 b" . consult-buffer-other-frame)  ;; orig. switch-to-buffer-other-frame
+  	 ("C-x t b" . consult-buffer-other-tab)    ;; orig. switch-to-buffer-other-tab
+  	 ("C-x r b" . consult-bookmark)            ;; orig. bookmark-jump
+  	 ("C-x p b" . consult-project-buffer)      ;; orig. project-switch-to-buffer
+  	 ;; Custom M-# bindings for fast register access
+  	 ("M-#" . consult-register-load)
+  	 ("M-'" . consult-register-store)          ;; orig. abbrev-prefix-mark (unrelated)
+  	 ("C-M-#" . consult-register)
+  	 ;; Other custom bindings
+  	 ("M-y" . consult-yank-pop)                ;; orig. yank-pop
+  	 ;; Minibuffer history
+  	 :map minibuffer-local-map
+  	 ("M-s" . consult-history)                 ;; orig. next-matching-history-element
+  	 ("M-r" . consult-history))                ;; orig. previous-matching-history-element
     :hook (completion-list-mode . consult-preview-at-point-mode)
     :init
     (advice-add #'register-preview :override #'consult-register-window)
     (setq register-preview-delay 0.5)
     (setq xref-show-xrefs-function #'consult-xref
-	  xref-show-definitions-function #'consult-xref))
+  	xref-show-definitions-function #'consult-xref))
 
 #+end_src
 
-*** Completion At Point (in main buffers)
+**** Completion At Point (in main buffers)
+
+Completion at point usually happens in main buffers, the main concern of `corfu` and `cape` is providing the UI elements.
+Most of the functionality for completion comes from other functions within Emacs as far as I understand.
 
 #+begin_src emacs-lisp :tangle "init.el"
   ;; corfu: mini completion ui
@@ -837,29 +886,10 @@ Builtin Emacs directory editor
     (read-extended-command-predicate #'command-completion-default-include-p))
 #+end_src
 
-*** Better and More Helpful Menus
+*** Programming Languages
+**** Syntax Checking and Formatting
 
-#+begin_src emacs-lisp :tangle "init.el"
-  ;;; Better discoverability for key mappings (which-key)
-  ;; https://github.com/justbur/emacs-which-key
-  ;; builtin to emacs > 30.1
-  (use-package which-key
-    :straight t
-    :init (which-key-mode 1))
-
-    ;;; Better help menus (helpful)
-  ;; https://github.com/Wilfred/helpful
-  (use-package helpful
-    :straight t
-    :bind
-    (("C-c C-d" . helpful-at-point)    ; Lookup the symbol at point
-     ("C-h f" . helpful-callable)      ; Describe a function
-     ("C-h v" . helpful-variable)      ; Describe a variable
-     ("C-h k" . helpful-key)           ; Describe a key binding
-     ("C-h x" . helpful-command)))     ; Describe a command
-#+end_src
-
-*** Syntax Checking and Formatting
+Basic syntax checking and formatting.
 
 #+begin_src emacs-lisp :tangle "init.el"
   ;; Syntax checking
@@ -867,7 +897,7 @@ Builtin Emacs directory editor
   ;; https://github.com/flycheck/flycheck
   (use-package flycheck
     :straight t
-    :init (add-hook 'after-init-hook #'global-flycheck-mode))
+    :init (global-flycheck-mode))
 
   ;;; External code formatting tool integration (format-all)
   ;; https://github.com/lassik/emacs-format-all-the-code
@@ -887,7 +917,24 @@ Builtin Emacs directory editor
     (global-whitespace-cleanup-mode))
 #+end_src
 
-*** Abbrevs and Snippets
+**** Compile Mode
+
+Compile the interpreters and interpret the compilers.
+
+#+begin_src emacs-lisp :tangle "init.el"
+  (use-package compile
+    :straight nil
+    :config
+    (setq compilation-scroll-output t))
+
+  (add-hook 'python-mode-hook
+    	  (lambda () (set (make-local-variable 'compile-command)
+    			  (format "python3 %s" (file-name-nondirectory buffer-file-name)))))
+#+end_src
+
+**** Abbrevs and Snippets
+
+Abbreviations and Snippets simply allow for less typing and more output.
 
 #+begin_src emacs-lisp :tangle "init.el"
   ;; Abbrevs and Snippets
@@ -921,37 +968,36 @@ Builtin Emacs directory editor
     :init)
 #+end_src
 
-*** Extra Language Modes
+**** LSP
+
+Add language server protocol using eglot. Installing LSP servers is a separate process.
 
 #+begin_src emacs-lisp :tangle "init.el"
+  ;; LSP Modes
   (use-package eglot
     :straight nil
     :defer t
     :hook ((python-mode . eglot-ensure)
-  	   (go-mode . eglot-ensure)))
+  	 (go-mode . eglot-ensure)))
 
-  ;;; Extra Language Modes
+  ;; Allow flycheck errors to show with eglot
+  ;;https://github.com/flycheck/flycheck-eglot
+  ;; (use-package flycheck-eglot
+  ;;   :straight t
+  ;;   :after (flycheck eglot)
+  ;;   :config
+  ;;   (global-flycheck-eglot-mode 1))
+#+end_src
+
+**** Additional Language Settings
+
+More setup for languages beyond LSP
+
+#+begin_src emacs-lisp :tangle "init.el"
   ;; Lua mode
   (use-package lua-mode
     :straight t)
 
-  ;;; Other misc modes (docker, gptel, load-env-vars, csv-mode)
-  (use-package docker
-    :straight t
-    :defer t)
-
-  (use-package dockerfile-mode
-    :straight t
-    :defer t)
-
-  (use-package csv-mode
-    :straight t
-    :defer t)
-#+end_src
-
-*** Additional Language Settings
-
-#+begin_src emacs-lisp :tangle "init.el"
   ;; JavaScript
   (use-package js
     :defer t
@@ -989,13 +1035,40 @@ Builtin Emacs directory editor
     (package-install 'json-mode))
 
   (setq-default major-mode
-		(lambda () ; guess major mode from file name
-		  (unless buffer-file-name
-		    (let ((buffer-file-name (buffer-name)))
-		      (set-auto-mode)))))
+  	      (lambda () ; guess major mode from file name
+  		(unless buffer-file-name
+  		  (let ((buffer-file-name (buffer-name)))
+  		    (set-auto-mode)))))
 #+end_src
 
-*** Local Environment Variables
+**** Misc Config Language Settings
+
+More obscure langauges (or configuration modes)
+
+#+begin_src emacs-lisp :tangle "init.el"
+  ;;; Extra Language Modes
+  ;; docker
+  (use-package docker
+    :straight t
+    :defer t)
+  (use-package dockerfile-mode
+    :straight t
+    :defer t)
+
+  ;; csv
+  (use-package csv-mode
+    :straight t
+    :defer t)
+
+  ;; vimrc 
+  (use-package vimrc-mode
+    :straight t)
+#+end_src
+
+*** Integrate External Tools
+**** Local Environment Variables
+
+Pick up local environment variables (if that file exists)
 
 #+begin_src emacs-lisp :tangle "init.el"
   ;; Local Environment File
@@ -1005,10 +1078,12 @@ Builtin Emacs directory editor
   (defvar my-env-file "~/.local/.env" "Local environment file.")
   (let ((my-env-file "~/.local/.env"))
     (if (file-exists-p my-env-file)
-	(load-env-vars my-env-file)))
+        (load-env-vars my-env-file)))
 #+end_src
 
-*** LLM Support
+**** LLM Support
+
+Setup LLMs here (at some point)
 
 #+begin_src emacs-lisp :tangle "init.el"
   ;; LLM support (must configure with api keys)
@@ -1021,7 +1096,10 @@ Builtin Emacs directory editor
   ;; (gptel-make-openai "OpenAI" :stream t :key gptel-api-key)
 #+end_src
 
+** Windows (win32)
 *** Windows / Win32 Specifics
+
+Those things that are just for Windows, specially for Windows operating systems.
 
 #+begin_src emacs-lisp :tangle "init.el"
   ;; for Win32
@@ -1033,12 +1111,12 @@ Builtin Emacs directory editor
     (set-frame-font "Cascadia Code 12" nil t)
 
     (let ((xlist
-	   '(
-	     "C:/Program Files/PowerShell/7/pwsh.exe"
-	     "~/AppData/Local/Microsoft/WindowsApps/pwsh.exe"
-	     "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe"
-	     ))
-	  xfound)
+  	 '(
+  	   "C:/Program Files/PowerShell/7/pwsh.exe"
+  	   "~/AppData/Local/Microsoft/WindowsApps/pwsh.exe"
+  	   "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe"
+  	   ))
+  	xfound)
       (setq xfound (seq-some (lambda (x) (if (file-exists-p x) x nil)) xlist))
       (when xfound (setq explicit-shell-file-name xfound))))
 
@@ -1064,31 +1142,18 @@ Builtin Emacs directory editor
   ;; xah-lee functions
   ;; http://xahlee.info/index.html
 
-  (defun x-open-in-vscode ()
+  (defun open-in-vscode ()
     "Open current file or dir in vscode."
     (interactive)
     (let ((xpath (if buffer-file-name buffer-file-name (expand-file-name default-directory))))
       (message "path is %s" xpath)
       (cond
        ((eq system-type 'darwin)
-	(shell-command (format "open -a Visual\\ Studio\\ Code.app %s" (shell-quote-argument xpath))))
+        (shell-command (format "open -a Visual\\ Studio\\ Code.app %s" (shell-quote-argument xpath))))
        ((eq system-type 'windows-nt)
-	(shell-command (format "code.cmd %s" (shell-quote-argument xpath))))
+        (shell-command (format "code.cmd %s" (shell-quote-argument xpath))))
        ((eq system-type 'gnu/linux)
-	(shell-command (format "code %s" (shell-quote-argument xpath)))))))
-
-  (defun x-open-in-terminal ()
-    "Open the current dir in a new terminal window."
-    (interactive)
-    (cond
-     ((eq system-type 'windows-nt)
-      (shell-command (concat "wt -d " (shell-quote-argument (expand-file-name default-directory)))))
-     ((eq system-type 'darwin)
-      (shell-command (concat "open -a iTerm " (shell-quote-argument (expand-file-name default-directory)))))
-     ((eq system-type 'gnu/linux)
-      (let ((process-connection-type nil)) (start-process "" nil "x-terminal-emulator" (concat "--working-directory=" default-directory))))
-     ((eq system-type 'berkeley-unix)
-      (let ((process-connection-type nil)) (start-process "" nil "x-terminal-emulator" (concat "--working-directory=" default-directory))))))
+        (shell-command (format "code %s" (shell-quote-argument xpath)))))))
 #+end_src
 
 *** Misc Windows Dotfiles Setup
