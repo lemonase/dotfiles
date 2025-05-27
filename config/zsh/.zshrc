@@ -88,6 +88,12 @@ alias tmlsc="tmux lsc"
 alias tmks="tmux kill-session -t" # kill one session
 alias tmka="tmux kill-server"     # aka killall
 
+# emacs
+alias e="emacs"
+alias ec="emacsclient -a '' --no-wait --reuse-frame"
+alias ecn="emacsclient -a '' -no-wait --create-frame"
+alias et="emacsclient -a '' --no-window-system"
+
 # python
 alias py="python3"
 alias ipy="ipython3"
@@ -102,7 +108,6 @@ alias ungzip="gunzip"
 # * * * * * *
 # Functions *
 # * * * * * *
-
 
 # concat common commands
 mkcd() { mkdir -p -- "$1" && cd "$1"; }
