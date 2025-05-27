@@ -7,7 +7,6 @@
 ;;; My Emacs Config
 ;;;
 ;;; Code:
-
 (setq user-full-name "James Dixon")
 (setq user-mail-address "notjamesdixon@gmail.com")
 
@@ -464,12 +463,14 @@
   (global-set-key (kbd "C-c a") #'org-agenda)
   (global-set-key (kbd "C-c c") #'org-capture)
   (global-set-key (kbd "C-c l") #'org-store-link)
+  (setq org-agenda-files (list "~/Documents/notes/org/life.org"))
   (setq org-html-htmlize-output-type 'css)
   (setq org-clock-persist 'history)
-  (setq org-agenda-files (list "~/Documents/notes/org/life.org"))
   (org-clock-persistence-insinuate)
-  (setq org-todo-keywords '((sequence "TODO(!)" "IN PROGRESS" "DONE")))
+  (setq org-todo-keywords '((sequence "TODO" "IN PROGRESS" "DONE")))
   (setq org-treat-insert-todo-heading-as-state-change t)
+  (setq org-src-preserve-indentation nil)
+  (setq org-edit-src-content-indentation 0)
   (setq org-log-done t))
 
 ;; Sticky headers at the top of the buffer (matching org outline)
@@ -554,72 +555,85 @@
 
 ;; https://github.com/doomemacs/themes
 (use-package doom-themes
-:straight t
-:config)
-;; (load-theme 'doom-badger t))
-;; (load-theme 'doom-ir-black t))
+  :straight t
+  :config)
+
+(load-theme 'doom-badger t)
+;; (load-theme 'doom-ir-black t)
 
 ;; Doom Modeline - much easier on the eyes
 ;; https://github.com/seagle0128/doom-modeline
 (use-package doom-modeline
-:straight t
-:hook (after-init . doom-modeline-mode))
+  :straight t
+  :hook (after-init . doom-modeline-mode))
+
+;; Run M-x nerd-icons-install-fonts to install the necessary fonts.
+(use-package nerd-icons
+  :custom
+  (nerd-icons-font-family "Symbols Nerd Font Mono")
+  ;; (nerd-icons-font-family "Martian Mono Nerd Font")
+  :straight )
 
 ;; Sticky headers for programming modes
 ;; https://github.com/alphapapa/topsy.el
 (use-package topsy
-:straight t)
+  :straight t)
 ;; :hook (prog-mode . topsy-mode))
 
 ;; Highlights TODOs and other configured keywords in buffer
 ;; https://github.com/tarsius/hl-todo
 (use-package hl-todo
-:straight t
-:hook (prog-mode . hl-todo-mode)
-:config
-(setq hl-todo-highlight-punctuation ":"
-    hl-todo-keyword-faces
-    `(("TODO"       warning bold)
-      ("FIXME"      error bold)
-      ("HACK"       font-lock-constant-face bold)
-      ("REVIEW"     font-lock-keyword-face bold)
-      ("NOTE"       success bold)
-      ("DEPRECATED" font-lock-doc-face bold))))
-				      ; TODO: look into todo integrations
+  :straight t
+  :hook (prog-mode . hl-todo-mode)
+  :config
+  (setq hl-todo-highlight-punctuation ":"
+        hl-todo-keyword-faces
+        `(("TODO"       warning bold)
+          ("FIXME"      error bold)
+          ("HACK"       font-lock-constant-face bold)
+          ("REVIEW"     font-lock-keyword-face bold)
+          ("NOTE"       success bold)
+          ("DEPRECATED" font-lock-doc-face bold))))
+                                        ; TODO: look into todo integrations
 
 ;; Colorize color names in buffers
 ;; https://github.com/emacsmirror/rainbow-mode
 (use-package rainbow-mode
-:straight t)
+  :straight t)
 
 ;; Rainbow Delimiters - who doesn't love colors
 ;; https://github.com/Fanael/rainbow-delimiters
 (use-package rainbow-delimiters
-:straight t
-:init (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
+  :straight t
+  :init (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
 
 ;; Git Gutter -- sidebar / fringe indicators of changes
 ;; https://github.com/emacsorphanage/git-gutter
 (use-package git-gutter
-:hook (prog-mode . git-gutter-mode)
-:straight t
-:config
-(setq git-gutter:update-interval 0.2))
+  :hook (prog-mode . git-gutter-mode)
+  :straight t
+  :config
+  (setq git-gutter:update-interval 0.2))
 
 ;; TODO: disable this in terminal mode
 ;; highlights the modified region (yank/kill)
 ;; https://github.com/minad/goggles
 (use-package goggles
-:straight t
-:hook ((prog-mode org-mode) . goggles-mode)
-:config
-(goggles-define yank evil-paste-after) ; make pasting from evil mode highlighted
-(setq-default goggles-pulse t))
+  :straight t
+  :hook ((prog-mode org-mode) . goggles-mode)
+  :config
+  (goggles-define yank evil-paste-after) ; make pasting from evil mode highlighted
+  (setq-default goggles-pulse t))
 
-;; NYAN x inf
+;; NYAN cat in modeline
 ;; https://github.com/TeMPOraL/nyan-mode
 (use-package nyan-mode
-:straight t)
+  :straight t)
+
+;; Party Parrot in modeline
+;; https://github.com/dp12/parrot
+(use-package parrot
+  :straight t)
 
 ;;; Mini-buffer improvements (fido, orderless, marginalia)
 ;; Let's try [icomplete / fido / ido] mode for a while.
@@ -780,7 +794,9 @@
 ;; https://github.com/smihica/emmet-mode
 (use-package emmet-mode
   :straight t
-  :init)
+  :init
+  (add-hook 'sgml-mode-hook 'emmet-mode) ;; Auto-start on any markup modes
+  (add-hook 'css-mode-hook  'emmet-mode)) ;; enable Emmet's css abbreviation.
 
 ;; LSP Modes
 (use-package eglot
@@ -888,12 +904,12 @@
   (set-frame-font "Cascadia Code 12" nil t)
 
   (let ((xlist
-	 '(
-	   "C:/Program Files/PowerShell/7/pwsh.exe"
-	   "~/AppData/Local/Microsoft/WindowsApps/pwsh.exe"
-	   "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe"
-	   ))
-	xfound)
+         '(
+           "C:/Program Files/PowerShell/7/pwsh.exe"
+           "~/AppData/Local/Microsoft/WindowsApps/pwsh.exe"
+           "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe"
+           ))
+        xfound)
     (setq xfound (seq-some (lambda (x) (if (file-exists-p x) x nil)) xlist))
     (when xfound (setq explicit-shell-file-name xfound))))
 
