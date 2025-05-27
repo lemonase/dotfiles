@@ -34,6 +34,10 @@
 (global-display-line-numbers-mode 1)    ; Display line numbers
 (column-number-mode 1)                  ; Toggle column number display in the mode line.
 
+;; Show relative line numbers
+(setq display-line-numbers-type 'relative)
+(global-display-line-numbers-mode 1)
+
 ;; Mark and go-to modes
 (transient-mark-mode 1)                 ; Easier starting of marks/regions
 (delete-selection-mode 1)               ; Easier deleting of marks/regions
@@ -69,6 +73,8 @@
   (set-frame-font "Maple Mono 12" nil t)))
 (load-theme 'modus-vivendi t)
 ;; (load-theme 'modus-operandi t)
+
+(display-time-mode 1) ;; Display time in modeline
 
 ;;; File History, Saving and Reverting
 
@@ -498,6 +504,13 @@
   (setq markdown-fontify-code-blocks-natively t) ; Make code block syntax highlighted
   :bind(:map markdown-mode-map
 	     ("C-c C-e" . markdown-do)))
+
+;; spell checking w/ flyspell
+(use-package flyspell
+  :straight nil
+  :config
+  (add-hook 'text-mode-hook #'flyspell-mode)
+  (add-hook 'prog-mode-hook #'flyspell-prog-mode))
 
 ;; Magit (intuitive git interface)
 ;; https://magit.vc/

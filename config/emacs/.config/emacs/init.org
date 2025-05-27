@@ -63,6 +63,10 @@ Initial comment prelude to appease the commnent gods.
 (global-display-line-numbers-mode 1)    ; Display line numbers
 (column-number-mode 1)                  ; Toggle column number display in the mode line.
 
+;; Show relative line numbers
+(setq display-line-numbers-type 'relative)
+(global-display-line-numbers-mode 1)
+
 ;; Mark and go-to modes
 (transient-mark-mode 1)                 ; Easier starting of marks/regions
 (delete-selection-mode 1)               ; Easier deleting of marks/regions
@@ -108,6 +112,8 @@ Undo and Garbage Collection Limits Upgrade
   (set-frame-font "Maple Mono 12" nil t)))
 (load-theme 'modus-vivendi t)
 ;; (load-theme 'modus-operandi t)
+
+(display-time-mode 1) ;; Display time in modeline
 #+end_src
 
 *** File History, Saving, Reverting and Backups
@@ -604,7 +610,6 @@ Org mode. Cut my life into pizzas. This is my plastic fork!1 |dmb|
 
 **** Markdown Mode (markdown-mode)
 
-- State "TODO"       from              [2025-05-26 Mon 21:37]
 Markdown is not supported filetype with Emacs, must use package.
 
 #+begin_src emacs-lisp :tangle "init.el"
@@ -617,6 +622,17 @@ Markdown is not supported filetype with Emacs, must use package.
   (setq markdown-fontify-code-blocks-natively t) ; Make code block syntax highlighted
   :bind(:map markdown-mode-map
 	     ("C-c C-e" . markdown-do)))
+#+end_src
+
+**** Spell Checking (flyspell)
+
+#+begin_src emacs-lisp :tangle "init.el"
+;; spell checking w/ flyspell
+(use-package flyspell
+  :straight nil
+  :config
+  (add-hook 'text-mode-hook #'flyspell-mode)
+  (add-hook 'prog-mode-hook #'flyspell-prog-mode))
 #+end_src
 
 **** Magit (git)
