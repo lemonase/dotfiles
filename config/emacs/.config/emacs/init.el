@@ -477,7 +477,10 @@
   (setq org-treat-insert-todo-heading-as-state-change t)
   (setq org-src-preserve-indentation nil)
   (setq org-edit-src-content-indentation 0)
-  (setq org-log-done t))
+  (setq org-log-done t)
+  (setq org-capture-templates '(("j" "Journal Entry"
+                                 entry (file+olp+datetree "~/Google Drive/My Drive/Org/journal.org")
+                                 "* %?" :empty-lines 1))))
 
 ;; Sticky headers at the top of the buffer (matching org outline)
 ;; https://github.com/alphapapa/org-sticky-header/tree/master
@@ -571,7 +574,7 @@
   :straight t
   :config)
 
-(load-theme 'doom-badger t)
+;; (load-theme 'doom-badger t)
 ;; (load-theme 'doom-ir-black t)
 
 ;; Doom Modeline - much easier on the eyes
