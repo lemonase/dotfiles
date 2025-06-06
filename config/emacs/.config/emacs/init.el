@@ -305,7 +305,7 @@
   (setq evil-want-keybinding nil)
   (setq evil-want-integration t)
   :config
-  (evil-mode 1))
+  (evil-mode -1))
 
 ;;; Undo Nicities
 ;; https://github.com/emacsmirror/undo-fu
@@ -448,7 +448,12 @@
   :straight t
   :init (which-key-mode 1))
 
-  ;;; Better help menus (helpful)
+;;; Command log (show list of commands in separate buffer)
+;; https://github.com/lewang/command-log-mode
+(use-package command-log-mode
+  :straight t)
+
+;;; Better help menus (helpful)
 ;; https://github.com/Wilfred/helpful
 (use-package helpful
   :straight t
@@ -644,12 +649,20 @@
 ;; NYAN cat in modeline
 ;; https://github.com/TeMPOraL/nyan-mode
 (use-package nyan-mode
-  :straight t)
+  :straight t
+  :config
+  (setq nyan-wavy-trail t)
+  :init
+  (nyan-mode 1))
 
 ;; Party Parrot in modeline
 ;; https://github.com/dp12/parrot
 (use-package parrot
-  :straight t)
+  :straight t
+  :init (parrot-mode 1))
+
+(add-hook 'post-command-hook 'parrot-start-animation)
+(add-hook 'post-command-hook 'nyan-start-animation)
 
 ;;; Mini-buffer improvements (fido, orderless, marginalia)
 ;; Let's try [icomplete / fido / ido] mode for a while.
@@ -783,6 +796,8 @@
   			  (format "python3 %s" (file-name-nondirectory buffer-file-name)))))
 
 ;; Abbrevs and Snippets
+(define-abbrev global-abbrev-table "t" "the")
+(define-abbrev global-abbrev-table "g" "go")
 ;; URLs
 (define-abbrev global-abbrev-table "mygh" "https://github.com/lemonase")
 ;; Timestamps
