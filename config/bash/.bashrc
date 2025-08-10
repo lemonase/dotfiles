@@ -14,8 +14,6 @@ esac
 
 # environment variables for commands
 export PAGER="less"
-export EDITOR="/usr/bin/vim"
-export VISUAL="/usr/bin/vim"
 # bash history options
 export HISTSIZE= ;
 export HISTFILESIZE= ;
