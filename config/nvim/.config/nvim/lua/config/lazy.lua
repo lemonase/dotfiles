@@ -64,6 +64,9 @@ require("lazy").setup({
       'nvim-treesitter/nvim-treesitter',
       'j-hui/fidget.nvim',
 
+      -- discord
+      'andweeb/presence.nvim',
+
       -- colorschemes
       'rose-pine/neovim',
       'w0ng/vim-hybrid',
