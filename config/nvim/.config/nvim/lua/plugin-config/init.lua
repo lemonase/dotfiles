@@ -21,7 +21,7 @@ require('plugin-config.gitsigns')
 require('plugin-config.vim-fugitive')
 
 -- * Discord Presence * --
-require('plugin-config.discord-presence')
+-- require('plugin-config.discord-presence')
 
 -- colorscheme
 require('plugin-config.colorscheme')

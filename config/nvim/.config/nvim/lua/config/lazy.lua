@@ -65,7 +65,7 @@ require("lazy").setup({
       'j-hui/fidget.nvim',
 
       -- discord
-      'andweeb/presence.nvim',
+      -- 'andweeb/presence.nvim',
 
       -- colorschemes
       'rose-pine/neovim',
