@@ -1,5 +1,5 @@
 -- settings.lua
--- general settings
+-- general settings for basic vim
 
 -- encoding/format
 vim.opt.encoding = 'utf-8'
