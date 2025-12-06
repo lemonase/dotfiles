@@ -1,6 +1,11 @@
--- -- Diagnostic keymaps
-vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
-vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
+-- Diagnostic keymaps
+vim.keymap.set('n', '[d', function()
+    vim.diagnostic.jump({count=1, float=true})
+end)
+vim.keymap.set('n', ']d', function()
+    vim.diagnostic.jump({count=-1, float=true})
+end)
+
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float)
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist)
 
@@ -60,10 +65,11 @@ require('mason-lspconfig').setup({ ensure_installed = servers })
 
 -- loop through servers, adding keymaps and capabilities
 for _, lsp in ipairs(servers) do
-  require('lspconfig')[lsp].setup {
+  -- require('lspconfig')[lsp].setup {
+  vim.lsp.config(lsp, {
     on_attach = on_attach,
     capabilities = capabilities,
-  }
+  })
 end
 -- -- fidget - for lsp status above statusline
 require('fidget').setup()
@@ -76,7 +82,7 @@ require('fidget').setup()
 
 local lspconfig = require('lspconfig')
 
-lspconfig.lua_ls.setup {
+vim.lsp.config("lua_ls", {
   on_attach = on_attach,
   capabilities = capabilities,
   settings = {
@@ -87,4 +93,4 @@ lspconfig.lua_ls.setup {
       telemetry = { enable = false },
     },
   },
-}
+})
