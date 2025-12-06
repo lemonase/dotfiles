@@ -1,11 +1,10 @@
--- Diagnostic keymaps
+-- LSP keymaps
 vim.keymap.set('n', '[d', function()
-    vim.diagnostic.jump({count=1, float=true})
+  vim.diagnostic.jump({ count = 1, float = true })
 end)
 vim.keymap.set('n', ']d', function()
-    vim.diagnostic.jump({count=-1, float=true})
+  vim.diagnostic.jump({ count = -1, float = true })
 end)
-
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float)
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist)
 
@@ -42,11 +41,12 @@ local on_attach = function(_, bufnr)
     end
   end, { desc = 'Format current buffer with LSP' })
 end
+-- End LSP keymaps
 
--- nvim-cmp - extend capabilities of LSP (for text completions)
-local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
+-- LSP server setup
 
+-- mason - package manager for lsp servers
+require('mason').setup()
 local servers = {
   'clangd',
   'rust_analyzer',
@@ -58,30 +58,24 @@ local servers = {
   'lua_ls',
   'bashls'
 }
-
--- mason - package manager for lsp servers
-require('mason').setup()
 require('mason-lspconfig').setup({ ensure_installed = servers })
 
--- loop through servers, adding keymaps and capabilities
+-- nvim-cmp - extend capabilities of LSP (for text completions)
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
+
+-- LSP server enable/config loop
 for _, lsp in ipairs(servers) do
-  -- require('lspconfig')[lsp].setup {
+  vim.lsp.enable(lsp)
   vim.lsp.config(lsp, {
     on_attach = on_attach,
     capabilities = capabilities,
   })
 end
--- -- fidget - for lsp status above statusline
-require('fidget').setup()
 
--- -- lua lsp config
--- -- Make runtime files discoverable to the server
--- local runtime_path = vim.split(package.path, ';')
--- table.insert(runtime_path, 'lua/?.lua')
--- table.insert(runtime_path, 'lua/?/init.lua')
+-- Language Specific LSP setup
 
-local lspconfig = require('lspconfig')
-
+-- lua_ls vim config
 vim.lsp.config("lua_ls", {
   on_attach = on_attach,
   capabilities = capabilities,
@@ -94,3 +88,6 @@ vim.lsp.config("lua_ls", {
     },
   },
 })
+
+-- fidget - for lsp status above statusline
+require('fidget').setup()
