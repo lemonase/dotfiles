@@ -13,12 +13,15 @@ case $- in
 esac
 
 # environment variables for commands
-export PAGER="less"
+[ -z "$EDITOR" ] && export EDITOR="vim"
+[ -z "$PAGER" ] && export PAGER="less"
+
 # bash history options
 export HISTSIZE= ;
 export HISTFILESIZE= ;
 export HISTCONTROL="ignoreboth:erasedups"
 export HISTTIMEFORMAT="%F %T  "
+
 # shell options
 shopt -s checkhash
 shopt -s cdspell
@@ -63,15 +66,17 @@ alias tmlsc="tmux lsc"
 alias tmks="tmux kill-session -t" # kill one session
 alias tmka="tmux kill-server" # aka killall
 
-# edit rc
+# edit rcs
 alias brc="$EDITOR ~/.bashrc"
 alias lbrc="$EDITOR ~/.local/.bashrc"
 alias lenv="$EDITOR ~/.local/.env"
+
 alias vrc="$EDITOR ~/.vim/vimrc"
 alias lvrc="$EDITOR ~/.local/.vimrc"
 alias nvrc="$EDITOR ~/.config/nvim/init.lua"
 alias nvrcd="$EDITOR ~/.config/nvim/"
 alias lnvrc="$EDITOR ~/.local/.nvimrc"
+
 alias tmrc="$EDITOR ~/.tmux.conf"
 alias ltmrc="$EDITOR ~/.local/.tmux.conf"
 alias gitrc="$EDITOR ~/.gitconfig"
