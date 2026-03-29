@@ -342,4 +342,4 @@ fi
 [ -f "$ZSH_SYNTAX_HIGHLIGHT_PATH" ] && source $ZSH_SYNTAX_HIGHLIGHT_PATH
 
 # local rc
-[ -r "$HOME/.local/zshrc" ] && source "$HOME/.local/zshrc"
+[ -r "$HOME/.local/.zshrc" ] && source "$HOME/.local/.zshrc"
