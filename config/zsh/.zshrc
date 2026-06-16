@@ -105,6 +105,10 @@ alias mktar="tar -caf"
 alias tarls="tar -tvf"
 alias ungzip="gunzip"
 
+# macos specific stuff
+alias insom="sudo pmset disablesleep 1"
+alias go2sleep="sudo pmset disablesleep 0"
+
 # * * * * * *
 # Functions *
 # * * * * * *
@@ -321,7 +325,6 @@ fi
 # * * * * * * * * * * * *
 # MISC $PATH Additions  *
 # * * * * * * * * * * * *
-
 # homebrew stuff
 [ -d "/opt/homebrew/bin" ] && path+=("/opt/homebrew/bin" $path)
 [ -d "/opt/homebrew/opt/sqlite/bin" ] && path+=("/opt/homebrew/opt/sqlite/bin" $path)
